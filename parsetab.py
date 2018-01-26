@@ -5,9 +5,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'NUMBER TYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF VALOF NAME program : function \n                | function programfunction : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACEfbody : statement\n            | statement fbodystatement : assignment\n                | declaration\n        \n        declaration : TYPE dlist1 SEMICOLON\n    \n        declaration : TYPE dlist2 SEMICOLON\n    dlist1 : NAME \n            | NAME COMMA dlist1  \n    dlist2 : VALOF NAME \n            | VALOF NAME  COMMA dlist2  \n    \n        assignment : assignment_list SEMICOLON\n                    \n    \n        assignment_list : assignment_base\n                        | assignment_base COMMA assignment_list\n     assignment_base : VALOF NAME EQUALS NUMBER \n            | VALOF NAME EQUALS VALOF NAME \n            | NAME EQUALS ADDROF NAME  '
+_lr_signature = 'NUMBER TYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF VALOF NAME program : function \n                | function programfunction : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACEfbody : statement\n            | statement fbodystatement : assignment\n                | declaration\n        \n        declaration : TYPE dlist1 SEMICOLON\n    \n        declaration : TYPE dlist2 SEMICOLON\n    dlist1 : NAME \n            | NAME COMMA dlist1  \n    dlist2 : VALOF NAME \n            | VALOF NAME  COMMA dlist2  \n    \n        assignment : assignment_list SEMICOLON\n                    \n    \n        assignment_list : assignment_inter\n                        | assignment_inter COMMA assignment_list\n    \n    assignment_inter : assignment_base\n                    | VALOF NAME EQUALS assignment_inter\n     assignment_base : VALOF NAME EQUALS NUMBER \n            | VALOF NAME EQUALS VALOF NAME \n            | NAME EQUALS ADDROF NAME  '
     
-_lr_action_items = {'TYPE':([0,2,8,12,13,14,23,25,28,29,],[3,3,9,9,-6,-7,-3,-14,-8,-9,]),'$end':([1,2,4,23,],[0,-1,-2,-3,]),'NAME':([3,8,9,12,13,14,17,21,25,26,28,29,30,32,38,],[5,10,20,10,-6,-7,27,31,-14,10,-8,-9,20,37,41,]),'LPAREN':([5,],[6,]),'RPAREN':([6,],[7,]),'LBRACE':([7,],[8,]),'VALOF':([8,9,12,13,14,25,26,28,29,34,36,],[17,21,17,-6,-7,-14,17,-8,-9,38,21,]),'EQUALS':([10,27,],[22,34,]),'RBRACE':([11,12,13,14,24,25,28,29,],[23,-4,-6,-7,-5,-14,-8,-9,]),'SEMICOLON':([15,16,18,19,20,31,33,35,37,39,40,41,],[25,-15,28,29,-10,-12,-16,-11,-19,-17,-13,-18,]),'COMMA':([16,20,31,37,39,41,],[26,30,36,-19,-17,-18,]),'ADDROF':([22,],[32,]),'NUMBER':([34,],[39,]),}
+_lr_action_items = {'LPAREN':([5,],[6,]),'VALOF':([8,9,12,14,16,25,27,30,32,34,40,],[11,-7,21,-6,11,-14,11,37,-8,-9,21,]),'LBRACE':([7,],[8,]),'RBRACE':([9,14,16,18,25,26,32,34,],[-7,-6,-4,28,-14,-5,-8,-9,]),'NAME':([2,8,9,11,12,14,16,21,25,27,29,30,32,33,34,37,],[5,10,-7,20,23,-6,10,31,-14,10,36,10,-8,23,-9,42,]),'TYPE':([0,1,8,9,14,16,25,28,32,34,],[2,2,12,-7,-6,12,-14,-3,-8,-9,]),'EQUALS':([10,20,42,],[19,30,30,]),'$end':([1,3,4,28,],[-1,0,-2,-3,]),'SEMICOLON':([13,15,17,22,23,24,31,35,36,38,39,41,42,43,],[25,-17,-15,32,-10,34,-12,-16,-21,-19,-18,-11,-20,-13,]),'RPAREN':([6,],[7,]),'NUMBER':([30,],[38,]),'COMMA':([15,17,23,31,36,38,39,42,],[-17,27,33,40,-21,-19,-18,-20,]),'ADDROF':([19,],[29,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,2,],[1,4,]),'function':([0,2,],[2,2,]),'fbody':([8,12,],[11,24,]),'statement':([8,12,],[12,12,]),'assignment':([8,12,],[13,13,]),'declaration':([8,12,],[14,14,]),'assignment_list':([8,12,26,],[15,15,33,]),'assignment_base':([8,12,26,],[16,16,16,]),'dlist1':([9,30,],[18,35,]),'dlist2':([9,36,],[19,40,]),}
+_lr_goto_items = {'declaration':([8,16,],[9,9,]),'assignment_list':([8,16,27,],[13,13,35,]),'assignment':([8,16,],[14,14,]),'dlist1':([12,33,],[22,41,]),'assignment_base':([8,16,27,30,],[15,15,15,15,]),'function':([0,1,],[1,1,]),'statement':([8,16,],[16,16,]),'assignment_inter':([8,16,27,30,],[17,17,17,39,]),'dlist2':([12,40,],[24,43,]),'fbody':([8,16,],[18,26,]),'program':([0,1,],[3,4,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -40,9 +40,11 @@ _lr_productions = [
   ('dlist2 -> VALOF NAME','dlist2',2,'p_dlist2','level1.py',92),
   ('dlist2 -> VALOF NAME COMMA dlist2','dlist2',4,'p_dlist2','level1.py',93),
   ('assignment -> assignment_list SEMICOLON','assignment',2,'p_assignment','level1.py',102),
-  ('assignment_list -> assignment_base','assignment_list',1,'p_assignment_list','level1.py',108),
-  ('assignment_list -> assignment_base COMMA assignment_list','assignment_list',3,'p_assignment_list','level1.py',109),
-  ('assignment_base -> VALOF NAME EQUALS NUMBER','assignment_base',4,'p_assignment_base','level1.py',113),
-  ('assignment_base -> VALOF NAME EQUALS VALOF NAME','assignment_base',5,'p_assignment_base','level1.py',114),
-  ('assignment_base -> NAME EQUALS ADDROF NAME','assignment_base',4,'p_assignment_base','level1.py',115),
+  ('assignment_list -> assignment_inter','assignment_list',1,'p_assignment_list','level1.py',110),
+  ('assignment_list -> assignment_inter COMMA assignment_list','assignment_list',3,'p_assignment_list','level1.py',111),
+  ('assignment_inter -> assignment_base','assignment_inter',1,'p_assignment_inter','level1.py',120),
+  ('assignment_inter -> VALOF NAME EQUALS assignment_inter','assignment_inter',4,'p_assignment_inter','level1.py',121),
+  ('assignment_base -> VALOF NAME EQUALS NUMBER','assignment_base',4,'p_assignment_base','level1.py',128),
+  ('assignment_base -> VALOF NAME EQUALS VALOF NAME','assignment_base',5,'p_assignment_base','level1.py',129),
+  ('assignment_base -> NAME EQUALS ADDROF NAME','assignment_base',4,'p_assignment_base','level1.py',130),
 ]

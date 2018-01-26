@@ -107,13 +107,23 @@ def p_assignment(p):
     no_of_assignments = no_of_assignments + p[0]
 def p_assignment_list(p):
     """
-        assignment_list : assignment_base
-                        | assignment_base COMMA assignment_list
+        assignment_list : assignment_inter
+                        | assignment_inter COMMA assignment_list
     """
     if(len(p)==2):
         p[0] = p[1]
     else:
         p[0] = p[1] + p[3]
+
+def p_assignment_inter(p):
+    """
+    assignment_inter : assignment_base
+                    | VALOF NAME EQUALS assignment_inter
+    """
+    if(len(p)==2):
+        p[0] = p[1]
+    else:
+        p[0] = p[4] + 1
 def p_assignment_base(p):
 
     """ assignment_base : VALOF NAME EQUALS NUMBER 

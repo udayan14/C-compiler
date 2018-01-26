@@ -4,6 +4,7 @@ void main(){
 
 void f1(){
 	int b,c,d,e,f;
-	int* c;
+	int* c, *l;
 	c = &d;
+	*l = 13;
 }
