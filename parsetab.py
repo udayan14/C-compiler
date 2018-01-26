@@ -5,9 +5,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'NUMBER TYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF VALOF NAME program : function \n                | function programfunction : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACEfbody : statement\n            | statement fbodystatement : assignment\n                | declaration\n        \n        declaration : TYPE dlist1 SEMICOLON\n    \n        declaration : TYPE dlist2 SEMICOLON\n    dlist1 : NAME \n            | NAME COMMA dlist1  \n    dlist2 : VALOF NAME \n            | VALOF NAME  COMMA dlist2  \n    \n        assignment : assignment_list SEMICOLON\n                    \n    \n        assignment_list : assignment_inter\n                        | assignment_inter COMMA assignment_list\n    \n    assignment_inter : assignment_base\n                    | VALOF NAME EQUALS assignment_inter\n     assignment_base : VALOF NAME EQUALS NUMBER \n            | VALOF NAME EQUALS VALOF NAME \n            | NAME EQUALS ADDROF NAME  '
+_lr_signature = 'NUMBER TYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF VALOF NAME \n    program : function \n                | function program\n    \n    function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE\n    \n    fbody : statement\n            | statement fbody\n    \n    statement : assignment\n            | declaration\n    \n        declaration : TYPE dlist1 SEMICOLON\n    \n        declaration : TYPE dlist2 SEMICOLON\n    \n    dlist1 : NAME \n            | NAME COMMA dlist1  \n    \n    dlist2 : VALOF NAME \n            | VALOF NAME  COMMA dlist2  \n    \n    assignment : assignment_list SEMICOLON\n    \n    assignment_list : assignment_inter\n                        | assignment_inter COMMA assignment_list\n    \n    assignment_inter : assignment_base\n                    | VALOF NAME EQUALS assignment_inter\n     \n    assignment_base : VALOF NAME EQUALS NUMBER \n            | VALOF NAME EQUALS VALOF NAME \n            | NAME EQUALS ADDROF NAME \n     '
     
-_lr_action_items = {'LPAREN':([5,],[6,]),'VALOF':([8,9,12,14,16,25,27,30,32,34,40,],[11,-7,21,-6,11,-14,11,37,-8,-9,21,]),'LBRACE':([7,],[8,]),'RBRACE':([9,14,16,18,25,26,32,34,],[-7,-6,-4,28,-14,-5,-8,-9,]),'NAME':([2,8,9,11,12,14,16,21,25,27,29,30,32,33,34,37,],[5,10,-7,20,23,-6,10,31,-14,10,36,10,-8,23,-9,42,]),'TYPE':([0,1,8,9,14,16,25,28,32,34,],[2,2,12,-7,-6,12,-14,-3,-8,-9,]),'EQUALS':([10,20,42,],[19,30,30,]),'$end':([1,3,4,28,],[-1,0,-2,-3,]),'SEMICOLON':([13,15,17,22,23,24,31,35,36,38,39,41,42,43,],[25,-17,-15,32,-10,34,-12,-16,-21,-19,-18,-11,-20,-13,]),'RPAREN':([6,],[7,]),'NUMBER':([30,],[38,]),'COMMA':([15,17,23,31,36,38,39,42,],[-17,27,33,40,-21,-19,-18,-20,]),'ADDROF':([19,],[29,]),}
+_lr_action_items = {'TYPE':([0,2,8,12,13,14,24,26,29,30,],[3,3,9,9,-6,-7,-3,-14,-8,-9,]),'$end':([1,2,4,24,],[0,-1,-2,-3,]),'NAME':([3,8,9,12,13,14,18,22,26,27,29,30,31,33,35,39,],[5,10,21,10,-6,-7,28,32,-14,10,-8,-9,21,38,10,43,]),'LPAREN':([5,],[6,]),'RPAREN':([6,],[7,]),'LBRACE':([7,],[8,]),'VALOF':([8,9,12,13,14,26,27,29,30,35,37,],[18,22,18,-6,-7,-14,18,-8,-9,39,22,]),'EQUALS':([10,28,43,],[23,35,35,]),'RBRACE':([11,12,13,14,25,26,29,30,],[24,-4,-6,-7,-5,-14,-8,-9,]),'SEMICOLON':([15,16,17,19,20,21,32,34,36,38,40,41,42,43,],[26,-15,-17,29,30,-10,-12,-16,-11,-21,-18,-19,-13,-20,]),'COMMA':([16,17,21,32,38,40,41,43,],[27,-17,31,37,-21,-18,-19,-20,]),'ADDROF':([23,],[33,]),'NUMBER':([35,],[41,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'declaration':([8,16,],[9,9,]),'assignment_list':([8,16,27,],[13,13,35,]),'assignment':([8,16,],[14,14,]),'dlist1':([12,33,],[22,41,]),'assignment_base':([8,16,27,30,],[15,15,15,15,]),'function':([0,1,],[1,1,]),'statement':([8,16,],[16,16,]),'assignment_inter':([8,16,27,30,],[17,17,17,39,]),'dlist2':([12,40,],[24,43,]),'fbody':([8,16,],[18,26,]),'program':([0,1,],[3,4,]),}
+_lr_goto_items = {'program':([0,2,],[1,4,]),'function':([0,2,],[2,2,]),'fbody':([8,12,],[11,25,]),'statement':([8,12,],[12,12,]),'assignment':([8,12,],[13,13,]),'declaration':([8,12,],[14,14,]),'assignment_list':([8,12,27,],[15,15,34,]),'assignment_inter':([8,12,27,35,],[16,16,16,40,]),'assignment_base':([8,12,27,35,],[17,17,17,17,]),'dlist1':([9,31,],[19,36,]),'dlist2':([9,37,],[20,42,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,25 +26,25 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> function','program',1,'p_program','level1.py',51),
-  ('program -> function program','program',2,'p_program','level1.py',52),
-  ('function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE','function',7,'p_function','level1.py',55),
-  ('fbody -> statement','fbody',1,'p_fbody','level1.py',59),
-  ('fbody -> statement fbody','fbody',2,'p_fbody','level1.py',60),
-  ('statement -> assignment','statement',1,'p_statement_expr','level1.py',64),
-  ('statement -> declaration','statement',1,'p_statement_expr','level1.py',65),
-  ('declaration -> TYPE dlist1 SEMICOLON','declaration',3,'p_declaration1','level1.py',72),
-  ('declaration -> TYPE dlist2 SEMICOLON','declaration',3,'p_declaration2','level1.py',78),
-  ('dlist1 -> NAME','dlist1',1,'p_dlist1','level1.py',83),
-  ('dlist1 -> NAME COMMA dlist1','dlist1',3,'p_dlist1','level1.py',84),
-  ('dlist2 -> VALOF NAME','dlist2',2,'p_dlist2','level1.py',92),
-  ('dlist2 -> VALOF NAME COMMA dlist2','dlist2',4,'p_dlist2','level1.py',93),
-  ('assignment -> assignment_list SEMICOLON','assignment',2,'p_assignment','level1.py',102),
-  ('assignment_list -> assignment_inter','assignment_list',1,'p_assignment_list','level1.py',110),
-  ('assignment_list -> assignment_inter COMMA assignment_list','assignment_list',3,'p_assignment_list','level1.py',111),
-  ('assignment_inter -> assignment_base','assignment_inter',1,'p_assignment_inter','level1.py',120),
-  ('assignment_inter -> VALOF NAME EQUALS assignment_inter','assignment_inter',4,'p_assignment_inter','level1.py',121),
-  ('assignment_base -> VALOF NAME EQUALS NUMBER','assignment_base',4,'p_assignment_base','level1.py',128),
-  ('assignment_base -> VALOF NAME EQUALS VALOF NAME','assignment_base',5,'p_assignment_base','level1.py',129),
-  ('assignment_base -> NAME EQUALS ADDROF NAME','assignment_base',4,'p_assignment_base','level1.py',130),
+  ('program -> function','program',1,'p_program','level1.py',52),
+  ('program -> function program','program',2,'p_program','level1.py',53),
+  ('function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE','function',7,'p_function','level1.py',58),
+  ('fbody -> statement','fbody',1,'p_fbody','level1.py',64),
+  ('fbody -> statement fbody','fbody',2,'p_fbody','level1.py',65),
+  ('statement -> assignment','statement',1,'p_statement_expr','level1.py',71),
+  ('statement -> declaration','statement',1,'p_statement_expr','level1.py',72),
+  ('declaration -> TYPE dlist1 SEMICOLON','declaration',3,'p_declaration1','level1.py',78),
+  ('declaration -> TYPE dlist2 SEMICOLON','declaration',3,'p_declaration2','level1.py',86),
+  ('dlist1 -> NAME','dlist1',1,'p_dlist1','level1.py',94),
+  ('dlist1 -> NAME COMMA dlist1','dlist1',3,'p_dlist1','level1.py',95),
+  ('dlist2 -> VALOF NAME','dlist2',2,'p_dlist2','level1.py',104),
+  ('dlist2 -> VALOF NAME COMMA dlist2','dlist2',4,'p_dlist2','level1.py',105),
+  ('assignment -> assignment_list SEMICOLON','assignment',2,'p_assignment','level1.py',114),
+  ('assignment_list -> assignment_inter','assignment_list',1,'p_assignment_list','level1.py',123),
+  ('assignment_list -> assignment_inter COMMA assignment_list','assignment_list',3,'p_assignment_list','level1.py',124),
+  ('assignment_inter -> assignment_base','assignment_inter',1,'p_assignment_inter','level1.py',133),
+  ('assignment_inter -> VALOF NAME EQUALS assignment_inter','assignment_inter',4,'p_assignment_inter','level1.py',134),
+  ('assignment_base -> VALOF NAME EQUALS NUMBER','assignment_base',4,'p_assignment_base','level1.py',143),
+  ('assignment_base -> VALOF NAME EQUALS VALOF NAME','assignment_base',5,'p_assignment_base','level1.py',144),
+  ('assignment_base -> NAME EQUALS ADDROF NAME','assignment_base',4,'p_assignment_base','level1.py',145),
 ]

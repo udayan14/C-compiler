@@ -64,12 +64,18 @@ state 0
     (2) program -> . function program
     (3) function -> . TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 
-    TYPE            shift and go to state 2
+    TYPE            shift and go to state 3
 
-    function                       shift and go to state 1
-    program                        shift and go to state 3
+    program                        shift and go to state 1
+    function                       shift and go to state 2
 
 state 1
+
+    (0) S' -> program .
+
+
+
+state 2
 
     (1) program -> function .
     (2) program -> function . program
@@ -78,22 +84,16 @@ state 1
     (3) function -> . TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 
     $end            reduce using rule 1 (program -> function .)
-    TYPE            shift and go to state 2
+    TYPE            shift and go to state 3
 
-    function                       shift and go to state 1
+    function                       shift and go to state 2
     program                        shift and go to state 4
 
-state 2
+state 3
 
     (3) function -> TYPE . NAME LPAREN RPAREN LBRACE fbody RBRACE
 
     NAME            shift and go to state 5
-
-
-state 3
-
-    (0) S' -> program .
-
 
 
 state 4
@@ -142,45 +142,19 @@ state 8
     (20) assignment_base -> . VALOF NAME EQUALS VALOF NAME
     (21) assignment_base -> . NAME EQUALS ADDROF NAME
 
-    TYPE            shift and go to state 12
-    VALOF           shift and go to state 11
+    TYPE            shift and go to state 9
+    VALOF           shift and go to state 18
     NAME            shift and go to state 10
 
-    declaration                    shift and go to state 9
-    assignment_list                shift and go to state 13
-    assignment                     shift and go to state 14
-    assignment_base                shift and go to state 15
-    statement                      shift and go to state 16
-    assignment_inter               shift and go to state 17
-    fbody                          shift and go to state 18
+    fbody                          shift and go to state 11
+    statement                      shift and go to state 12
+    assignment                     shift and go to state 13
+    declaration                    shift and go to state 14
+    assignment_list                shift and go to state 15
+    assignment_inter               shift and go to state 16
+    assignment_base                shift and go to state 17
 
 state 9
-
-    (7) statement -> declaration .
-
-    TYPE            reduce using rule 7 (statement -> declaration .)
-    VALOF           reduce using rule 7 (statement -> declaration .)
-    NAME            reduce using rule 7 (statement -> declaration .)
-    RBRACE          reduce using rule 7 (statement -> declaration .)
-
-
-state 10
-
-    (21) assignment_base -> NAME . EQUALS ADDROF NAME
-
-    EQUALS          shift and go to state 19
-
-
-state 11
-
-    (18) assignment_inter -> VALOF . NAME EQUALS assignment_inter
-    (19) assignment_base -> VALOF . NAME EQUALS NUMBER
-    (20) assignment_base -> VALOF . NAME EQUALS VALOF NAME
-
-    NAME            shift and go to state 20
-
-
-state 12
 
     (8) declaration -> TYPE . dlist1 SEMICOLON
     (9) declaration -> TYPE . dlist2 SEMICOLON
@@ -189,38 +163,27 @@ state 12
     (12) dlist2 -> . VALOF NAME
     (13) dlist2 -> . VALOF NAME COMMA dlist2
 
-    NAME            shift and go to state 23
-    VALOF           shift and go to state 21
+    NAME            shift and go to state 21
+    VALOF           shift and go to state 22
 
-    dlist2                         shift and go to state 24
-    dlist1                         shift and go to state 22
+    dlist1                         shift and go to state 19
+    dlist2                         shift and go to state 20
 
-state 13
+state 10
 
-    (14) assignment -> assignment_list . SEMICOLON
+    (21) assignment_base -> NAME . EQUALS ADDROF NAME
 
-    SEMICOLON       shift and go to state 25
-
-
-state 14
-
-    (6) statement -> assignment .
-
-    TYPE            reduce using rule 6 (statement -> assignment .)
-    VALOF           reduce using rule 6 (statement -> assignment .)
-    NAME            reduce using rule 6 (statement -> assignment .)
-    RBRACE          reduce using rule 6 (statement -> assignment .)
+    EQUALS          shift and go to state 23
 
 
-state 15
+state 11
 
-    (17) assignment_inter -> assignment_base .
+    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody . RBRACE
 
-    COMMA           reduce using rule 17 (assignment_inter -> assignment_base .)
-    SEMICOLON       reduce using rule 17 (assignment_inter -> assignment_base .)
+    RBRACE          shift and go to state 24
 
 
-state 16
+state 12
 
     (4) fbody -> statement .
     (5) fbody -> statement . fbody
@@ -240,19 +203,46 @@ state 16
     (21) assignment_base -> . NAME EQUALS ADDROF NAME
 
     RBRACE          reduce using rule 4 (fbody -> statement .)
-    TYPE            shift and go to state 12
-    VALOF           shift and go to state 11
+    TYPE            shift and go to state 9
+    VALOF           shift and go to state 18
     NAME            shift and go to state 10
 
-    declaration                    shift and go to state 9
-    assignment_list                shift and go to state 13
-    assignment                     shift and go to state 14
-    assignment_base                shift and go to state 15
-    statement                      shift and go to state 16
-    assignment_inter               shift and go to state 17
-    fbody                          shift and go to state 26
+    statement                      shift and go to state 12
+    fbody                          shift and go to state 25
+    assignment                     shift and go to state 13
+    declaration                    shift and go to state 14
+    assignment_list                shift and go to state 15
+    assignment_inter               shift and go to state 16
+    assignment_base                shift and go to state 17
 
-state 17
+state 13
+
+    (6) statement -> assignment .
+
+    TYPE            reduce using rule 6 (statement -> assignment .)
+    VALOF           reduce using rule 6 (statement -> assignment .)
+    NAME            reduce using rule 6 (statement -> assignment .)
+    RBRACE          reduce using rule 6 (statement -> assignment .)
+
+
+state 14
+
+    (7) statement -> declaration .
+
+    TYPE            reduce using rule 7 (statement -> declaration .)
+    VALOF           reduce using rule 7 (statement -> declaration .)
+    NAME            reduce using rule 7 (statement -> declaration .)
+    RBRACE          reduce using rule 7 (statement -> declaration .)
+
+
+state 15
+
+    (14) assignment -> assignment_list . SEMICOLON
+
+    SEMICOLON       shift and go to state 26
+
+
+state 16
 
     (15) assignment_list -> assignment_inter .
     (16) assignment_list -> assignment_inter . COMMA assignment_list
@@ -261,61 +251,77 @@ state 17
     COMMA           shift and go to state 27
 
 
+state 17
+
+    (17) assignment_inter -> assignment_base .
+
+    COMMA           reduce using rule 17 (assignment_inter -> assignment_base .)
+    SEMICOLON       reduce using rule 17 (assignment_inter -> assignment_base .)
+
+
 state 18
 
-    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody . RBRACE
+    (18) assignment_inter -> VALOF . NAME EQUALS assignment_inter
+    (19) assignment_base -> VALOF . NAME EQUALS NUMBER
+    (20) assignment_base -> VALOF . NAME EQUALS VALOF NAME
 
-    RBRACE          shift and go to state 28
+    NAME            shift and go to state 28
 
 
 state 19
 
-    (21) assignment_base -> NAME EQUALS . ADDROF NAME
+    (8) declaration -> TYPE dlist1 . SEMICOLON
 
-    ADDROF          shift and go to state 29
+    SEMICOLON       shift and go to state 29
 
 
 state 20
 
-    (18) assignment_inter -> VALOF NAME . EQUALS assignment_inter
-    (19) assignment_base -> VALOF NAME . EQUALS NUMBER
-    (20) assignment_base -> VALOF NAME . EQUALS VALOF NAME
+    (9) declaration -> TYPE dlist2 . SEMICOLON
 
-    EQUALS          shift and go to state 30
+    SEMICOLON       shift and go to state 30
 
 
 state 21
-
-    (12) dlist2 -> VALOF . NAME
-    (13) dlist2 -> VALOF . NAME COMMA dlist2
-
-    NAME            shift and go to state 31
-
-
-state 22
-
-    (8) declaration -> TYPE dlist1 . SEMICOLON
-
-    SEMICOLON       shift and go to state 32
-
-
-state 23
 
     (10) dlist1 -> NAME .
     (11) dlist1 -> NAME . COMMA dlist1
 
     SEMICOLON       reduce using rule 10 (dlist1 -> NAME .)
-    COMMA           shift and go to state 33
+    COMMA           shift and go to state 31
+
+
+state 22
+
+    (12) dlist2 -> VALOF . NAME
+    (13) dlist2 -> VALOF . NAME COMMA dlist2
+
+    NAME            shift and go to state 32
+
+
+state 23
+
+    (21) assignment_base -> NAME EQUALS . ADDROF NAME
+
+    ADDROF          shift and go to state 33
 
 
 state 24
 
-    (9) declaration -> TYPE dlist2 . SEMICOLON
+    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .
 
-    SEMICOLON       shift and go to state 34
+    TYPE            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
+    $end            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
 
 
 state 25
+
+    (5) fbody -> statement fbody .
+
+    RBRACE          reduce using rule 5 (fbody -> statement fbody .)
+
+
+state 26
 
     (14) assignment -> assignment_list SEMICOLON .
 
@@ -323,13 +329,6 @@ state 25
     VALOF           reduce using rule 14 (assignment -> assignment_list SEMICOLON .)
     NAME            reduce using rule 14 (assignment -> assignment_list SEMICOLON .)
     RBRACE          reduce using rule 14 (assignment -> assignment_list SEMICOLON .)
-
-
-state 26
-
-    (5) fbody -> statement fbody .
-
-    RBRACE          reduce using rule 5 (fbody -> statement fbody .)
 
 
 state 27
@@ -343,29 +342,76 @@ state 27
     (20) assignment_base -> . VALOF NAME EQUALS VALOF NAME
     (21) assignment_base -> . NAME EQUALS ADDROF NAME
 
-    VALOF           shift and go to state 11
+    VALOF           shift and go to state 18
     NAME            shift and go to state 10
 
-    assignment_base                shift and go to state 15
-    assignment_inter               shift and go to state 17
-    assignment_list                shift and go to state 35
+    assignment_inter               shift and go to state 16
+    assignment_list                shift and go to state 34
+    assignment_base                shift and go to state 17
 
 state 28
 
-    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .
+    (18) assignment_inter -> VALOF NAME . EQUALS assignment_inter
+    (19) assignment_base -> VALOF NAME . EQUALS NUMBER
+    (20) assignment_base -> VALOF NAME . EQUALS VALOF NAME
 
-    TYPE            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
-    $end            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
+    EQUALS          shift and go to state 35
 
 
 state 29
 
-    (21) assignment_base -> NAME EQUALS ADDROF . NAME
+    (8) declaration -> TYPE dlist1 SEMICOLON .
 
-    NAME            shift and go to state 36
+    TYPE            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
+    VALOF           reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
+    NAME            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
+    RBRACE          reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
 
 
 state 30
+
+    (9) declaration -> TYPE dlist2 SEMICOLON .
+
+    TYPE            reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
+    VALOF           reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
+    NAME            reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
+    RBRACE          reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
+
+
+state 31
+
+    (11) dlist1 -> NAME COMMA . dlist1
+    (10) dlist1 -> . NAME
+    (11) dlist1 -> . NAME COMMA dlist1
+
+    NAME            shift and go to state 21
+
+    dlist1                         shift and go to state 36
+
+state 32
+
+    (12) dlist2 -> VALOF NAME .
+    (13) dlist2 -> VALOF NAME . COMMA dlist2
+
+    SEMICOLON       reduce using rule 12 (dlist2 -> VALOF NAME .)
+    COMMA           shift and go to state 37
+
+
+state 33
+
+    (21) assignment_base -> NAME EQUALS ADDROF . NAME
+
+    NAME            shift and go to state 38
+
+
+state 34
+
+    (16) assignment_list -> assignment_inter COMMA assignment_list .
+
+    SEMICOLON       reduce using rule 16 (assignment_list -> assignment_inter COMMA assignment_list .)
+
+
+state 35
 
     (18) assignment_inter -> VALOF NAME EQUALS . assignment_inter
     (19) assignment_base -> VALOF NAME EQUALS . NUMBER
@@ -376,60 +422,31 @@ state 30
     (20) assignment_base -> . VALOF NAME EQUALS VALOF NAME
     (21) assignment_base -> . NAME EQUALS ADDROF NAME
 
-    NUMBER          shift and go to state 38
-    VALOF           shift and go to state 37
+    NUMBER          shift and go to state 41
+    VALOF           shift and go to state 39
     NAME            shift and go to state 10
 
-    assignment_base                shift and go to state 15
-    assignment_inter               shift and go to state 39
-
-state 31
-
-    (12) dlist2 -> VALOF NAME .
-    (13) dlist2 -> VALOF NAME . COMMA dlist2
-
-    SEMICOLON       reduce using rule 12 (dlist2 -> VALOF NAME .)
-    COMMA           shift and go to state 40
-
-
-state 32
-
-    (8) declaration -> TYPE dlist1 SEMICOLON .
-
-    TYPE            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
-    VALOF           reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
-    NAME            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
-    RBRACE          reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
-
-
-state 33
-
-    (11) dlist1 -> NAME COMMA . dlist1
-    (10) dlist1 -> . NAME
-    (11) dlist1 -> . NAME COMMA dlist1
-
-    NAME            shift and go to state 23
-
-    dlist1                         shift and go to state 41
-
-state 34
-
-    (9) declaration -> TYPE dlist2 SEMICOLON .
-
-    TYPE            reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
-    VALOF           reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
-    NAME            reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
-    RBRACE          reduce using rule 9 (declaration -> TYPE dlist2 SEMICOLON .)
-
-
-state 35
-
-    (16) assignment_list -> assignment_inter COMMA assignment_list .
-
-    SEMICOLON       reduce using rule 16 (assignment_list -> assignment_inter COMMA assignment_list .)
-
+    assignment_inter               shift and go to state 40
+    assignment_base                shift and go to state 17
 
 state 36
+
+    (11) dlist1 -> NAME COMMA dlist1 .
+
+    SEMICOLON       reduce using rule 11 (dlist1 -> NAME COMMA dlist1 .)
+
+
+state 37
+
+    (13) dlist2 -> VALOF NAME COMMA . dlist2
+    (12) dlist2 -> . VALOF NAME
+    (13) dlist2 -> . VALOF NAME COMMA dlist2
+
+    VALOF           shift and go to state 22
+
+    dlist2                         shift and go to state 42
+
+state 38
 
     (21) assignment_base -> NAME EQUALS ADDROF NAME .
 
@@ -437,25 +454,17 @@ state 36
     SEMICOLON       reduce using rule 21 (assignment_base -> NAME EQUALS ADDROF NAME .)
 
 
-state 37
+state 39
 
     (20) assignment_base -> VALOF NAME EQUALS VALOF . NAME
     (18) assignment_inter -> VALOF . NAME EQUALS assignment_inter
     (19) assignment_base -> VALOF . NAME EQUALS NUMBER
     (20) assignment_base -> VALOF . NAME EQUALS VALOF NAME
 
-    NAME            shift and go to state 42
+    NAME            shift and go to state 43
 
 
-state 38
-
-    (19) assignment_base -> VALOF NAME EQUALS NUMBER .
-
-    COMMA           reduce using rule 19 (assignment_base -> VALOF NAME EQUALS NUMBER .)
-    SEMICOLON       reduce using rule 19 (assignment_base -> VALOF NAME EQUALS NUMBER .)
-
-
-state 39
+state 40
 
     (18) assignment_inter -> VALOF NAME EQUALS assignment_inter .
 
@@ -463,24 +472,22 @@ state 39
     SEMICOLON       reduce using rule 18 (assignment_inter -> VALOF NAME EQUALS assignment_inter .)
 
 
-state 40
-
-    (13) dlist2 -> VALOF NAME COMMA . dlist2
-    (12) dlist2 -> . VALOF NAME
-    (13) dlist2 -> . VALOF NAME COMMA dlist2
-
-    VALOF           shift and go to state 21
-
-    dlist2                         shift and go to state 43
-
 state 41
 
-    (11) dlist1 -> NAME COMMA dlist1 .
+    (19) assignment_base -> VALOF NAME EQUALS NUMBER .
 
-    SEMICOLON       reduce using rule 11 (dlist1 -> NAME COMMA dlist1 .)
+    COMMA           reduce using rule 19 (assignment_base -> VALOF NAME EQUALS NUMBER .)
+    SEMICOLON       reduce using rule 19 (assignment_base -> VALOF NAME EQUALS NUMBER .)
 
 
 state 42
+
+    (13) dlist2 -> VALOF NAME COMMA dlist2 .
+
+    SEMICOLON       reduce using rule 13 (dlist2 -> VALOF NAME COMMA dlist2 .)
+
+
+state 43
 
     (20) assignment_base -> VALOF NAME EQUALS VALOF NAME .
     (18) assignment_inter -> VALOF NAME . EQUALS assignment_inter
@@ -489,12 +496,5 @@ state 42
 
     COMMA           reduce using rule 20 (assignment_base -> VALOF NAME EQUALS VALOF NAME .)
     SEMICOLON       reduce using rule 20 (assignment_base -> VALOF NAME EQUALS VALOF NAME .)
-    EQUALS          shift and go to state 30
-
-
-state 43
-
-    (13) dlist2 -> VALOF NAME COMMA dlist2 .
-
-    SEMICOLON       reduce using rule 13 (dlist2 -> VALOF NAME COMMA dlist2 .)
+    EQUALS          shift and go to state 35
 

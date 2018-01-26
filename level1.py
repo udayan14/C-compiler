@@ -48,39 +48,50 @@ def t_error(t):
     t.lexer.skip(1)
 
 def p_program(p):
-    """ program : function 
-                | function program"""
+    """ 
+    program : function 
+                | function program
+    """
 
 def p_function(p):
-    """function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE"""
-    print(p[2])
+    """
+    function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
+    """
+
 
 def p_fbody(p):
-    """fbody : statement
-            | statement fbody"""
+    """
+    fbody : statement
+            | statement fbody
+    """
     p[0] = p[1]
 
 def p_statement_expr(p):
-        """statement : assignment
-                | declaration
-        """
-        p[0]=p[1]
-        #print(p[0])
+    """
+    statement : assignment
+            | declaration
+    """
+    p[0]=p[1]
 
 def p_declaration1(p):
     """
         declaration : TYPE dlist1 SEMICOLON
     """
     global no_of_static_declarations
+
     no_of_static_declarations = no_of_static_declarations + p[2]
+
 def p_declaration2(p):
     """
         declaration : TYPE dlist2 SEMICOLON
     """
     global no_of_pointer_declarations
+
     no_of_pointer_declarations = no_of_pointer_declarations + p[2]
+
 def p_dlist1(p):
-    """dlist1 : NAME 
+    """
+    dlist1 : NAME 
             | NAME COMMA dlist1  
     """
     if(len(p)==2):
@@ -89,7 +100,8 @@ def p_dlist1(p):
         p[0] = p[3] + 1
 
 def p_dlist2(p):
-    """dlist2 : VALOF NAME 
+    """
+    dlist2 : VALOF NAME 
             | VALOF NAME  COMMA dlist2  
     """
     if(len(p)==3):
@@ -99,15 +111,16 @@ def p_dlist2(p):
     
 def p_assignment(p):
     """
-        assignment : assignment_list SEMICOLON
-                    
+    assignment : assignment_list SEMICOLON
     """
     global no_of_assignments
+
     p[0] = p[1]
     no_of_assignments = no_of_assignments + p[0]
+
 def p_assignment_list(p):
     """
-        assignment_list : assignment_inter
+    assignment_list : assignment_inter
                         | assignment_inter COMMA assignment_list
     """
     if(len(p)==2):
@@ -124,11 +137,14 @@ def p_assignment_inter(p):
         p[0] = p[1]
     else:
         p[0] = p[4] + 1
+
 def p_assignment_base(p):
 
-    """ assignment_base : VALOF NAME EQUALS NUMBER 
+    """ 
+    assignment_base : VALOF NAME EQUALS NUMBER 
             | VALOF NAME EQUALS VALOF NAME 
-            | NAME EQUALS ADDROF NAME  """
+            | NAME EQUALS ADDROF NAME 
+     """
 
     p[0] = 1 
 
@@ -145,9 +161,8 @@ def process(data):
     yacc.parse(data)
 
 if __name__ == "__main__":
-    print("Enter the Program")
     data = sys.stdin.read()
     process(data)
-    print("Static variables : ",no_of_static_declarations)
-    print("Pointer variables : ",no_of_pointer_declarations)
-    print("Assignments : ",no_of_assignments)
+    print(no_of_static_declarations)
+    print(no_of_pointer_declarations)
+    print(no_of_assignments)
