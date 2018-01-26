@@ -6,19 +6,19 @@ import ply.yacc as yacc
 
 no_of_pointer_declarations = 0
 no_of_static_declarations = 0
-
+no_of_assignments = 0
 tokens = (
     'NUMBER',
     'TYPE',
-    'DELIM', 'EQUALS',
+    'SEMICOLON', 'EQUALS', 'COMMA',
     'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
     'ADDROF','VALOF',
     'NAME',
-    'MAIN',
     )
 
 t_ignore = " \t\n"
-t_DELIM = ";"
+t_SEMICOLON = ";"
+t_COMMA = ","
 t_EQUALS = "="
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
@@ -30,12 +30,9 @@ t_VALOF = r'\*'
 
 def t_TYPE(t):
     r'\bvoid\b | \bint\b'
-    print("some datatype found")
     return t
 
-def t_MAIN(t):
-    r'\bmain\b'
-    return t
+
 
 def t_NUMBER(t):
     r'\d+'
@@ -51,7 +48,11 @@ def t_error(t):
     t.lexer.skip(1)
 
 def p_program(p):
-    """program : TYPE MAIN LPAREN RPAREN LBRACE fbody RBRACE"""
+    """ program : function 
+                | function program"""
+
+def p_function(p):
+    """function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE"""
     print(p[2])
 
 def p_fbody(p):
@@ -64,23 +65,62 @@ def p_statement_expr(p):
                 | declaration
         """
         p[0]=p[1]
+        #print(p[0])
 
-def p_declaration(p):
-    """declaration : TYPE NAME DELIM
-            | TYPE VALOF NAME DELIM 
+def p_declaration1(p):
     """
-    global no_of_static_declarations, no_of_pointer_declarations
-    if(len(p)==4):
-        no_of_static_declarations = no_of_static_declarations + 1
-    else:
-        no_of_pointer_declarations = no_of_pointer_declarations + 1
-    p[0] = p[1]
+        declaration : TYPE dlist1 SEMICOLON
+    """
+    global no_of_static_declarations
+    no_of_static_declarations = no_of_static_declarations + p[2]
+def p_declaration2(p):
+    """
+        declaration : TYPE dlist2 SEMICOLON
+    """
+    global no_of_pointer_declarations
+    no_of_pointer_declarations = no_of_pointer_declarations + p[2]
+def p_dlist1(p):
+    """dlist1 : NAME 
+            | NAME COMMA dlist1  
+    """
+    if(len(p)==2):
+        p[0] = 1
+    else:  
+        p[0] = p[3] + 1
 
+def p_dlist2(p):
+    """dlist2 : VALOF NAME 
+            | VALOF NAME  COMMA dlist2  
+    """
+    if(len(p)==3):
+        p[0] = 1
+    else:  
+        p[0] = p[4] + 1
+    
 def p_assignment(p):
-    """assignment : VALOF NAME EQUALS NUMBER DELIM
-            | VALOF NAME EQUALS VALOF NAME DELIM"""
+    """
+        assignment : assignment_list SEMICOLON
+                    
+    """
+    global no_of_assignments
     p[0] = p[1]
+    no_of_assignments = no_of_assignments + p[0]
+def p_assignment_list(p):
+    """
+        assignment_list : assignment_base
+                        | assignment_base COMMA assignment_list
+    """
+    if(len(p)==2):
+        p[0] = p[1]
+    else:
+        p[0] = p[1] + p[3]
+def p_assignment_base(p):
 
+    """ assignment_base : VALOF NAME EQUALS NUMBER 
+            | VALOF NAME EQUALS VALOF NAME 
+            | NAME EQUALS ADDROF NAME  """
+
+    p[0] = 1 
 
 
 def p_error(p):
@@ -100,3 +140,4 @@ if __name__ == "__main__":
     process(data)
     print("Static variables : ",no_of_static_declarations)
     print("Pointer variables : ",no_of_pointer_declarations)
+    print("Assignments : ",no_of_assignments)

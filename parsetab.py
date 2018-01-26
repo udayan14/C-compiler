@@ -5,9 +5,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'NUMBER TYPE DELIM EQUALS LPAREN RPAREN LBRACE RBRACE ADDROF VALOF NAME MAINprogram : TYPE MAIN LPAREN RPAREN LBRACE fbody RBRACEfbody : statement\n            | statement fbodystatement : assignment\n                | declaration\n        declaration : TYPE NAME DELIM\n            | TYPE VALOF NAME DELIM \n    assignment : VALOF NAME EQUALS NUMBER DELIM\n            | VALOF NAME EQUALS VALOF NAME DELIM'
+_lr_signature = 'NUMBER TYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF VALOF NAME program : function \n                | function programfunction : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACEfbody : statement\n            | statement fbodystatement : assignment\n                | declaration\n        \n        declaration : TYPE dlist1 SEMICOLON\n    \n        declaration : TYPE dlist2 SEMICOLON\n    dlist1 : NAME \n            | NAME COMMA dlist1  \n    dlist2 : VALOF NAME \n            | VALOF NAME  COMMA dlist2  \n    \n        assignment : assignment_list SEMICOLON\n                    \n    \n        assignment_list : assignment_base\n                        | assignment_base COMMA assignment_list\n     assignment_base : VALOF NAME EQUALS NUMBER \n            | VALOF NAME EQUALS VALOF NAME \n            | NAME EQUALS ADDROF NAME  '
     
-_lr_action_items = {'RPAREN':([4,],[5,]),'EQUALS':([15,],[18,]),'MAIN':([2,],[3,]),'LBRACE':([5,],[6,]),'RBRACE':([7,8,10,11,13,19,23,24,26,],[-2,14,-4,-5,-3,-6,-7,-8,-9,]),'LPAREN':([3,],[4,]),'$end':([1,14,],[0,-1,]),'NAME':([9,12,17,22,],[15,16,20,25,]),'NUMBER':([18,],[21,]),'DELIM':([16,20,21,25,],[19,23,24,26,]),'VALOF':([6,7,10,11,12,18,19,23,24,26,],[9,9,-4,-5,17,22,-6,-7,-8,-9,]),'TYPE':([0,6,7,10,11,19,23,24,26,],[2,12,12,-4,-5,-6,-7,-8,-9,]),}
+_lr_action_items = {'TYPE':([0,2,8,12,13,14,23,25,28,29,],[3,3,9,9,-6,-7,-3,-14,-8,-9,]),'$end':([1,2,4,23,],[0,-1,-2,-3,]),'NAME':([3,8,9,12,13,14,17,21,25,26,28,29,30,32,38,],[5,10,20,10,-6,-7,27,31,-14,10,-8,-9,20,37,41,]),'LPAREN':([5,],[6,]),'RPAREN':([6,],[7,]),'LBRACE':([7,],[8,]),'VALOF':([8,9,12,13,14,25,26,28,29,34,36,],[17,21,17,-6,-7,-14,17,-8,-9,38,21,]),'EQUALS':([10,27,],[22,34,]),'RBRACE':([11,12,13,14,24,25,28,29,],[23,-4,-6,-7,-5,-14,-8,-9,]),'SEMICOLON':([15,16,18,19,20,31,33,35,37,39,40,41,],[25,-15,28,29,-10,-12,-16,-11,-19,-17,-13,-18,]),'COMMA':([16,20,31,37,39,41,],[26,30,36,-19,-17,-18,]),'ADDROF':([22,],[32,]),'NUMBER':([34,],[39,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statement':([6,7,],[7,7,]),'fbody':([6,7,],[8,13,]),'assignment':([6,7,],[10,10,]),'program':([0,],[1,]),'declaration':([6,7,],[11,11,]),}
+_lr_goto_items = {'program':([0,2,],[1,4,]),'function':([0,2,],[2,2,]),'fbody':([8,12,],[11,24,]),'statement':([8,12,],[12,12,]),'assignment':([8,12,],[13,13,]),'declaration':([8,12,],[14,14,]),'assignment_list':([8,12,26,],[15,15,33,]),'assignment_base':([8,12,26,],[16,16,16,]),'dlist1':([9,30,],[18,35,]),'dlist2':([9,36,],[19,40,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,13 +26,23 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> TYPE MAIN LPAREN RPAREN LBRACE fbody RBRACE','program',7,'p_program','level1.py',51),
-  ('fbody -> statement','fbody',1,'p_fbody','level1.py',55),
-  ('fbody -> statement fbody','fbody',2,'p_fbody','level1.py',56),
-  ('statement -> assignment','statement',1,'p_statement_expr','level1.py',60),
-  ('statement -> declaration','statement',1,'p_statement_expr','level1.py',61),
-  ('declaration -> TYPE NAME DELIM','declaration',3,'p_declaration','level1.py',66),
-  ('declaration -> TYPE VALOF NAME DELIM','declaration',4,'p_declaration','level1.py',67),
-  ('assignment -> VALOF NAME EQUALS NUMBER DELIM','assignment',5,'p_assignment','level1.py',72),
-  ('assignment -> VALOF NAME EQUALS VALOF NAME DELIM','assignment',6,'p_assignment','level1.py',73),
+  ('program -> function','program',1,'p_program','level1.py',51),
+  ('program -> function program','program',2,'p_program','level1.py',52),
+  ('function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE','function',7,'p_function','level1.py',55),
+  ('fbody -> statement','fbody',1,'p_fbody','level1.py',59),
+  ('fbody -> statement fbody','fbody',2,'p_fbody','level1.py',60),
+  ('statement -> assignment','statement',1,'p_statement_expr','level1.py',64),
+  ('statement -> declaration','statement',1,'p_statement_expr','level1.py',65),
+  ('declaration -> TYPE dlist1 SEMICOLON','declaration',3,'p_declaration1','level1.py',72),
+  ('declaration -> TYPE dlist2 SEMICOLON','declaration',3,'p_declaration2','level1.py',78),
+  ('dlist1 -> NAME','dlist1',1,'p_dlist1','level1.py',83),
+  ('dlist1 -> NAME COMMA dlist1','dlist1',3,'p_dlist1','level1.py',84),
+  ('dlist2 -> VALOF NAME','dlist2',2,'p_dlist2','level1.py',92),
+  ('dlist2 -> VALOF NAME COMMA dlist2','dlist2',4,'p_dlist2','level1.py',93),
+  ('assignment -> assignment_list SEMICOLON','assignment',2,'p_assignment','level1.py',102),
+  ('assignment_list -> assignment_base','assignment_list',1,'p_assignment_list','level1.py',108),
+  ('assignment_list -> assignment_base COMMA assignment_list','assignment_list',3,'p_assignment_list','level1.py',109),
+  ('assignment_base -> VALOF NAME EQUALS NUMBER','assignment_base',4,'p_assignment_base','level1.py',113),
+  ('assignment_base -> VALOF NAME EQUALS VALOF NAME','assignment_base',5,'p_assignment_base','level1.py',114),
+  ('assignment_base -> NAME EQUALS ADDROF NAME','assignment_base',4,'p_assignment_base','level1.py',115),
 ]
