@@ -7,6 +7,7 @@ import ply.yacc as yacc
 no_of_pointer_declarations = 0
 no_of_static_declarations = 0
 no_of_assignments = 0
+is_error = 0
 tokens = (
     'NUMBER',
     'TYPE',
@@ -142,7 +143,8 @@ def p_assignment_base(p):
 
     """ 
     assignment_base : VALOF NAME EQUALS NUMBER 
-            | VALOF NAME EQUALS VALOF NAME 
+            | VALOF NAME EQUALS VALOF NAME
+            | NAME EQUALS NAME 
             | NAME EQUALS ADDROF NAME 
      """
 
@@ -150,6 +152,8 @@ def p_assignment_base(p):
 
 
 def p_error(p):
+    global is_error
+    is_error = 1
     if p:
         print("syntax error at {0}".format(p.value))
     else:
@@ -163,6 +167,7 @@ def process(data):
 if __name__ == "__main__":
     data = sys.stdin.read()
     process(data)
-    print(no_of_static_declarations)
-    print(no_of_pointer_declarations)
-    print(no_of_assignments)
+    if(is_error==0):
+        print(no_of_static_declarations)
+        print(no_of_pointer_declarations)
+        print(no_of_assignments)
