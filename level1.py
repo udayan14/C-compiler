@@ -8,16 +8,19 @@ no_of_pointer_declarations = 0
 no_of_static_declarations = 0
 no_of_assignments = 0
 is_error = 0
+main_found = 0
 tokens = (
     'NUMBER',
     'TYPE',
+    'newline',
     'SEMICOLON', 'EQUALS', 'COMMA',
     'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
     'ADDROF','VALOF',
     'NAME',
+    'COMMENT',
     )
 
-t_ignore = " \t\n"
+t_ignore = " \t"
 t_SEMICOLON = ";"
 t_COMMA = ","
 t_EQUALS = "="
@@ -33,7 +36,13 @@ def t_TYPE(t):
     r'\bvoid\b | \bint\b'
     return t
 
+def t_newline(t):
+	r'\n'
+	t.lexer.lineno += len(t.value)
 
+def t_COMMENT(t):
+	r'//.*'
+	pass
 
 def t_NUMBER(t):
     r'\d+'
@@ -58,6 +67,10 @@ def p_function(p):
     """
     function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
     """
+    global main_found
+    # print(p[2])
+    if str(p[2])=='main':
+    	main_found = 1
 
 
 def p_fbody(p):
@@ -78,38 +91,30 @@ def p_declaration1(p):
     """
         declaration : TYPE dlist1 SEMICOLON
     """
+    # no_of_static_declarations = no_of_static_declarations + p[2]
+
+def p_dlistname(p):
+    """
+    dlist1 : NAME  
+            | NAME COMMA dlist1
+    """
     global no_of_static_declarations
+    no_of_static_declarations = no_of_static_declarations + 1
+    	
+def p_dlistpointer(p):
+	"""
+	dlist1 : specialvar
+			| specialvar  COMMA dlist1  
+	"""
+	global no_of_pointer_declarations
+	no_of_pointer_declarations = no_of_pointer_declarations + 1
 
-    no_of_static_declarations = no_of_static_declarations + p[2]
+def p_specialvar(p):
+	"""
+	specialvar : VALOF specialvar
+				| VALOF NAME
+	"""
 
-def p_declaration2(p):
-    """
-        declaration : TYPE dlist2 SEMICOLON
-    """
-    global no_of_pointer_declarations
-
-    no_of_pointer_declarations = no_of_pointer_declarations + p[2]
-
-def p_dlist1(p):
-    """
-    dlist1 : NAME 
-            | NAME COMMA dlist1  
-    """
-    if(len(p)==2):
-        p[0] = 1
-    else:  
-        p[0] = p[3] + 1
-
-def p_dlist2(p):
-    """
-    dlist2 : VALOF NAME 
-            | VALOF NAME  COMMA dlist2  
-    """
-    if(len(p)==3):
-        p[0] = 1
-    else:  
-        p[0] = p[4] + 1
-    
 def p_assignment(p):
     """
     assignment : assignment_list SEMICOLON
@@ -132,32 +137,44 @@ def p_assignment_list(p):
 def p_assignment_inter(p):
     """
     assignment_inter : assignment_base
-                    | VALOF NAME EQUALS assignment_inter
+                    | VALOF pointervar EQUALS assignment_inter
+                    | NAME EQUALS assignment_inter
+
     """
     if(len(p)==2):
         p[0] = p[1]
+    elif(len(p)==4):
+        p[0] = p[3] + 1
     else:
-        p[0] = p[4] + 1
+    	p[0] = p[4] + 1
 
 def p_assignment_base(p):
 
     """ 
-    assignment_base : VALOF NAME EQUALS NUMBER 
-            | VALOF NAME EQUALS VALOF NAME
-            | NAME EQUALS NAME 
-            | NAME EQUALS ADDROF NAME 
+    assignment_base : VALOF pointervar EQUALS NUMBER
+    		| VALOF pointervar EQUALS pointervar 
+    		| NAME EQUALS pointervar 
      """
 
     p[0] = 1 
+
+def p_pointervar(p):
+	"""
+	pointervar : VALOF pointervar
+				| ADDROF pointervar
+				| NAME
+	"""
+	# print("pointervar found",p[1])
+	p[0]=1
 
 
 def p_error(p):
     global is_error
     is_error = 1
     if p:
-        print("syntax error at {0}".format(p.value))
+        print("Syntax error at '{0}' line no  '{1}' ".format(p.value,p.lexer.lineno))
     else:
-        print("syntax error at EOF")
+        print("Syntax error at EOF")
 
 def process(data):
     lex.lex()
@@ -167,7 +184,9 @@ def process(data):
 if __name__ == "__main__":
     data = sys.stdin.read()
     process(data)
-    if(is_error==0):
+    if(main_found==0):
+    	print("Program has no main function! ")
+    elif(is_error==0):
         print(no_of_static_declarations)
         print(no_of_pointer_declarations)
         print(no_of_assignments)
