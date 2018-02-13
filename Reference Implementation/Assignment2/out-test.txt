@@ -1,0 +1,27 @@
+ASGN
+(
+	DEREF
+	(
+		VAR(b)
+	)
+	,
+	PLUS
+	(
+		CONST(5)
+		,
+		MUL
+		(
+			CONST(4)
+			,
+			CONST(4)
+		)
+	)
+)
+
+ASGN
+(
+	VAR(f)
+	,
+	VAR(g)
+)
+
