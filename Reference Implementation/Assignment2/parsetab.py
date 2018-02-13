@@ -5,9 +5,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftTIMESDIVIDErightVALOFrightUMINUSNUMBER TYPE newline SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF VALOF NAME COMMENT PLUS MINUS TIMES DIVIDE \n\tprogram : function \n\t\t\t\t| function program\n\t\n\tfunction : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE\n\t\n\tfbody : statement\n\t\t\t| statement fbody\n\t\n\tstatement : assignment\n\t\t\t| declaration\n\t\n\t\tdeclaration : TYPE dlist1 SEMICOLON\n\t\n\tdlist1 : NAME  \n\t\t\t| NAME COMMA dlist1\n\t\n\tdlist1 : specialvar\n\t\t\t| specialvar  COMMA dlist1  \n\t\n\tspecialvar : VALOF specialvar\n\t\t\t\t| VALOF NAME\n\t\n\tassignment : assignment_base SEMICOLON\n\t \n\tassignment_base : VALOF pointervar EQUALS expression\n\t\t\t| NAME EQUALS expression \n\t \n\texpression : expression PLUS expression\n\t\t\t\t| expression MINUS expression\n\t\t\t\t| expression VALOF expression %prec TIMES \n\t\t\t\t| expression DIVIDE expression\n\t\n\texpression : MINUS expression %prec UMINUS\n\t\n\texpression : LPAREN expression RPAREN\n\t\n\texpression : NUMBER\n\t\n\texpression : pointervar\n\t\n\tpointervar : VALOF pointervar\n\t\n\tpointervar : ADDROF pointervar\n\t\n\tpointervar : NAME\n\t'
+_lr_signature = 'leftPLUSMINUSleftTIMESleftDIVIDErightVALOFrightUMINUSNUMBER TYPE MAINTYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF NAME PLUS MINUS TIMES DIVIDE \n\tprogram : function \n\t\t\t\t| function program\n\t\n\tfunction : MAINTYPE NAME LPAREN RPAREN LBRACE fbody RBRACE\n\t\n\tfbody : statement\n\t\t\t| statement fbody\n\t\n\tstatement : assignment\n\t\t\t| declaration\n\t\n\t\tdeclaration : TYPE dlist1 SEMICOLON\n\t\n\tdlist1 : NAME  \n\t\t\t| NAME COMMA dlist1\n\t\n\tdlist1 : specialvar\n\t\t\t| specialvar  COMMA dlist1  \n\t\n\tspecialvar : TIMES specialvar\n\t\t\t\t| TIMES NAME\n\t\n\tassignment : assignment_base SEMICOLON\n\t \n\tassignment_base : TIMES pointervar EQUALS expression\n\t\t\t| NAME EQUALS expression \n\t \n\texpression : expression PLUS expression\n\t\t\t\t| expression MINUS expression\n\t\t\t\t| expression DIVIDE expression\n\t\n\texpression : expression TIMES expression\n\t\n\texpression : TIMES expression %prec VALOF \n\t\n\texpression : MINUS expression %prec UMINUS\n\t\n\texpression : LPAREN expression RPAREN\n\t\n\texpression : NUMBER\n\t\n\texpression : pointervar\n\t\n\tpointervar : TIMES pointervar\n\t\n\tpointervar : ADDROF pointervar\n\t\n\tpointervar : NAME\n\t'
     
-_lr_action_items = {'TYPE':([0,3,8,13,14,16,17,27,31,],[2,2,10,-6,-7,10,-15,-3,-8,]),'NUMBER':([26,36,39,40,47,48,49,50,],[37,37,37,37,37,37,37,37,]),'DIVIDE':([25,34,35,37,38,41,44,45,46,51,52,53,54,55,],[-28,-26,-27,-24,-25,47,47,-22,47,-23,-21,47,47,-20,]),'SEMICOLON':([9,19,20,21,25,29,30,34,35,37,38,41,42,43,44,45,51,52,53,54,55,],[17,31,-9,-11,-28,-14,-13,-26,-27,-24,-25,-17,-10,-12,-16,-22,-23,-21,-18,-19,-20,]),'PLUS':([25,34,35,37,38,41,44,45,46,51,52,53,54,55,],[-28,-26,-27,-24,-25,48,48,-22,48,-23,-21,-18,-19,-20,]),'LBRACE':([7,],[8,]),'COMMA':([20,21,29,30,],[32,33,-14,-13,]),'VALOF':([8,10,11,13,14,16,17,18,22,23,25,26,31,32,33,34,35,36,37,38,39,40,41,44,45,46,47,48,49,50,51,52,53,54,55,],[11,18,22,-6,-7,11,-15,18,22,22,-28,22,-8,18,18,-26,-27,22,-24,-25,22,22,50,50,-22,50,22,22,22,22,-23,50,50,50,50,]),'$end':([1,3,5,27,],[0,-1,-2,-3,]),'NAME':([2,8,10,11,13,14,16,17,18,22,23,26,31,32,33,36,39,40,47,48,49,50,],[4,12,20,25,-6,-7,12,-15,29,25,25,25,-8,20,20,25,25,25,25,25,25,25,]),'ADDROF':([11,22,23,26,36,39,40,47,48,49,50,],[23,23,23,23,23,23,23,23,23,23,23,]),'RPAREN':([6,25,34,35,37,38,45,46,51,52,53,54,55,],[7,-28,-26,-27,-24,-25,-22,51,-23,-21,-18,-19,-20,]),'MINUS':([25,26,34,35,36,37,38,39,40,41,44,45,46,47,48,49,50,51,52,53,54,55,],[-28,39,-26,-27,39,-24,-25,39,39,49,49,-22,49,39,39,39,39,-23,-21,-18,-19,-20,]),'EQUALS':([12,24,25,34,35,],[26,36,-28,-26,-27,]),'LPAREN':([4,26,36,39,40,47,48,49,50,],[6,40,40,40,40,40,40,40,40,]),'RBRACE':([13,14,15,16,17,28,31,],[-6,-7,27,-4,-15,-5,-8,]),}
+_lr_action_items = {'TYPE':([8,12,15,16,27,29,],[9,9,-7,-6,-15,-8,]),'RPAREN':([6,25,34,38,40,42,45,46,47,48,54,55,56,57,58,],[7,-29,-25,-26,-27,-28,54,-26,-22,-23,-24,-18,-21,-19,-20,]),'NUMBER':([21,35,36,37,41,49,50,51,52,],[34,34,34,34,34,34,34,34,34,]),'LPAREN':([5,21,35,36,37,41,49,50,51,52,],[6,35,35,35,35,35,35,35,35,35,]),'EQUALS':([10,23,25,40,42,],[21,41,-29,-27,-28,]),'NAME':([3,8,9,11,12,15,16,19,21,22,24,27,29,30,33,35,36,37,41,49,50,51,52,],[5,10,18,25,10,-7,-6,32,25,25,25,-15,-8,18,18,25,25,25,25,25,25,25,25,]),'TIMES':([8,9,11,12,15,16,19,21,22,24,25,27,29,30,33,34,35,36,37,38,39,40,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,],[11,19,22,11,-7,-6,19,36,22,22,-29,-15,-8,19,19,-25,36,36,36,-26,50,-27,36,-28,50,-26,-22,-23,36,36,36,36,50,-24,50,-21,50,-20,]),'SEMICOLON':([13,17,18,20,25,31,32,34,38,39,40,42,43,44,46,47,48,53,54,55,56,57,58,],[27,29,-9,-11,-29,-13,-14,-25,-26,-17,-27,-28,-10,-12,-26,-22,-23,-16,-24,-18,-21,-19,-20,]),'LBRACE':([7,],[8,]),'MAINTYPE':([0,1,28,],[3,3,-3,]),'PLUS':([25,34,38,39,40,42,45,46,47,48,53,54,55,56,57,58,],[-29,-25,-26,49,-27,-28,49,-26,-22,-23,49,-24,-18,-21,-19,-20,]),'RBRACE':([12,14,15,16,26,27,29,],[-4,28,-7,-6,-5,-15,-8,]),'MINUS':([21,25,34,35,36,37,38,39,40,41,42,45,46,47,48,49,50,51,52,53,54,55,56,57,58,],[37,-29,-25,37,37,37,-26,51,-27,37,-28,51,-26,-22,-23,37,37,37,37,51,-24,-18,-21,-19,-20,]),'$end':([1,2,4,28,],[-1,0,-2,-3,]),'DIVIDE':([25,34,38,39,40,42,45,46,47,48,53,54,55,56,57,58,],[-29,-25,-26,52,-27,-28,52,-26,-22,-23,52,-24,52,52,52,-20,]),'ADDROF':([11,21,22,24,35,36,37,41,49,50,51,52,],[24,24,24,24,24,24,24,24,24,24,24,24,]),'COMMA':([18,20,31,32,],[30,33,-13,-14,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'pointervar':([11,22,23,26,36,39,40,47,48,49,50,],[24,34,35,38,38,38,38,38,38,38,38,]),'dlist1':([10,32,33,],[19,42,43,]),'program':([0,3,],[1,5,]),'assignment':([8,16,],[13,13,]),'assignment_base':([8,16,],[9,9,]),'declaration':([8,16,],[14,14,]),'fbody':([8,16,],[15,28,]),'expression':([26,36,39,40,47,48,49,50,],[41,44,45,46,52,53,54,55,]),'function':([0,3,],[3,3,]),'statement':([8,16,],[16,16,]),'specialvar':([10,18,32,33,],[21,30,21,21,]),}
+_lr_goto_items = {'dlist1':([9,30,33,],[17,43,44,]),'expression':([21,35,36,37,41,49,50,51,52,],[39,45,47,48,53,55,56,57,58,]),'assignment_base':([8,12,],[13,13,]),'program':([0,1,],[2,4,]),'function':([0,1,],[1,1,]),'pointervar':([11,21,22,24,35,36,37,41,49,50,51,52,],[23,38,40,42,38,46,38,38,38,38,38,38,]),'specialvar':([9,19,30,33,],[20,31,20,20,]),'fbody':([8,12,],[14,26,]),'assignment':([8,12,],[16,16,]),'declaration':([8,12,],[15,15,]),'statement':([8,12,],[12,12,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,32 +26,33 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> function','program',1,'p_program','150070001-150070018.py',124),
-  ('program -> function program','program',2,'p_program','150070001-150070018.py',125),
-  ('function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE','function',7,'p_function','150070001-150070018.py',149),
-  ('fbody -> statement','fbody',1,'p_fbody','150070001-150070018.py',160),
-  ('fbody -> statement fbody','fbody',2,'p_fbody','150070001-150070018.py',161),
-  ('statement -> assignment','statement',1,'p_statement_expr','150070001-150070018.py',178),
-  ('statement -> declaration','statement',1,'p_statement_expr','150070001-150070018.py',179),
-  ('declaration -> TYPE dlist1 SEMICOLON','declaration',3,'p_declaration1','150070001-150070018.py',184),
-  ('dlist1 -> NAME','dlist1',1,'p_dlistname','150070001-150070018.py',190),
-  ('dlist1 -> NAME COMMA dlist1','dlist1',3,'p_dlistname','150070001-150070018.py',191),
-  ('dlist1 -> specialvar','dlist1',1,'p_dlistpointer','150070001-150070018.py',198),
-  ('dlist1 -> specialvar COMMA dlist1','dlist1',3,'p_dlistpointer','150070001-150070018.py',199),
-  ('specialvar -> VALOF specialvar','specialvar',2,'p_specialvar','150070001-150070018.py',206),
-  ('specialvar -> VALOF NAME','specialvar',2,'p_specialvar','150070001-150070018.py',207),
-  ('assignment -> assignment_base SEMICOLON','assignment',2,'p_assignment','150070001-150070018.py',212),
-  ('assignment_base -> VALOF pointervar EQUALS expression','assignment_base',4,'p_assignment_base_pointer','150070001-150070018.py',221),
-  ('assignment_base -> NAME EQUALS expression','assignment_base',3,'p_assignment_base_pointer','150070001-150070018.py',222),
-  ('expression -> expression PLUS expression','expression',3,'p_expression1','150070001-150070018.py',244),
-  ('expression -> expression MINUS expression','expression',3,'p_expression1','150070001-150070018.py',245),
-  ('expression -> expression VALOF expression','expression',3,'p_expression1','150070001-150070018.py',246),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression1','150070001-150070018.py',247),
-  ('expression -> MINUS expression','expression',2,'p_expression_uminus','150070001-150070018.py',266),
-  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_paren','150070001-150070018.py',273),
-  ('expression -> NUMBER','expression',1,'p_expression_base_number','150070001-150070018.py',279),
-  ('expression -> pointervar','expression',1,'p_expression_base_pointer','150070001-150070018.py',285),
-  ('pointervar -> VALOF pointervar','pointervar',2,'p_pointervar1','150070001-150070018.py',292),
-  ('pointervar -> ADDROF pointervar','pointervar',2,'p_pointervar2','150070001-150070018.py',298),
-  ('pointervar -> NAME','pointervar',1,'p_pointervar3','150070001-150070018.py',305),
+  ('program -> function','program',1,'p_program','150070001-150070018.py',127),
+  ('program -> function program','program',2,'p_program','150070001-150070018.py',128),
+  ('function -> MAINTYPE NAME LPAREN RPAREN LBRACE fbody RBRACE','function',7,'p_function','150070001-150070018.py',152),
+  ('fbody -> statement','fbody',1,'p_fbody','150070001-150070018.py',173),
+  ('fbody -> statement fbody','fbody',2,'p_fbody','150070001-150070018.py',174),
+  ('statement -> assignment','statement',1,'p_statement_expr','150070001-150070018.py',191),
+  ('statement -> declaration','statement',1,'p_statement_expr','150070001-150070018.py',192),
+  ('declaration -> TYPE dlist1 SEMICOLON','declaration',3,'p_declaration1','150070001-150070018.py',197),
+  ('dlist1 -> NAME','dlist1',1,'p_dlistname','150070001-150070018.py',203),
+  ('dlist1 -> NAME COMMA dlist1','dlist1',3,'p_dlistname','150070001-150070018.py',204),
+  ('dlist1 -> specialvar','dlist1',1,'p_dlistpointer','150070001-150070018.py',211),
+  ('dlist1 -> specialvar COMMA dlist1','dlist1',3,'p_dlistpointer','150070001-150070018.py',212),
+  ('specialvar -> TIMES specialvar','specialvar',2,'p_specialvar','150070001-150070018.py',219),
+  ('specialvar -> TIMES NAME','specialvar',2,'p_specialvar','150070001-150070018.py',220),
+  ('assignment -> assignment_base SEMICOLON','assignment',2,'p_assignment','150070001-150070018.py',225),
+  ('assignment_base -> TIMES pointervar EQUALS expression','assignment_base',4,'p_assignment_base_pointer','150070001-150070018.py',234),
+  ('assignment_base -> NAME EQUALS expression','assignment_base',3,'p_assignment_base_pointer','150070001-150070018.py',235),
+  ('expression -> expression PLUS expression','expression',3,'p_expression1','150070001-150070018.py',255),
+  ('expression -> expression MINUS expression','expression',3,'p_expression1','150070001-150070018.py',256),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression1','150070001-150070018.py',257),
+  ('expression -> expression TIMES expression','expression',3,'p_expression_mul','150070001-150070018.py',274),
+  ('expression -> TIMES expression','expression',2,'p_expression_umult','150070001-150070018.py',282),
+  ('expression -> MINUS expression','expression',2,'p_expression_uminus','150070001-150070018.py',289),
+  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_paren','150070001-150070018.py',296),
+  ('expression -> NUMBER','expression',1,'p_expression_base_number','150070001-150070018.py',302),
+  ('expression -> pointervar','expression',1,'p_expression_base_pointer','150070001-150070018.py',308),
+  ('pointervar -> TIMES pointervar','pointervar',2,'p_pointervar1','150070001-150070018.py',315),
+  ('pointervar -> ADDROF pointervar','pointervar',2,'p_pointervar2','150070001-150070018.py',321),
+  ('pointervar -> NAME','pointervar',1,'p_pointervar3','150070001-150070018.py',328),
 ]

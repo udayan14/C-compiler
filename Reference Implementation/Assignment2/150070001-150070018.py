@@ -13,13 +13,11 @@ main_found = 0
 assignment_error = 0
 tokens = (
 	'NUMBER',
-	'TYPE',
-	'newline',
+	'TYPE','MAINTYPE',
 	'SEMICOLON', 'EQUALS', 'COMMA',
 	'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
-	'ADDROF','VALOF',
+	'ADDROF',
 	'NAME',
-	'COMMENT',
 	'PLUS','MINUS','TIMES','DIVIDE',
 	)
 
@@ -33,13 +31,17 @@ t_LBRACE = r'\{'
 t_RBRACE = r'\}'
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_ADDROF = r'&'
-t_VALOF = r'\*'
+t_TIMES = r'\*'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_DIVIDE = r'/'
 
 def t_TYPE(t):
 	r'\bvoid\b | \bint\b'
+	return t
+
+def t_MAINTYPE(t):
+	r'\bvoid\b'
 	return t
 
 def t_newline(t):
@@ -65,7 +67,8 @@ def t_error(t):
 
 precedence = (
 	('left','PLUS','MINUS'),
-	('left','TIMES','DIVIDE'),
+	('left','TIMES',),
+	('left','DIVIDE',),
 	('right','VALOF'),
 	('right','UMINUS'),
 	)
@@ -149,14 +152,16 @@ def p_function(p):
 	function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 	"""
 	global main_found,assignment_error
+	global is_error
 	# print(p[2])
 	if str(p[2])=='main':
 		main_found = 1
 	# print(p[6][::-1])
 	if(assignment_error):
-		print("Direct assignment of constant to variable is prohobited.")
+		is_error = 1
+		print("Direct assignment of constant to variable is prohibited.")
 	else:
-		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
+		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt1"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f,'w')		
 		p[6].printit(0)
@@ -211,8 +216,8 @@ def p_dlistpointer(p):
 
 def p_specialvar(p):
 	"""
-	specialvar : VALOF specialvar
-				| VALOF NAME
+	specialvar : TIMES specialvar
+				| TIMES NAME
 	"""
 
 def p_assignment(p):
@@ -227,7 +232,7 @@ def p_assignment(p):
 def p_assignment_base_pointer(p):
 
 	""" 
-	assignment_base : VALOF pointervar EQUALS expression
+	assignment_base : TIMES pointervar EQUALS expression
 			| NAME EQUALS expression 
 	 """
 	global assignment_error
@@ -249,7 +254,6 @@ def p_expression1(p):
 	"""
 	expression : expression PLUS expression
 				| expression MINUS expression
-				| expression VALOF expression %prec TIMES 
 				| expression DIVIDE expression
 	"""
 	if p[2] == '+':
@@ -265,7 +269,20 @@ def p_expression1(p):
 		p[0] = ["DIVIDE",p[1],p[3]]
 		p[0] = AST("DIV","",[p[1],p[3]])
 
+def p_expression_mul(p):
+	"""
+	expression : expression TIMES expression
+	"""
+	if p[2] == '*':
+		p[0] = ["MUL",p[1],p[3]]
+		p[0] = AST("MUL","",[p[1],p[3]])
 
+def p_expression_umult(p):
+	"""
+	expression : TIMES expression %prec VALOF 
+	"""
+	p[0] = ["DEREF",p[2]]
+	p[0] = AST("DEREF","",[p[2]])
 
 def p_expression_uminus(p):
 	"""
@@ -295,7 +312,7 @@ def p_expression_base_pointer(p):
 
 def p_pointervar1(p):
 	"""
-	pointervar : VALOF pointervar
+	pointervar : TIMES pointervar
 	"""
 	p[0] = ["DEREF",p[2]]
 	p[0] = AST("DEREF","",[p[2]])
@@ -334,9 +351,11 @@ if __name__ == "__main__":
 		data = f.read()
 	process(data)
 	if(main_found==0):
-		print("Program has no main function! ")
-	elif(is_error==0):
+		# print("Program has no main function! ")
 		pass
+	elif(is_error==0):
+		# pass
+		print("Successfully parsed")
 		# print(no_of_static_declarations)
 		# print(no_of_pointer_declarations)
 		# print(no_of_assignments)

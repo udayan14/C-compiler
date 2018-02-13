@@ -65,7 +65,8 @@ def t_error(t):
 
 precedence = (
 	('left','PLUS','MINUS'),
-	('left','TIMES','DIVIDE'),
+	('left','TIMES',),
+	('left','DIVIDE',),
 	('right','VALOF'),
 	('right','UMINUS'),
 	)
@@ -149,14 +150,16 @@ def p_function(p):
 	function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 	"""
 	global main_found,assignment_error
+	global is_error
 	# print(p[2])
 	if str(p[2])=='main':
 		main_found = 1
 	# print(p[6][::-1])
 	if(assignment_error):
-		print("Direct assignment of constant to variable is prohobited.")
+		is_error = 1
+		print("Direct assignment of constant to variable is prohibited.")
 	else:
-		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
+		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt1"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f,'w')		
 		p[6].printit(0)
@@ -249,7 +252,6 @@ def p_expression1(p):
 	"""
 	expression : expression PLUS expression
 				| expression MINUS expression
-				| expression VALOF expression %prec TIMES 
 				| expression DIVIDE expression
 	"""
 	if p[2] == '+':
@@ -265,7 +267,13 @@ def p_expression1(p):
 		p[0] = ["DIVIDE",p[1],p[3]]
 		p[0] = AST("DIV","",[p[1],p[3]])
 
-
+def p_expression_mul(p):
+	"""
+	expression : expression VALOF expression %prec TIMES
+	"""
+	if p[2] == '*':
+		p[0] = ["MUL",p[1],p[3]]
+		p[0] = AST("MUL","",[p[1],p[3]])
 
 def p_expression_uminus(p):
 	"""
@@ -334,9 +342,10 @@ if __name__ == "__main__":
 		data = f.read()
 	process(data)
 	if(main_found==0):
-		print("Program has no main function! ")
+		# print("Program has no main function! ")
 	elif(is_error==0):
-		pass
+		# pass
+		print("Successfully parsed")
 		# print(no_of_static_declarations)
 		# print(no_of_pointer_declarations)
 		# print(no_of_assignments)
