@@ -11,6 +11,7 @@ no_of_assignments = 0
 is_error = 0
 main_found = 0
 assignment_error = 0
+return_error = 0
 tokens = (
 	'NUMBER',
 	'TYPE',
@@ -147,15 +148,17 @@ def p_function(p):
 	"""
 	function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 	"""
-	global main_found,assignment_error
+	global main_found,assignment_error,return_error
 	global is_error
 	# print(p[2])
 	if str(p[2])=='main':
 		main_found = 1
+	if str(p[1]=='int'):
+		void_return = 1
 	# print(p[6][::-1])
-	if(assignment_error):
+	if(assignment_error or not main_found or not void_return):
 		is_error = 1
-		print("Direct assignment of constant to variable is prohibited.")
+		print("Main function not found || Return type of main is not void || Invalid Assignment")
 	else:
 		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt1"
 		oldstdout = sys.stdout
@@ -339,10 +342,7 @@ if __name__ == "__main__":
 	with open(filename,'r') as f:
 		data = f.read()
 	process(data)
-	if(main_found==0):
-		# print("Program has no main function! ")
-		pass
-	elif(is_error==0):
+	if(is_error==0):
 		# pass
 		print("Successfully parsed")
 		# print(no_of_static_declarations)
