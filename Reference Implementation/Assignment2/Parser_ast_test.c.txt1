@@ -1,20 +1,26 @@
 ASGN
 (
-	DEREF
-	(
-		VAR(a)
-	)
+	VAR(a)
 	,
 	MUL
 	(
 		DIV
 		(
-			CONST(3)
+			VAR(b)
 			,
 			CONST(4)
 		)
 		,
-		CONST(5)
+		DEREF
+		(
+			DEREF
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+			)
+		)
 	)
 )
 

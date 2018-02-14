@@ -13,7 +13,7 @@ main_found = 0
 assignment_error = 0
 tokens = (
 	'NUMBER',
-	'TYPE','MAINTYPE',
+	'TYPE',
 	'SEMICOLON', 'EQUALS', 'COMMA',
 	'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
 	'ADDROF',
@@ -40,9 +40,6 @@ def t_TYPE(t):
 	r'\bvoid\b | \bint\b'
 	return t
 
-def t_MAINTYPE(t):
-	r'\bvoid\b'
-	return t
 
 def t_newline(t):
 	r'\n'
@@ -67,8 +64,7 @@ def t_error(t):
 
 precedence = (
 	('left','PLUS','MINUS'),
-	('left','TIMES',),
-	('left','DIVIDE',),
+	('left','TIMES','DIVIDE'),
 	('right','VALOF'),
 	('right','UMINUS'),
 	)
@@ -216,8 +212,8 @@ def p_dlistpointer(p):
 
 def p_specialvar(p):
 	"""
-	specialvar : TIMES specialvar
-				| TIMES NAME
+	specialvar : TIMES specialvar %prec VALOF
+				| TIMES NAME %prec VALOF
 	"""
 
 def p_assignment(p):
@@ -277,13 +273,6 @@ def p_expression_mul(p):
 		p[0] = ["MUL",p[1],p[3]]
 		p[0] = AST("MUL","",[p[1],p[3]])
 
-def p_expression_umult(p):
-	"""
-	expression : TIMES expression %prec VALOF 
-	"""
-	p[0] = ["DEREF",p[2]]
-	p[0] = AST("DEREF","",[p[2]])
-
 def p_expression_uminus(p):
 	"""
 	expression : MINUS expression %prec UMINUS
@@ -312,7 +301,7 @@ def p_expression_base_pointer(p):
 
 def p_pointervar1(p):
 	"""
-	pointervar : TIMES pointervar
+	pointervar : TIMES pointervar %prec VALOF
 	"""
 	p[0] = ["DEREF",p[2]]
 	p[0] = AST("DEREF","",[p[2]])
