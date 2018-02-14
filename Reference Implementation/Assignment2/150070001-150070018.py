@@ -149,16 +149,27 @@ def p_function(p):
 	function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 	"""
 	global main_found,assignment_error,return_error
+	void_return = 0
 	global is_error
 	# print(p[2])
 	if str(p[2])=='main':
 		main_found = 1
-	if str(p[1]=='int'):
+	if str(p[1])=='void':
 		void_return = 1
 	# print(p[6][::-1])
-	if(assignment_error or not main_found or not void_return):
+	if(assignment_error):
 		is_error = 1
-		print("Main function not found || Return type of main is not void || Invalid Assignment")
+		if p:
+			print("Syntax error at line no  '{0}' , assignment error ".format(p.lexer.lineno))
+		else:
+			print("Syntax error at EOF")
+		# print("Main function not found || Return type of main is not void || Invalid Assignment")
+	elif(not main_found):
+		is_error = 1
+		print("Syntax error at line no  '{0}' , main not found".format(p.lexer.lineno))
+	elif(not void_return):
+		is_error = 1
+		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
 		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt1"
 		oldstdout = sys.stdout
