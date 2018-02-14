@@ -1,4 +1,4 @@
-Created by PLY version 3.7 (http://www.dabeaz.com/ply)
+Created by PLY version 3.10 (http://www.dabeaz.com/ply)
 
 Grammar
 
@@ -74,16 +74,15 @@ state 0
     (2) program -> . function program
     (3) function -> . TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 
-    TYPE            shift and go to state 1
+    TYPE            shift and go to state 3
 
+    program                        shift and go to state 1
     function                       shift and go to state 2
-    program                        shift and go to state 3
 
 state 1
 
-    (3) function -> TYPE . NAME LPAREN RPAREN LBRACE fbody RBRACE
+    (0) S' -> program .
 
-    NAME            shift and go to state 4
 
 
 state 2
@@ -95,29 +94,30 @@ state 2
     (3) function -> . TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 
     $end            reduce using rule 1 (program -> function .)
-    TYPE            shift and go to state 1
+    TYPE            shift and go to state 3
 
     function                       shift and go to state 2
-    program                        shift and go to state 5
+    program                        shift and go to state 4
 
 state 3
 
-    (0) S' -> program .
+    (3) function -> TYPE . NAME LPAREN RPAREN LBRACE fbody RBRACE
 
+    NAME            shift and go to state 5
 
 
 state 4
 
-    (3) function -> TYPE NAME . LPAREN RPAREN LBRACE fbody RBRACE
+    (2) program -> function program .
 
-    LPAREN          shift and go to state 6
+    $end            reduce using rule 2 (program -> function program .)
 
 
 state 5
 
-    (2) program -> function program .
+    (3) function -> TYPE NAME . LPAREN RPAREN LBRACE fbody RBRACE
 
-    $end            reduce using rule 2 (program -> function program .)
+    LPAREN          shift and go to state 6
 
 
 state 6
@@ -146,17 +146,47 @@ state 8
     (16) assignment_base -> . TIMES pointervar EQUALS expression
     (17) assignment_base -> . NAME EQUALS expression
 
-    TYPE            shift and go to state 15
-    TIMES           shift and go to state 10
-    NAME            shift and go to state 11
+    TYPE            shift and go to state 9
+    TIMES           shift and go to state 16
+    NAME            shift and go to state 10
 
-    statement                      shift and go to state 9
-    assignment_base                shift and go to state 12
-    fbody                          shift and go to state 13
-    assignment                     shift and go to state 14
-    declaration                    shift and go to state 16
+    fbody                          shift and go to state 11
+    statement                      shift and go to state 12
+    assignment                     shift and go to state 13
+    declaration                    shift and go to state 14
+    assignment_base                shift and go to state 15
 
 state 9
+
+    (8) declaration -> TYPE . dlist1 SEMICOLON
+    (9) dlist1 -> . NAME
+    (10) dlist1 -> . NAME COMMA dlist1
+    (11) dlist1 -> . specialvar
+    (12) dlist1 -> . specialvar COMMA dlist1
+    (13) specialvar -> . TIMES specialvar
+    (14) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 18
+    TIMES           shift and go to state 20
+
+    dlist1                         shift and go to state 17
+    specialvar                     shift and go to state 19
+
+state 10
+
+    (17) assignment_base -> NAME . EQUALS expression
+
+    EQUALS          shift and go to state 21
+
+
+state 11
+
+    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody . RBRACE
+
+    RBRACE          shift and go to state 22
+
+
+state 12
 
     (4) fbody -> statement .
     (5) fbody -> statement . fbody
@@ -170,51 +200,17 @@ state 9
     (17) assignment_base -> . NAME EQUALS expression
 
     RBRACE          reduce using rule 4 (fbody -> statement .)
-    TYPE            shift and go to state 15
-    TIMES           shift and go to state 10
-    NAME            shift and go to state 11
+    TYPE            shift and go to state 9
+    TIMES           shift and go to state 16
+    NAME            shift and go to state 10
 
-    statement                      shift and go to state 9
-    assignment_base                shift and go to state 12
-    fbody                          shift and go to state 17
-    assignment                     shift and go to state 14
-    declaration                    shift and go to state 16
-
-state 10
-
-    (16) assignment_base -> TIMES . pointervar EQUALS expression
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
-
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
-
-    pointervar                     shift and go to state 21
-
-state 11
-
-    (17) assignment_base -> NAME . EQUALS expression
-
-    EQUALS          shift and go to state 22
-
-
-state 12
-
-    (15) assignment -> assignment_base . SEMICOLON
-
-    SEMICOLON       shift and go to state 23
-
+    statement                      shift and go to state 12
+    fbody                          shift and go to state 23
+    assignment                     shift and go to state 13
+    declaration                    shift and go to state 14
+    assignment_base                shift and go to state 15
 
 state 13
-
-    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody . RBRACE
-
-    RBRACE          shift and go to state 24
-
-
-state 14
 
     (6) statement -> assignment .
 
@@ -224,23 +220,7 @@ state 14
     RBRACE          reduce using rule 6 (statement -> assignment .)
 
 
-state 15
-
-    (8) declaration -> TYPE . dlist1 SEMICOLON
-    (9) dlist1 -> . NAME
-    (10) dlist1 -> . NAME COMMA dlist1
-    (11) dlist1 -> . specialvar
-    (12) dlist1 -> . specialvar COMMA dlist1
-    (13) specialvar -> . TIMES specialvar
-    (14) specialvar -> . TIMES NAME
-
-    NAME            shift and go to state 25
-    TIMES           shift and go to state 28
-
-    dlist1                         shift and go to state 26
-    specialvar                     shift and go to state 27
-
-state 16
+state 14
 
     (7) statement -> declaration .
 
@@ -250,60 +230,64 @@ state 16
     RBRACE          reduce using rule 7 (statement -> declaration .)
 
 
+state 15
+
+    (15) assignment -> assignment_base . SEMICOLON
+
+    SEMICOLON       shift and go to state 24
+
+
+state 16
+
+    (16) assignment_base -> TIMES . pointervar EQUALS expression
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
+
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
+
+    pointervar                     shift and go to state 26
+
 state 17
 
-    (5) fbody -> statement fbody .
+    (8) declaration -> TYPE dlist1 . SEMICOLON
 
-    RBRACE          reduce using rule 5 (fbody -> statement fbody .)
+    SEMICOLON       shift and go to state 29
 
 
 state 18
 
-    (26) pointervar -> TIMES . pointervar
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
+    (9) dlist1 -> NAME .
+    (10) dlist1 -> NAME . COMMA dlist1
 
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
+    SEMICOLON       reduce using rule 9 (dlist1 -> NAME .)
+    COMMA           shift and go to state 30
 
-    pointervar                     shift and go to state 29
 
 state 19
 
-    (28) pointervar -> NAME .
+    (11) dlist1 -> specialvar .
+    (12) dlist1 -> specialvar . COMMA dlist1
 
-    PLUS            reduce using rule 28 (pointervar -> NAME .)
-    MINUS           reduce using rule 28 (pointervar -> NAME .)
-    DIVIDE          reduce using rule 28 (pointervar -> NAME .)
-    TIMES           reduce using rule 28 (pointervar -> NAME .)
-    SEMICOLON       reduce using rule 28 (pointervar -> NAME .)
-    RPAREN          reduce using rule 28 (pointervar -> NAME .)
-    EQUALS          reduce using rule 28 (pointervar -> NAME .)
+    SEMICOLON       reduce using rule 11 (dlist1 -> specialvar .)
+    COMMA           shift and go to state 31
 
 
 state 20
 
-    (27) pointervar -> ADDROF . pointervar
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
+    (13) specialvar -> TIMES . specialvar
+    (14) specialvar -> TIMES . NAME
+    (13) specialvar -> . TIMES specialvar
+    (14) specialvar -> . TIMES NAME
 
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
+    NAME            shift and go to state 33
+    TIMES           shift and go to state 20
 
-    pointervar                     shift and go to state 30
+    specialvar                     shift and go to state 32
 
 state 21
-
-    (16) assignment_base -> TIMES pointervar . EQUALS expression
-
-    EQUALS          shift and go to state 31
-
-
-state 22
 
     (17) assignment_base -> NAME EQUALS . expression
     (18) expression -> . expression PLUS expression
@@ -318,17 +302,32 @@ state 22
     (27) pointervar -> . ADDROF pointervar
     (28) pointervar -> . NAME
 
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
 
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 36
+    expression                     shift and go to state 34
+    pointervar                     shift and go to state 38
+
+state 22
+
+    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .
+
+    TYPE            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
+    $end            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
+
 
 state 23
+
+    (5) fbody -> statement fbody .
+
+    RBRACE          reduce using rule 5 (fbody -> statement fbody .)
+
+
+state 24
 
     (15) assignment -> assignment_base SEMICOLON .
 
@@ -338,128 +337,126 @@ state 23
     RBRACE          reduce using rule 15 (assignment -> assignment_base SEMICOLON .)
 
 
-state 24
-
-    (3) function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .
-
-    TYPE            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
-    $end            reduce using rule 3 (function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE .)
-
-
 state 25
 
-    (9) dlist1 -> NAME .
-    (10) dlist1 -> NAME . COMMA dlist1
+    (26) pointervar -> TIMES . pointervar
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
 
-    SEMICOLON       reduce using rule 9 (dlist1 -> NAME .)
-    COMMA           shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
 
+    pointervar                     shift and go to state 39
 
 state 26
 
-    (8) declaration -> TYPE dlist1 . SEMICOLON
+    (16) assignment_base -> TIMES pointervar . EQUALS expression
 
-    SEMICOLON       shift and go to state 38
+    EQUALS          shift and go to state 40
 
 
 state 27
 
-    (11) dlist1 -> specialvar .
-    (12) dlist1 -> specialvar . COMMA dlist1
+    (27) pointervar -> ADDROF . pointervar
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
 
-    SEMICOLON       reduce using rule 11 (dlist1 -> specialvar .)
-    COMMA           shift and go to state 39
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
 
+    pointervar                     shift and go to state 41
 
 state 28
 
-    (13) specialvar -> TIMES . specialvar
-    (14) specialvar -> TIMES . NAME
-    (13) specialvar -> . TIMES specialvar
-    (14) specialvar -> . TIMES NAME
+    (28) pointervar -> NAME .
 
-    NAME            shift and go to state 41
-    TIMES           shift and go to state 28
+    EQUALS          reduce using rule 28 (pointervar -> NAME .)
+    PLUS            reduce using rule 28 (pointervar -> NAME .)
+    MINUS           reduce using rule 28 (pointervar -> NAME .)
+    DIVIDE          reduce using rule 28 (pointervar -> NAME .)
+    TIMES           reduce using rule 28 (pointervar -> NAME .)
+    SEMICOLON       reduce using rule 28 (pointervar -> NAME .)
+    RPAREN          reduce using rule 28 (pointervar -> NAME .)
 
-    specialvar                     shift and go to state 40
 
 state 29
 
-    (26) pointervar -> TIMES pointervar .
+    (8) declaration -> TYPE dlist1 SEMICOLON .
 
-    PLUS            reduce using rule 26 (pointervar -> TIMES pointervar .)
-    MINUS           reduce using rule 26 (pointervar -> TIMES pointervar .)
-    DIVIDE          reduce using rule 26 (pointervar -> TIMES pointervar .)
-    TIMES           reduce using rule 26 (pointervar -> TIMES pointervar .)
-    SEMICOLON       reduce using rule 26 (pointervar -> TIMES pointervar .)
-    RPAREN          reduce using rule 26 (pointervar -> TIMES pointervar .)
-    EQUALS          reduce using rule 26 (pointervar -> TIMES pointervar .)
+    TYPE            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
+    TIMES           reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
+    NAME            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
+    RBRACE          reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
 
 
 state 30
 
-    (27) pointervar -> ADDROF pointervar .
+    (10) dlist1 -> NAME COMMA . dlist1
+    (9) dlist1 -> . NAME
+    (10) dlist1 -> . NAME COMMA dlist1
+    (11) dlist1 -> . specialvar
+    (12) dlist1 -> . specialvar COMMA dlist1
+    (13) specialvar -> . TIMES specialvar
+    (14) specialvar -> . TIMES NAME
 
-    PLUS            reduce using rule 27 (pointervar -> ADDROF pointervar .)
-    MINUS           reduce using rule 27 (pointervar -> ADDROF pointervar .)
-    DIVIDE          reduce using rule 27 (pointervar -> ADDROF pointervar .)
-    TIMES           reduce using rule 27 (pointervar -> ADDROF pointervar .)
-    SEMICOLON       reduce using rule 27 (pointervar -> ADDROF pointervar .)
-    RPAREN          reduce using rule 27 (pointervar -> ADDROF pointervar .)
-    EQUALS          reduce using rule 27 (pointervar -> ADDROF pointervar .)
+    NAME            shift and go to state 18
+    TIMES           shift and go to state 20
 
+    dlist1                         shift and go to state 42
+    specialvar                     shift and go to state 19
 
 state 31
 
-    (16) assignment_base -> TIMES pointervar EQUALS . expression
-    (18) expression -> . expression PLUS expression
-    (19) expression -> . expression MINUS expression
-    (20) expression -> . expression DIVIDE expression
-    (21) expression -> . expression TIMES expression
-    (22) expression -> . MINUS expression
-    (23) expression -> . LPAREN expression RPAREN
-    (24) expression -> . NUMBER
-    (25) expression -> . pointervar
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
+    (12) dlist1 -> specialvar COMMA . dlist1
+    (9) dlist1 -> . NAME
+    (10) dlist1 -> . NAME COMMA dlist1
+    (11) dlist1 -> . specialvar
+    (12) dlist1 -> . specialvar COMMA dlist1
+    (13) specialvar -> . TIMES specialvar
+    (14) specialvar -> . TIMES NAME
 
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
+    NAME            shift and go to state 18
+    TIMES           shift and go to state 20
 
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 42
+    specialvar                     shift and go to state 19
+    dlist1                         shift and go to state 43
 
 state 32
 
-    (23) expression -> LPAREN . expression RPAREN
-    (18) expression -> . expression PLUS expression
-    (19) expression -> . expression MINUS expression
-    (20) expression -> . expression DIVIDE expression
-    (21) expression -> . expression TIMES expression
-    (22) expression -> . MINUS expression
-    (23) expression -> . LPAREN expression RPAREN
-    (24) expression -> . NUMBER
-    (25) expression -> . pointervar
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
+    (13) specialvar -> TIMES specialvar .
 
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
+    COMMA           reduce using rule 13 (specialvar -> TIMES specialvar .)
+    SEMICOLON       reduce using rule 13 (specialvar -> TIMES specialvar .)
 
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 43
 
 state 33
+
+    (14) specialvar -> TIMES NAME .
+
+    COMMA           reduce using rule 14 (specialvar -> TIMES NAME .)
+    SEMICOLON       reduce using rule 14 (specialvar -> TIMES NAME .)
+
+
+state 34
+
+    (17) assignment_base -> NAME EQUALS expression .
+    (18) expression -> expression . PLUS expression
+    (19) expression -> expression . MINUS expression
+    (20) expression -> expression . DIVIDE expression
+    (21) expression -> expression . TIMES expression
+
+    SEMICOLON       reduce using rule 17 (assignment_base -> NAME EQUALS expression .)
+    PLUS            shift and go to state 44
+    MINUS           shift and go to state 45
+    DIVIDE          shift and go to state 46
+    TIMES           shift and go to state 47
+
+
+state 35
 
     (22) expression -> MINUS . expression
     (18) expression -> . expression PLUS expression
@@ -474,240 +471,131 @@ state 33
     (27) pointervar -> . ADDROF pointervar
     (28) pointervar -> . NAME
 
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
 
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 44
+    expression                     shift and go to state 48
+    pointervar                     shift and go to state 38
 
-state 34
+state 36
 
-    (25) expression -> pointervar .
+    (23) expression -> LPAREN . expression RPAREN
+    (18) expression -> . expression PLUS expression
+    (19) expression -> . expression MINUS expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . expression TIMES expression
+    (22) expression -> . MINUS expression
+    (23) expression -> . LPAREN expression RPAREN
+    (24) expression -> . NUMBER
+    (25) expression -> . pointervar
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
 
-    RPAREN          reduce using rule 25 (expression -> pointervar .)
-    PLUS            reduce using rule 25 (expression -> pointervar .)
-    MINUS           reduce using rule 25 (expression -> pointervar .)
-    DIVIDE          reduce using rule 25 (expression -> pointervar .)
-    TIMES           reduce using rule 25 (expression -> pointervar .)
-    SEMICOLON       reduce using rule 25 (expression -> pointervar .)
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
 
+    expression                     shift and go to state 49
+    pointervar                     shift and go to state 38
 
-state 35
+state 37
 
     (24) expression -> NUMBER .
 
-    RPAREN          reduce using rule 24 (expression -> NUMBER .)
     PLUS            reduce using rule 24 (expression -> NUMBER .)
     MINUS           reduce using rule 24 (expression -> NUMBER .)
     DIVIDE          reduce using rule 24 (expression -> NUMBER .)
     TIMES           reduce using rule 24 (expression -> NUMBER .)
     SEMICOLON       reduce using rule 24 (expression -> NUMBER .)
+    RPAREN          reduce using rule 24 (expression -> NUMBER .)
 
-
-state 36
-
-    (17) assignment_base -> NAME EQUALS expression .
-    (18) expression -> expression . PLUS expression
-    (19) expression -> expression . MINUS expression
-    (20) expression -> expression . DIVIDE expression
-    (21) expression -> expression . TIMES expression
-
-    SEMICOLON       reduce using rule 17 (assignment_base -> NAME EQUALS expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 47
-    DIVIDE          shift and go to state 45
-    TIMES           shift and go to state 46
-
-
-state 37
-
-    (10) dlist1 -> NAME COMMA . dlist1
-    (9) dlist1 -> . NAME
-    (10) dlist1 -> . NAME COMMA dlist1
-    (11) dlist1 -> . specialvar
-    (12) dlist1 -> . specialvar COMMA dlist1
-    (13) specialvar -> . TIMES specialvar
-    (14) specialvar -> . TIMES NAME
-
-    NAME            shift and go to state 25
-    TIMES           shift and go to state 28
-
-    dlist1                         shift and go to state 49
-    specialvar                     shift and go to state 27
 
 state 38
 
-    (8) declaration -> TYPE dlist1 SEMICOLON .
+    (25) expression -> pointervar .
 
-    TYPE            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
-    TIMES           reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
-    NAME            reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
-    RBRACE          reduce using rule 8 (declaration -> TYPE dlist1 SEMICOLON .)
+    PLUS            reduce using rule 25 (expression -> pointervar .)
+    MINUS           reduce using rule 25 (expression -> pointervar .)
+    DIVIDE          reduce using rule 25 (expression -> pointervar .)
+    TIMES           reduce using rule 25 (expression -> pointervar .)
+    SEMICOLON       reduce using rule 25 (expression -> pointervar .)
+    RPAREN          reduce using rule 25 (expression -> pointervar .)
 
 
 state 39
 
-    (12) dlist1 -> specialvar COMMA . dlist1
-    (9) dlist1 -> . NAME
-    (10) dlist1 -> . NAME COMMA dlist1
-    (11) dlist1 -> . specialvar
-    (12) dlist1 -> . specialvar COMMA dlist1
-    (13) specialvar -> . TIMES specialvar
-    (14) specialvar -> . TIMES NAME
+    (26) pointervar -> TIMES pointervar .
 
-    NAME            shift and go to state 25
-    TIMES           shift and go to state 28
+    EQUALS          reduce using rule 26 (pointervar -> TIMES pointervar .)
+    PLUS            reduce using rule 26 (pointervar -> TIMES pointervar .)
+    MINUS           reduce using rule 26 (pointervar -> TIMES pointervar .)
+    DIVIDE          reduce using rule 26 (pointervar -> TIMES pointervar .)
+    TIMES           reduce using rule 26 (pointervar -> TIMES pointervar .)
+    SEMICOLON       reduce using rule 26 (pointervar -> TIMES pointervar .)
+    RPAREN          reduce using rule 26 (pointervar -> TIMES pointervar .)
 
-    dlist1                         shift and go to state 50
-    specialvar                     shift and go to state 27
 
 state 40
 
-    (13) specialvar -> TIMES specialvar .
+    (16) assignment_base -> TIMES pointervar EQUALS . expression
+    (18) expression -> . expression PLUS expression
+    (19) expression -> . expression MINUS expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . expression TIMES expression
+    (22) expression -> . MINUS expression
+    (23) expression -> . LPAREN expression RPAREN
+    (24) expression -> . NUMBER
+    (25) expression -> . pointervar
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
 
-    COMMA           reduce using rule 13 (specialvar -> TIMES specialvar .)
-    SEMICOLON       reduce using rule 13 (specialvar -> TIMES specialvar .)
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
 
+    pointervar                     shift and go to state 38
+    expression                     shift and go to state 50
 
 state 41
 
-    (14) specialvar -> TIMES NAME .
+    (27) pointervar -> ADDROF pointervar .
 
-    COMMA           reduce using rule 14 (specialvar -> TIMES NAME .)
-    SEMICOLON       reduce using rule 14 (specialvar -> TIMES NAME .)
+    EQUALS          reduce using rule 27 (pointervar -> ADDROF pointervar .)
+    PLUS            reduce using rule 27 (pointervar -> ADDROF pointervar .)
+    MINUS           reduce using rule 27 (pointervar -> ADDROF pointervar .)
+    DIVIDE          reduce using rule 27 (pointervar -> ADDROF pointervar .)
+    TIMES           reduce using rule 27 (pointervar -> ADDROF pointervar .)
+    SEMICOLON       reduce using rule 27 (pointervar -> ADDROF pointervar .)
+    RPAREN          reduce using rule 27 (pointervar -> ADDROF pointervar .)
 
 
 state 42
 
-    (16) assignment_base -> TIMES pointervar EQUALS expression .
-    (18) expression -> expression . PLUS expression
-    (19) expression -> expression . MINUS expression
-    (20) expression -> expression . DIVIDE expression
-    (21) expression -> expression . TIMES expression
+    (10) dlist1 -> NAME COMMA dlist1 .
 
-    SEMICOLON       reduce using rule 16 (assignment_base -> TIMES pointervar EQUALS expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 47
-    DIVIDE          shift and go to state 45
-    TIMES           shift and go to state 46
+    SEMICOLON       reduce using rule 10 (dlist1 -> NAME COMMA dlist1 .)
 
 
 state 43
 
-    (23) expression -> LPAREN expression . RPAREN
-    (18) expression -> expression . PLUS expression
-    (19) expression -> expression . MINUS expression
-    (20) expression -> expression . DIVIDE expression
-    (21) expression -> expression . TIMES expression
+    (12) dlist1 -> specialvar COMMA dlist1 .
 
-    RPAREN          shift and go to state 51
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 47
-    DIVIDE          shift and go to state 45
-    TIMES           shift and go to state 46
+    SEMICOLON       reduce using rule 12 (dlist1 -> specialvar COMMA dlist1 .)
 
 
 state 44
-
-    (22) expression -> MINUS expression .
-    (18) expression -> expression . PLUS expression
-    (19) expression -> expression . MINUS expression
-    (20) expression -> expression . DIVIDE expression
-    (21) expression -> expression . TIMES expression
-
-    RPAREN          reduce using rule 22 (expression -> MINUS expression .)
-    PLUS            reduce using rule 22 (expression -> MINUS expression .)
-    MINUS           reduce using rule 22 (expression -> MINUS expression .)
-    DIVIDE          reduce using rule 22 (expression -> MINUS expression .)
-    TIMES           reduce using rule 22 (expression -> MINUS expression .)
-    SEMICOLON       reduce using rule 22 (expression -> MINUS expression .)
-
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 47 ]
-  ! DIVIDE          [ shift and go to state 45 ]
-  ! TIMES           [ shift and go to state 46 ]
-
-
-state 45
-
-    (20) expression -> expression DIVIDE . expression
-    (18) expression -> . expression PLUS expression
-    (19) expression -> . expression MINUS expression
-    (20) expression -> . expression DIVIDE expression
-    (21) expression -> . expression TIMES expression
-    (22) expression -> . MINUS expression
-    (23) expression -> . LPAREN expression RPAREN
-    (24) expression -> . NUMBER
-    (25) expression -> . pointervar
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
-
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
-
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 52
-
-state 46
-
-    (21) expression -> expression TIMES . expression
-    (18) expression -> . expression PLUS expression
-    (19) expression -> . expression MINUS expression
-    (20) expression -> . expression DIVIDE expression
-    (21) expression -> . expression TIMES expression
-    (22) expression -> . MINUS expression
-    (23) expression -> . LPAREN expression RPAREN
-    (24) expression -> . NUMBER
-    (25) expression -> . pointervar
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
-
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
-
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 53
-
-state 47
-
-    (19) expression -> expression MINUS . expression
-    (18) expression -> . expression PLUS expression
-    (19) expression -> . expression MINUS expression
-    (20) expression -> . expression DIVIDE expression
-    (21) expression -> . expression TIMES expression
-    (22) expression -> . MINUS expression
-    (23) expression -> . LPAREN expression RPAREN
-    (24) expression -> . NUMBER
-    (25) expression -> . pointervar
-    (26) pointervar -> . TIMES pointervar
-    (27) pointervar -> . ADDROF pointervar
-    (28) pointervar -> . NAME
-
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
-
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 54
-
-state 48
 
     (18) expression -> expression PLUS . expression
     (18) expression -> . expression PLUS expression
@@ -722,106 +610,143 @@ state 48
     (27) pointervar -> . ADDROF pointervar
     (28) pointervar -> . NAME
 
-    MINUS           shift and go to state 33
-    LPAREN          shift and go to state 32
-    NUMBER          shift and go to state 35
-    TIMES           shift and go to state 18
-    ADDROF          shift and go to state 20
-    NAME            shift and go to state 19
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
 
-    pointervar                     shift and go to state 34
-    expression                     shift and go to state 55
+    expression                     shift and go to state 51
+    pointervar                     shift and go to state 38
+
+state 45
+
+    (19) expression -> expression MINUS . expression
+    (18) expression -> . expression PLUS expression
+    (19) expression -> . expression MINUS expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . expression TIMES expression
+    (22) expression -> . MINUS expression
+    (23) expression -> . LPAREN expression RPAREN
+    (24) expression -> . NUMBER
+    (25) expression -> . pointervar
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
+
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
+
+    expression                     shift and go to state 52
+    pointervar                     shift and go to state 38
+
+state 46
+
+    (20) expression -> expression DIVIDE . expression
+    (18) expression -> . expression PLUS expression
+    (19) expression -> . expression MINUS expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . expression TIMES expression
+    (22) expression -> . MINUS expression
+    (23) expression -> . LPAREN expression RPAREN
+    (24) expression -> . NUMBER
+    (25) expression -> . pointervar
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
+
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
+
+    expression                     shift and go to state 53
+    pointervar                     shift and go to state 38
+
+state 47
+
+    (21) expression -> expression TIMES . expression
+    (18) expression -> . expression PLUS expression
+    (19) expression -> . expression MINUS expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . expression TIMES expression
+    (22) expression -> . MINUS expression
+    (23) expression -> . LPAREN expression RPAREN
+    (24) expression -> . NUMBER
+    (25) expression -> . pointervar
+    (26) pointervar -> . TIMES pointervar
+    (27) pointervar -> . ADDROF pointervar
+    (28) pointervar -> . NAME
+
+    MINUS           shift and go to state 35
+    LPAREN          shift and go to state 36
+    NUMBER          shift and go to state 37
+    TIMES           shift and go to state 25
+    ADDROF          shift and go to state 27
+    NAME            shift and go to state 28
+
+    expression                     shift and go to state 54
+    pointervar                     shift and go to state 38
+
+state 48
+
+    (22) expression -> MINUS expression .
+    (18) expression -> expression . PLUS expression
+    (19) expression -> expression . MINUS expression
+    (20) expression -> expression . DIVIDE expression
+    (21) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 22 (expression -> MINUS expression .)
+    MINUS           reduce using rule 22 (expression -> MINUS expression .)
+    DIVIDE          reduce using rule 22 (expression -> MINUS expression .)
+    TIMES           reduce using rule 22 (expression -> MINUS expression .)
+    SEMICOLON       reduce using rule 22 (expression -> MINUS expression .)
+    RPAREN          reduce using rule 22 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 44 ]
+  ! MINUS           [ shift and go to state 45 ]
+  ! DIVIDE          [ shift and go to state 46 ]
+  ! TIMES           [ shift and go to state 47 ]
+
 
 state 49
 
-    (10) dlist1 -> NAME COMMA dlist1 .
+    (23) expression -> LPAREN expression . RPAREN
+    (18) expression -> expression . PLUS expression
+    (19) expression -> expression . MINUS expression
+    (20) expression -> expression . DIVIDE expression
+    (21) expression -> expression . TIMES expression
 
-    SEMICOLON       reduce using rule 10 (dlist1 -> NAME COMMA dlist1 .)
+    RPAREN          shift and go to state 55
+    PLUS            shift and go to state 44
+    MINUS           shift and go to state 45
+    DIVIDE          shift and go to state 46
+    TIMES           shift and go to state 47
 
 
 state 50
 
-    (12) dlist1 -> specialvar COMMA dlist1 .
+    (16) assignment_base -> TIMES pointervar EQUALS expression .
+    (18) expression -> expression . PLUS expression
+    (19) expression -> expression . MINUS expression
+    (20) expression -> expression . DIVIDE expression
+    (21) expression -> expression . TIMES expression
 
-    SEMICOLON       reduce using rule 12 (dlist1 -> specialvar COMMA dlist1 .)
+    SEMICOLON       reduce using rule 16 (assignment_base -> TIMES pointervar EQUALS expression .)
+    PLUS            shift and go to state 44
+    MINUS           shift and go to state 45
+    DIVIDE          shift and go to state 46
+    TIMES           shift and go to state 47
 
 
 state 51
-
-    (23) expression -> LPAREN expression RPAREN .
-
-    RPAREN          reduce using rule 23 (expression -> LPAREN expression RPAREN .)
-    PLUS            reduce using rule 23 (expression -> LPAREN expression RPAREN .)
-    MINUS           reduce using rule 23 (expression -> LPAREN expression RPAREN .)
-    DIVIDE          reduce using rule 23 (expression -> LPAREN expression RPAREN .)
-    TIMES           reduce using rule 23 (expression -> LPAREN expression RPAREN .)
-    SEMICOLON       reduce using rule 23 (expression -> LPAREN expression RPAREN .)
-
-
-state 52
-
-    (20) expression -> expression DIVIDE expression .
-    (18) expression -> expression . PLUS expression
-    (19) expression -> expression . MINUS expression
-    (20) expression -> expression . DIVIDE expression
-    (21) expression -> expression . TIMES expression
-
-    RPAREN          reduce using rule 20 (expression -> expression DIVIDE expression .)
-    PLUS            reduce using rule 20 (expression -> expression DIVIDE expression .)
-    MINUS           reduce using rule 20 (expression -> expression DIVIDE expression .)
-    DIVIDE          reduce using rule 20 (expression -> expression DIVIDE expression .)
-    TIMES           reduce using rule 20 (expression -> expression DIVIDE expression .)
-    SEMICOLON       reduce using rule 20 (expression -> expression DIVIDE expression .)
-
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 47 ]
-  ! DIVIDE          [ shift and go to state 45 ]
-  ! TIMES           [ shift and go to state 46 ]
-
-
-state 53
-
-    (21) expression -> expression TIMES expression .
-    (18) expression -> expression . PLUS expression
-    (19) expression -> expression . MINUS expression
-    (20) expression -> expression . DIVIDE expression
-    (21) expression -> expression . TIMES expression
-
-    RPAREN          reduce using rule 21 (expression -> expression TIMES expression .)
-    PLUS            reduce using rule 21 (expression -> expression TIMES expression .)
-    MINUS           reduce using rule 21 (expression -> expression TIMES expression .)
-    DIVIDE          reduce using rule 21 (expression -> expression TIMES expression .)
-    TIMES           reduce using rule 21 (expression -> expression TIMES expression .)
-    SEMICOLON       reduce using rule 21 (expression -> expression TIMES expression .)
-
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 47 ]
-  ! DIVIDE          [ shift and go to state 45 ]
-  ! TIMES           [ shift and go to state 46 ]
-
-
-state 54
-
-    (19) expression -> expression MINUS expression .
-    (18) expression -> expression . PLUS expression
-    (19) expression -> expression . MINUS expression
-    (20) expression -> expression . DIVIDE expression
-    (21) expression -> expression . TIMES expression
-
-    RPAREN          reduce using rule 19 (expression -> expression MINUS expression .)
-    PLUS            reduce using rule 19 (expression -> expression MINUS expression .)
-    MINUS           reduce using rule 19 (expression -> expression MINUS expression .)
-    SEMICOLON       reduce using rule 19 (expression -> expression MINUS expression .)
-    DIVIDE          shift and go to state 45
-    TIMES           shift and go to state 46
-
-  ! DIVIDE          [ reduce using rule 19 (expression -> expression MINUS expression .) ]
-  ! TIMES           [ reduce using rule 19 (expression -> expression MINUS expression .) ]
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 47 ]
-
-
-state 55
 
     (18) expression -> expression PLUS expression .
     (18) expression -> expression . PLUS expression
@@ -829,15 +754,90 @@ state 55
     (20) expression -> expression . DIVIDE expression
     (21) expression -> expression . TIMES expression
 
-    RPAREN          reduce using rule 18 (expression -> expression PLUS expression .)
     PLUS            reduce using rule 18 (expression -> expression PLUS expression .)
     MINUS           reduce using rule 18 (expression -> expression PLUS expression .)
     SEMICOLON       reduce using rule 18 (expression -> expression PLUS expression .)
-    DIVIDE          shift and go to state 45
-    TIMES           shift and go to state 46
+    RPAREN          reduce using rule 18 (expression -> expression PLUS expression .)
+    DIVIDE          shift and go to state 46
+    TIMES           shift and go to state 47
 
   ! DIVIDE          [ reduce using rule 18 (expression -> expression PLUS expression .) ]
   ! TIMES           [ reduce using rule 18 (expression -> expression PLUS expression .) ]
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 47 ]
+  ! PLUS            [ shift and go to state 44 ]
+  ! MINUS           [ shift and go to state 45 ]
+
+
+state 52
+
+    (19) expression -> expression MINUS expression .
+    (18) expression -> expression . PLUS expression
+    (19) expression -> expression . MINUS expression
+    (20) expression -> expression . DIVIDE expression
+    (21) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 19 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 19 (expression -> expression MINUS expression .)
+    SEMICOLON       reduce using rule 19 (expression -> expression MINUS expression .)
+    RPAREN          reduce using rule 19 (expression -> expression MINUS expression .)
+    DIVIDE          shift and go to state 46
+    TIMES           shift and go to state 47
+
+  ! DIVIDE          [ reduce using rule 19 (expression -> expression MINUS expression .) ]
+  ! TIMES           [ reduce using rule 19 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 44 ]
+  ! MINUS           [ shift and go to state 45 ]
+
+
+state 53
+
+    (20) expression -> expression DIVIDE expression .
+    (18) expression -> expression . PLUS expression
+    (19) expression -> expression . MINUS expression
+    (20) expression -> expression . DIVIDE expression
+    (21) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 20 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 20 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 20 (expression -> expression DIVIDE expression .)
+    TIMES           reduce using rule 20 (expression -> expression DIVIDE expression .)
+    SEMICOLON       reduce using rule 20 (expression -> expression DIVIDE expression .)
+    RPAREN          reduce using rule 20 (expression -> expression DIVIDE expression .)
+
+  ! PLUS            [ shift and go to state 44 ]
+  ! MINUS           [ shift and go to state 45 ]
+  ! DIVIDE          [ shift and go to state 46 ]
+  ! TIMES           [ shift and go to state 47 ]
+
+
+state 54
+
+    (21) expression -> expression TIMES expression .
+    (18) expression -> expression . PLUS expression
+    (19) expression -> expression . MINUS expression
+    (20) expression -> expression . DIVIDE expression
+    (21) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 21 (expression -> expression TIMES expression .)
+    MINUS           reduce using rule 21 (expression -> expression TIMES expression .)
+    DIVIDE          reduce using rule 21 (expression -> expression TIMES expression .)
+    TIMES           reduce using rule 21 (expression -> expression TIMES expression .)
+    SEMICOLON       reduce using rule 21 (expression -> expression TIMES expression .)
+    RPAREN          reduce using rule 21 (expression -> expression TIMES expression .)
+
+  ! PLUS            [ shift and go to state 44 ]
+  ! MINUS           [ shift and go to state 45 ]
+  ! DIVIDE          [ shift and go to state 46 ]
+  ! TIMES           [ shift and go to state 47 ]
+
+
+state 55
+
+    (23) expression -> LPAREN expression RPAREN .
+
+    PLUS            reduce using rule 23 (expression -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 23 (expression -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 23 (expression -> LPAREN expression RPAREN .)
+    TIMES           reduce using rule 23 (expression -> LPAREN expression RPAREN .)
+    SEMICOLON       reduce using rule 23 (expression -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 23 (expression -> LPAREN expression RPAREN .)
 
