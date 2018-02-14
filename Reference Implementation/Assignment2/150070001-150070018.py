@@ -171,7 +171,7 @@ def p_function(p):
 		is_error = 1
 		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
-		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt1"
+		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f,'w')		
 		p[6].printit(0)

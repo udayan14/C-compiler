@@ -11,15 +11,14 @@ no_of_assignments = 0
 is_error = 0
 main_found = 0
 assignment_error = 0
+return_error = 0
 tokens = (
 	'NUMBER',
 	'TYPE',
-	'newline',
 	'SEMICOLON', 'EQUALS', 'COMMA',
 	'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
-	'ADDROF','VALOF',
+	'ADDROF',
 	'NAME',
-	'COMMENT',
 	'PLUS','MINUS','TIMES','DIVIDE',
 	)
 
@@ -33,7 +32,7 @@ t_LBRACE = r'\{'
 t_RBRACE = r'\}'
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_ADDROF = r'&'
-t_VALOF = r'\*'
+t_TIMES = r'\*'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_DIVIDE = r'/'
@@ -41,6 +40,7 @@ t_DIVIDE = r'/'
 def t_TYPE(t):
 	r'\bvoid\b | \bint\b'
 	return t
+
 
 def t_newline(t):
 	r'\n'
@@ -65,8 +65,7 @@ def t_error(t):
 
 precedence = (
 	('left','PLUS','MINUS'),
-	('left','TIMES',),
-	('left','DIVIDE',),
+	('left','TIMES','DIVIDE'),
 	('right','VALOF'),
 	('right','UMINUS'),
 	)
@@ -149,17 +148,30 @@ def p_function(p):
 	"""
 	function : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE
 	"""
-	global main_found,assignment_error
+	global main_found,assignment_error,return_error
+	void_return = 0
 	global is_error
 	# print(p[2])
 	if str(p[2])=='main':
 		main_found = 1
+	if str(p[1])=='void':
+		void_return = 1
 	# print(p[6][::-1])
 	if(assignment_error):
 		is_error = 1
-		print("Direct assignment of constant to variable is prohibited.")
+		if p:
+			print("Syntax error at line no  '{0}' , assignment error ".format(p.lexer.lineno))
+		else:
+			print("Syntax error at EOF")
+		# print("Main function not found || Return type of main is not void || Invalid Assignment")
+	elif(not main_found):
+		is_error = 1
+		print("Syntax error at line no  '{0}' , main not found".format(p.lexer.lineno))
+	elif(not void_return):
+		is_error = 1
+		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
-		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt1"
+		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f,'w')		
 		p[6].printit(0)
@@ -214,8 +226,8 @@ def p_dlistpointer(p):
 
 def p_specialvar(p):
 	"""
-	specialvar : VALOF specialvar
-				| VALOF NAME
+	specialvar : TIMES specialvar %prec VALOF
+				| TIMES NAME %prec VALOF
 	"""
 
 def p_assignment(p):
@@ -230,7 +242,7 @@ def p_assignment(p):
 def p_assignment_base_pointer(p):
 
 	""" 
-	assignment_base : VALOF pointervar EQUALS expression
+	assignment_base : TIMES pointervar EQUALS expression
 			| NAME EQUALS expression 
 	 """
 	global assignment_error
@@ -269,7 +281,7 @@ def p_expression1(p):
 
 def p_expression_mul(p):
 	"""
-	expression : expression VALOF expression %prec TIMES
+	expression : expression TIMES expression
 	"""
 	if p[2] == '*':
 		p[0] = ["MUL",p[1],p[3]]
@@ -303,7 +315,7 @@ def p_expression_base_pointer(p):
 
 def p_pointervar1(p):
 	"""
-	pointervar : VALOF pointervar
+	pointervar : TIMES pointervar %prec VALOF
 	"""
 	p[0] = ["DEREF",p[2]]
 	p[0] = AST("DEREF","",[p[2]])
@@ -341,9 +353,7 @@ if __name__ == "__main__":
 	with open(filename,'r') as f:
 		data = f.read()
 	process(data)
-	if(main_found==0):
-		# print("Program has no main function! ")
-	elif(is_error==0):
+	if(is_error==0):
 		# pass
 		print("Successfully parsed")
 		# print(no_of_static_declarations)

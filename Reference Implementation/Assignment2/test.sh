@@ -15,10 +15,11 @@ i=0
 
 while [ $i -lt $len ]
 do
+name = ${array[$i]} | tail -c +3
 echo ${array[$i]}
-python3 150070001-150070018.py ${array[$i]};
-./Assignment2 ${array[$i]};
- diff Parser_ast_${array[$i]}.txt Parser_ast_${array[$i]}.txt1 
+python3 150070001-150070018.py ${name};
+./Assignment2 name;
+ diff Parser_ast_${name}.txt Parser_ast_${name}.txt 
  echo "\n"
 let i++
 done
