@@ -18,7 +18,7 @@ do
 echo ${array[$i]}
 python3 150070001-150070018.py ${array[$i]};
 ./Assignment2 ${array[$i]};
- diff Parser_ast_${array[$i]}.txt Parser_ast_${array[$i]}.txt1 
+ diff Parser_ast_${array[$i]}.txt Parser_ast_${array[$i]}.txt
  echo "\n"
 let i++
 done

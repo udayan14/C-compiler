@@ -1,0 +1,53 @@
+
+<bb 0>
+pl=&l
+pt=&t
+pa=&a
+pm=&m
+pn=&n
+pb=&b
+pu=&u
+pv=&v
+goto <bb 1>
+
+
+<bb 1>
+if(*pb<4) goto <bb 2>
+else goto <bb 4>
+
+
+<bb 2>
+*pa=40
+goto <bb 3>
+
+
+<bb 3>
+*pu=90
+*pn=50
+goto End
+
+
+<bb 4>
+if(*pm<30) goto <bb 5>
+else goto <bb 6>
+
+
+<bb 5>
+*pt=0
+goto <bb 3>
+
+
+<bb 6>
+if(*pu<30) goto <bb 7>
+else goto <bb 8>
+
+
+<bb 7>
+*pv=0
+goto <bb 3>
+
+
+<bb 8>
+*pb=0
+goto <bb 3>
+
