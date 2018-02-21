@@ -1,26 +1,16 @@
 
 
 
-array=()
-find . -name "*.c" -print0 >tmpfile
-while IFS=  read -r -d $'\0'; do
-    array+=("$REPLY")
-done <tmpfile
-rm -f tmpfile
 
-len=${#array[*]}
-echo "found : ${len}"
+find . -name '*.c' | while read line; do
+	NAME="$(echo $line | tail -c +3)"
+	echo ${NAME}
+	 python3 150070001-150070018.py ${NAME};
+	./Assignment2 name;
+	 diff Parser_ast_${NAME}.txt Parser_ast_${NAME}.txt 
+	 echo "\n"   
 
-i=0
-
-while [ $i -lt $len ]
-do
-echo ${array[$i]}
-python3 150070001-150070018.py ${array[$i]};
-./Assignment2 ${array[$i]};
- diff Parser_ast_${array[$i]}.txt Parser_ast_${array[$i]}.txt
- echo "\n"
-let i++
 done
+
 
 
