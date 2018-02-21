@@ -20,12 +20,21 @@ tokens = (
 	'ADDROF',
 	'NAME',
 	'PLUS','MINUS','TIMES','DIVIDE',
+	'WHILE','IF','ELSE',
+	'EQUALCHECK','UNEQUAL','LESSTHAN','LESSTHANEQ','GREATERTHAN','GREATERTHANEQ','NOT',
 	)
 
 t_ignore = " \t"
 t_SEMICOLON = ";"
 t_COMMA = ","
 t_EQUALS = "="
+t_EQUALCHECK = "=="
+t_UNEQUAL = "!="
+t_LESSTHAN = "<"
+t_LESSTHANEQ = "<="
+t_GREATERTHAN = ">"
+t_GREATERTHANEQ = ">="
+t_NOT = "!"
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_LBRACE = r'\{'
@@ -41,6 +50,17 @@ def t_TYPE(t):
 	r'\bvoid\b | \bint\b'
 	return t
 
+def t_WHILE(t):
+	r'\bwhile\b'
+	return t
+
+def t_IF(t):
+	r'\bif\b'
+	return t
+
+def t_ELSE(t):
+	r'\belse\b'
+	return t
 
 def t_newline(t):
 	r'\n'
@@ -64,10 +84,14 @@ def t_error(t):
 	t.lexer.skip(1)
 
 precedence = (
+	('left','EQUALCHECK','UNEQUAL'),
+	('left','LESSTHANEQ','LESSTHAN','GREATERTHANEQ','GREATERTHAN'),
 	('left','PLUS','MINUS'),
 	('left','TIMES','DIVIDE'),
 	('right','VALOF'),
+	('right','NOT'),
 	('right','UMINUS'),
+
 	)
 
 
@@ -85,13 +109,20 @@ class AST:
 		elif(self.Type == "VAR"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
 
-		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR"):
+		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR" or self.Type == "NOT"):
 			printhelper(self.Type,i)
 			printhelper("(",i)
 			self.l[0].printit(i+1)
 			printhelper(")",i)
 
-		elif(self.Type == "PLUS" or self.Type == "MINUS" or self.Type == "MUL" or self.Type == "DIV" or self.Type == "ASGN"):
+		elif(self.Type == "WHILE"):
+			printhelper(self.Type,i)
+			printhelper("(",i)
+			self.l[0].printit(i+1)
+			printhelper(",",i+1)
+			self.l[1].printit(i+1)
+			printhelper(")",i)
+		elif(self.Type == "PLUS" or self.Type == "MINUS" or self.Type == "MUL" or self.Type == "DIV" or self.Type == "ASGN" or self.Type == "LTE" or self.Type == "GTE" or self.Type == "GT" or self.Type == "LT" or self.Type == "EQ" or self.Type == "UNEQ" ):
 			printhelper(self.Type,i)
 			printhelper("(",i)
 			self.l[0].printit(i+1)
@@ -104,14 +135,11 @@ class AST:
 			if(not self.l):
 				pass
 			else:
-				for i in range(len(self.l)-1,-1,-1):
-					self.l[i].printit(0)
-					if(i!=0):
+				for j in range(len(self.l)-1,-1,-1):
+					self.l[j].printit(i)
+					if(j!=0):
 						# print("")
 						pass
-
-
-
 
 	def appendchild(self,ast):
 		self.l.append(ast)
@@ -200,8 +228,78 @@ def p_statement_expr(p):
 	"""
 	statement : assignment
 			| declaration
+			| whileblock
+			| ifblock
 	"""
 	p[0] = p[1]
+
+def p_ifblock(p):
+	"""
+	ifblock : justifblock
+			| justifblock elseblock
+	"""
+	if len(p) == 2:
+		p[0] = p[1]
+	else:
+		p[0] = AST("IF ELSE","",[p[1].l[0],p[1].l[1],p[2]])
+def p_if(p):
+	"""
+	justifblock : IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+			| IF LPAREN conditional RPAREN statement
+	"""
+	if len(p) == 6:
+		p[0] = AST("IF","",[p[3],p[5]])
+	else:
+		p[0] = AST("IF","",[p[3],p[6]])
+
+def p_else(p):
+	"""
+	elseblock : ELSE LBRACE fbody RBRACE
+			| ELSE statement	
+	"""
+	if len(p) == 3:
+		p[0] = AST("ELSE","",[p[2]])
+	else:
+		p[0] = AST("ELSE","",[p[3]])
+def p_while(p):
+	"""
+	whileblock : WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+	"""
+	p[0] = AST("WHILE","",[p[3],p[6]])
+def p_conditional(p):
+	"""
+	conditional : CS
+				| conditional LESSTHANEQ conditional
+				| conditional GREATERTHANEQ conditional
+				| conditional UNEQUAL conditional
+				| conditional EQUALCHECK conditional
+				| conditional LESSTHAN conditional
+				| conditional GREATERTHAN conditional
+	"""
+	if len(p)==2:
+		p[0] = p[1]
+	else:
+		if p[2] == '<=':
+			p[0] = AST("LTE","",[p[1],p[3]])
+		elif p[2] == '>=':
+			p[0] = AST("GTE","",[p[1],p[3]])
+		elif p[2] == '!=':
+			p[0] = AST("UNEQ","",[p[1],p[3]])
+		elif p[2] == '==':
+			p[0] = AST("EQ","",[p[1],p[3]])
+		elif p[2] == '<':
+			p[0] = AST("LT","",[p[1],p[3]])
+		elif p[2] == '>':
+			p[0] = AST("GT","",[p[1],p[3]])
+def p_cs(p):
+	"""
+	CS : expression
+		| NOT LPAREN expression RPAREN
+	"""
+	if len(p)==2:
+		p[0] = p[1]
+	else:
+		p[0] = AST("NOT","",[p[3]])	
 def p_declaration1(p):
 	"""
 		declaration : TYPE dlist1 SEMICOLON
@@ -345,7 +443,7 @@ def p_error(p):
 
 def process(data):
 	lex.lex()
-	yacc.yacc()
+	yacc.yacc(debug = 1)
 	yacc.parse(data)
 
 if __name__ == "__main__":

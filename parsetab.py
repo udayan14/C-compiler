@@ -5,9 +5,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftTIMESDIVIDErightVALOFrightUMINUSNUMBER TYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF NAME PLUS MINUS TIMES DIVIDE \n\tprogram : function \n\t\t\t\t| function program\n\t\n\tfunction : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE\n\t\n\tfbody : statement\n\t\t\t| statement fbody\n\t\n\tstatement : assignment\n\t\t\t| declaration\n\t\n\t\tdeclaration : TYPE dlist1 SEMICOLON\n\t\n\tdlist1 : NAME  \n\t\t\t| NAME COMMA dlist1\n\t\n\tdlist1 : specialvar\n\t\t\t| specialvar  COMMA dlist1  \n\t\n\tspecialvar : TIMES specialvar %prec VALOF\n\t\t\t\t| TIMES NAME %prec VALOF\n\t\n\tassignment : assignment_base SEMICOLON\n\t \n\tassignment_base : TIMES pointervar EQUALS expression\n\t\t\t| NAME EQUALS expression \n\t \n\texpression : expression PLUS expression\n\t\t\t\t| expression MINUS expression\n\t\t\t\t| expression DIVIDE expression\n\t\n\texpression : expression TIMES expression\n\t\n\texpression : MINUS expression %prec UMINUS\n\t\n\texpression : LPAREN expression RPAREN\n\t\n\texpression : NUMBER\n\t\n\texpression : pointervar\n\t\n\tpointervar : TIMES pointervar %prec VALOF\n\t\n\tpointervar : ADDROF pointervar\n\t\n\tpointervar : NAME\n\t'
+_lr_signature = 'leftEQUALCHECKUNEQUALleftLESSTHANEQLESSTHANGREATERTHANEQGREATERTHANleftPLUSMINUSleftTIMESDIVIDErightVALOFrightNOTrightUMINUSNUMBER TYPE SEMICOLON EQUALS COMMA LPAREN RPAREN LBRACE RBRACE ADDROF NAME PLUS MINUS TIMES DIVIDE WHILE IF ELSE EQUALCHECK UNEQUAL LESSTHAN LESSTHANEQ GREATERTHAN GREATERTHANEQ NOT \n\tprogram : function \n\t\t\t\t| function program\n\t\n\tfunction : TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE\n\t\n\tfbody : statement\n\t\t\t| statement fbody\n\t\n\tstatement : assignment\n\t\t\t| declaration\n\t\t\t| whileblock\n\t\t\t| ifblock\n\t\n\tifblock : justifblock\n\t\t\t| justifblock elseblock\n\t\n\tjustifblock : IF LPAREN conditional RPAREN LBRACE fbody RBRACE\n\t\t\t| IF LPAREN conditional RPAREN statement\n\t\n\telseblock : ELSE LBRACE fbody RBRACE\n\t\t\t| ELSE statement\t\n\t\n\twhileblock : WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE\n\t\n\tconditional : CS\n\t\t\t\t| conditional LESSTHANEQ conditional\n\t\t\t\t| conditional GREATERTHANEQ conditional\n\t\t\t\t| conditional UNEQUAL conditional\n\t\t\t\t| conditional EQUALCHECK conditional\n\t\t\t\t| conditional LESSTHAN conditional\n\t\t\t\t| conditional GREATERTHAN conditional\n\t\n\tCS : expression\n\t\t| NOT LPAREN expression RPAREN\n\t\n\t\tdeclaration : TYPE dlist1 SEMICOLON\n\t\n\tdlist1 : NAME  \n\t\t\t| NAME COMMA dlist1\n\t\n\tdlist1 : specialvar\n\t\t\t| specialvar  COMMA dlist1  \n\t\n\tspecialvar : TIMES specialvar %prec VALOF\n\t\t\t\t| TIMES NAME %prec VALOF\n\t\n\tassignment : assignment_base SEMICOLON\n\t \n\tassignment_base : TIMES pointervar EQUALS expression\n\t\t\t| NAME EQUALS expression \n\t \n\texpression : expression PLUS expression\n\t\t\t\t| expression MINUS expression\n\t\t\t\t| expression DIVIDE expression\n\t\n\texpression : expression TIMES expression\n\t\n\texpression : MINUS expression %prec UMINUS\n\t\n\texpression : LPAREN expression RPAREN\n\t\n\texpression : NUMBER\n\t\n\texpression : pointervar\n\t\n\tpointervar : TIMES pointervar %prec VALOF\n\t\n\tpointervar : ADDROF pointervar\n\t\n\tpointervar : NAME\n\t'
     
-_lr_action_items = {'TYPE':([0,2,8,12,13,14,22,24,29,],[3,3,9,9,-6,-7,-3,-15,-8,]),'$end':([1,2,4,22,],[0,-1,-2,-3,]),'NAME':([3,8,9,12,13,14,16,20,21,24,25,27,29,30,31,35,36,40,44,45,46,47,],[5,10,18,10,-6,-7,28,33,28,-15,28,28,-8,18,18,28,28,28,28,28,28,28,]),'LPAREN':([5,21,35,36,40,44,45,46,47,],[6,36,36,36,36,36,36,36,36,]),'RPAREN':([6,28,37,38,39,41,48,49,51,52,53,54,55,],[7,-28,-24,-25,-26,-27,-22,55,-18,-19,-20,-21,-23,]),'LBRACE':([7,],[8,]),'TIMES':([8,9,12,13,14,16,20,21,24,25,27,28,29,30,31,34,35,36,37,38,39,40,41,44,45,46,47,48,49,50,51,52,53,54,55,],[16,20,16,-6,-7,25,20,25,-15,25,25,-28,-8,20,20,47,25,25,-24,-25,-26,25,-27,25,25,25,25,-22,47,47,47,47,-20,-21,-23,]),'EQUALS':([10,26,28,39,41,],[21,40,-28,-26,-27,]),'RBRACE':([11,12,13,14,23,24,29,],[22,-4,-6,-7,-5,-15,-8,]),'SEMICOLON':([15,17,18,19,28,32,33,34,37,38,39,41,42,43,48,50,51,52,53,54,55,],[24,29,-9,-11,-28,-13,-14,-17,-24,-25,-26,-27,-10,-12,-22,-16,-18,-19,-20,-21,-23,]),'ADDROF':([16,21,25,27,35,36,40,44,45,46,47,],[27,27,27,27,27,27,27,27,27,27,27,]),'COMMA':([18,19,32,33,],[30,31,-13,-14,]),'MINUS':([21,28,34,35,36,37,38,39,40,41,44,45,46,47,48,49,50,51,52,53,54,55,],[35,-28,45,35,35,-24,-25,-26,35,-27,35,35,35,35,-22,45,45,-18,-19,-20,-21,-23,]),'NUMBER':([21,35,36,40,44,45,46,47,],[37,37,37,37,37,37,37,37,]),'PLUS':([28,34,37,38,39,41,48,49,50,51,52,53,54,55,],[-28,44,-24,-25,-26,-27,-22,44,44,-18,-19,-20,-21,-23,]),'DIVIDE':([28,34,37,38,39,41,48,49,50,51,52,53,54,55,],[-28,46,-24,-25,-26,-27,-22,46,46,46,46,-20,-21,-23,]),}
+_lr_action_items = {'TYPE':([0,2,8,12,13,14,15,16,19,27,29,31,32,38,52,53,76,82,90,91,92,96,97,],[3,3,9,9,-6,-7,-8,-9,-10,-3,-33,-11,9,-26,9,-15,9,9,-14,9,-13,-16,-12,]),'$end':([1,2,4,27,],[0,-1,-2,-3,]),'NAME':([3,8,9,12,13,14,15,16,19,20,25,26,29,30,31,32,33,35,37,38,39,40,44,45,52,53,55,60,61,62,63,67,68,69,70,71,72,73,76,82,90,91,92,96,97,],[5,10,23,10,-6,-7,-8,-9,-10,36,42,36,-33,36,-11,10,36,36,36,-26,23,23,36,36,10,-15,36,36,36,36,36,36,36,36,36,36,36,36,10,10,-14,10,-13,-16,-12,]),'LPAREN':([5,18,21,26,30,37,44,45,51,55,60,61,62,63,67,68,69,70,71,72,73,],[6,30,37,45,45,45,45,45,73,45,45,45,45,45,45,45,45,45,45,45,45,]),'RPAREN':([6,36,46,47,48,49,50,54,56,57,64,65,77,78,79,80,81,83,84,85,86,87,88,89,94,],[7,-46,-42,-43,66,-17,-24,-44,-45,76,-40,81,-36,-37,-38,-39,-41,-18,-19,-20,-21,-22,-23,94,-25,]),'LBRACE':([7,32,66,76,],[8,52,82,91,]),'WHILE':([8,12,13,14,15,16,19,29,31,32,38,52,53,76,82,90,91,92,96,97,],[18,18,-6,-7,-8,-9,-10,-33,-11,18,-26,18,-15,18,18,-14,18,-13,-16,-12,]),'TIMES':([8,9,12,13,14,15,16,19,20,25,26,29,30,31,32,33,35,36,37,38,39,40,43,44,45,46,47,50,52,53,54,55,56,60,61,62,63,64,65,67,68,69,70,71,72,73,75,76,77,78,79,80,81,82,89,90,91,92,96,97,],[20,25,20,-6,-7,-8,-9,-10,33,25,33,-33,33,-11,20,33,33,-46,33,-26,25,25,63,33,33,-42,-43,63,20,-15,-44,33,-45,33,33,33,33,-40,63,33,33,33,33,33,33,33,63,20,63,63,-38,-39,-41,20,63,-14,20,-13,-16,-12,]),'IF':([8,12,13,14,15,16,19,29,31,32,38,52,53,76,82,90,91,92,96,97,],[21,21,-6,-7,-8,-9,-10,-33,-11,21,-26,21,-15,21,21,-14,21,-13,-16,-12,]),'EQUALS':([10,34,36,54,56,],[26,55,-46,-44,-45,]),'RBRACE':([11,12,13,14,15,16,19,28,29,31,38,53,74,90,92,93,95,96,97,],[27,-4,-6,-7,-8,-9,-10,-5,-33,-11,-26,-15,90,-14,-13,96,97,-16,-12,]),'ELSE':([13,14,15,16,19,29,31,38,53,90,92,96,97,],[-6,-7,-8,-9,32,-33,-11,-26,-15,-14,-13,-16,-12,]),'SEMICOLON':([17,22,23,24,36,41,42,43,46,47,54,56,58,59,64,75,77,78,79,80,81,],[29,38,-27,-29,-46,-31,-32,-35,-42,-43,-44,-45,-28,-30,-40,-34,-36,-37,-38,-39,-41,]),'ADDROF':([20,26,30,33,35,37,44,45,55,60,61,62,63,67,68,69,70,71,72,73,],[35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,]),'COMMA':([23,24,41,42,],[39,40,-31,-32,]),'MINUS':([26,30,36,37,43,44,45,46,47,50,54,55,56,60,61,62,63,64,65,67,68,69,70,71,72,73,75,77,78,79,80,81,89,],[44,44,-46,44,61,44,44,-42,-43,61,-44,44,-45,44,44,44,44,-40,61,44,44,44,44,44,44,44,61,-36,-37,-38,-39,-41,61,]),'NUMBER':([26,30,37,44,45,55,60,61,62,63,67,68,69,70,71,72,73,],[46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,]),'NOT':([30,37,67,68,69,70,71,72,],[51,51,51,51,51,51,51,51,]),'PLUS':([36,43,46,47,50,54,56,64,65,75,77,78,79,80,81,89,],[-46,60,-42,-43,60,-44,-45,-40,60,60,-36,-37,-38,-39,-41,60,]),'DIVIDE':([36,43,46,47,50,54,56,64,65,75,77,78,79,80,81,89,],[-46,62,-42,-43,62,-44,-45,-40,62,62,62,62,-38,-39,-41,62,]),'LESSTHANEQ':([36,46,47,48,49,50,54,56,57,64,77,78,79,80,81,83,84,85,86,87,88,94,],[-46,-42,-43,67,-17,-24,-44,-45,67,-40,-36,-37,-38,-39,-41,-18,-19,67,67,-22,-23,-25,]),'GREATERTHANEQ':([36,46,47,48,49,50,54,56,57,64,77,78,79,80,81,83,84,85,86,87,88,94,],[-46,-42,-43,68,-17,-24,-44,-45,68,-40,-36,-37,-38,-39,-41,-18,-19,68,68,-22,-23,-25,]),'UNEQUAL':([36,46,47,48,49,50,54,56,57,64,77,78,79,80,81,83,84,85,86,87,88,94,],[-46,-42,-43,69,-17,-24,-44,-45,69,-40,-36,-37,-38,-39,-41,-18,-19,-20,-21,-22,-23,-25,]),'EQUALCHECK':([36,46,47,48,49,50,54,56,57,64,77,78,79,80,81,83,84,85,86,87,88,94,],[-46,-42,-43,70,-17,-24,-44,-45,70,-40,-36,-37,-38,-39,-41,-18,-19,-20,-21,-22,-23,-25,]),'LESSTHAN':([36,46,47,48,49,50,54,56,57,64,77,78,79,80,81,83,84,85,86,87,88,94,],[-46,-42,-43,71,-17,-24,-44,-45,71,-40,-36,-37,-38,-39,-41,-18,-19,71,71,-22,-23,-25,]),'GREATERTHAN':([36,46,47,48,49,50,54,56,57,64,77,78,79,80,81,83,84,85,86,87,88,94,],[-46,-42,-43,72,-17,-24,-44,-45,72,-40,-36,-37,-38,-39,-41,-18,-19,72,72,-22,-23,-25,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,2,],[1,4,]),'function':([0,2,],[2,2,]),'fbody':([8,12,],[11,23,]),'statement':([8,12,],[12,12,]),'assignment':([8,12,],[13,13,]),'declaration':([8,12,],[14,14,]),'assignment_base':([8,12,],[15,15,]),'dlist1':([9,30,31,],[17,42,43,]),'specialvar':([9,20,30,31,],[19,32,19,19,]),'pointervar':([16,21,25,27,35,36,40,44,45,46,47,],[26,38,39,41,38,38,38,38,38,38,38,]),'expression':([21,35,36,40,44,45,46,47,],[34,48,49,50,51,52,53,54,]),}
+_lr_goto_items = {'program':([0,2,],[1,4,]),'function':([0,2,],[2,2,]),'fbody':([8,12,52,82,91,],[11,28,74,93,95,]),'statement':([8,12,32,52,76,82,91,],[12,12,53,12,92,12,12,]),'assignment':([8,12,32,52,76,82,91,],[13,13,13,13,13,13,13,]),'declaration':([8,12,32,52,76,82,91,],[14,14,14,14,14,14,14,]),'whileblock':([8,12,32,52,76,82,91,],[15,15,15,15,15,15,15,]),'ifblock':([8,12,32,52,76,82,91,],[16,16,16,16,16,16,16,]),'assignment_base':([8,12,32,52,76,82,91,],[17,17,17,17,17,17,17,]),'justifblock':([8,12,32,52,76,82,91,],[19,19,19,19,19,19,19,]),'dlist1':([9,39,40,],[22,58,59,]),'specialvar':([9,25,39,40,],[24,41,24,24,]),'elseblock':([19,],[31,]),'pointervar':([20,26,30,33,35,37,44,45,55,60,61,62,63,67,68,69,70,71,72,73,],[34,47,47,54,56,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,]),'expression':([26,30,37,44,45,55,60,61,62,63,67,68,69,70,71,72,73,],[43,50,50,64,65,75,77,78,79,80,50,50,50,50,50,50,89,]),'conditional':([30,37,67,68,69,70,71,72,],[48,57,83,84,85,86,87,88,]),'CS':([30,37,67,68,69,70,71,72,],[49,49,49,49,49,49,49,49,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,32 +26,50 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> function','program',1,'p_program','150070001-150070018.py',124),
-  ('program -> function program','program',2,'p_program','150070001-150070018.py',125),
-  ('function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE','function',7,'p_function','150070001-150070018.py',149),
-  ('fbody -> statement','fbody',1,'p_fbody','150070001-150070018.py',183),
-  ('fbody -> statement fbody','fbody',2,'p_fbody','150070001-150070018.py',184),
-  ('statement -> assignment','statement',1,'p_statement_expr','150070001-150070018.py',201),
-  ('statement -> declaration','statement',1,'p_statement_expr','150070001-150070018.py',202),
-  ('declaration -> TYPE dlist1 SEMICOLON','declaration',3,'p_declaration1','150070001-150070018.py',207),
-  ('dlist1 -> NAME','dlist1',1,'p_dlistname','150070001-150070018.py',213),
-  ('dlist1 -> NAME COMMA dlist1','dlist1',3,'p_dlistname','150070001-150070018.py',214),
-  ('dlist1 -> specialvar','dlist1',1,'p_dlistpointer','150070001-150070018.py',221),
-  ('dlist1 -> specialvar COMMA dlist1','dlist1',3,'p_dlistpointer','150070001-150070018.py',222),
-  ('specialvar -> TIMES specialvar','specialvar',2,'p_specialvar','150070001-150070018.py',229),
-  ('specialvar -> TIMES NAME','specialvar',2,'p_specialvar','150070001-150070018.py',230),
-  ('assignment -> assignment_base SEMICOLON','assignment',2,'p_assignment','150070001-150070018.py',235),
-  ('assignment_base -> TIMES pointervar EQUALS expression','assignment_base',4,'p_assignment_base_pointer','150070001-150070018.py',244),
-  ('assignment_base -> NAME EQUALS expression','assignment_base',3,'p_assignment_base_pointer','150070001-150070018.py',245),
-  ('expression -> expression PLUS expression','expression',3,'p_expression1','150070001-150070018.py',265),
-  ('expression -> expression MINUS expression','expression',3,'p_expression1','150070001-150070018.py',266),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression1','150070001-150070018.py',267),
-  ('expression -> expression TIMES expression','expression',3,'p_expression_mul','150070001-150070018.py',284),
-  ('expression -> MINUS expression','expression',2,'p_expression_uminus','150070001-150070018.py',292),
-  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_paren','150070001-150070018.py',299),
-  ('expression -> NUMBER','expression',1,'p_expression_base_number','150070001-150070018.py',305),
-  ('expression -> pointervar','expression',1,'p_expression_base_pointer','150070001-150070018.py',311),
-  ('pointervar -> TIMES pointervar','pointervar',2,'p_pointervar1','150070001-150070018.py',318),
-  ('pointervar -> ADDROF pointervar','pointervar',2,'p_pointervar2','150070001-150070018.py',324),
-  ('pointervar -> NAME','pointervar',1,'p_pointervar3','150070001-150070018.py',331),
+  ('program -> function','program',1,'p_program','150070001-150070018.py',152),
+  ('program -> function program','program',2,'p_program','150070001-150070018.py',153),
+  ('function -> TYPE NAME LPAREN RPAREN LBRACE fbody RBRACE','function',7,'p_function','150070001-150070018.py',177),
+  ('fbody -> statement','fbody',1,'p_fbody','150070001-150070018.py',211),
+  ('fbody -> statement fbody','fbody',2,'p_fbody','150070001-150070018.py',212),
+  ('statement -> assignment','statement',1,'p_statement_expr','150070001-150070018.py',229),
+  ('statement -> declaration','statement',1,'p_statement_expr','150070001-150070018.py',230),
+  ('statement -> whileblock','statement',1,'p_statement_expr','150070001-150070018.py',231),
+  ('statement -> ifblock','statement',1,'p_statement_expr','150070001-150070018.py',232),
+  ('ifblock -> justifblock','ifblock',1,'p_ifblock','150070001-150070018.py',238),
+  ('ifblock -> justifblock elseblock','ifblock',2,'p_ifblock','150070001-150070018.py',239),
+  ('justifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE','justifblock',7,'p_if','150070001-150070018.py',247),
+  ('justifblock -> IF LPAREN conditional RPAREN statement','justifblock',5,'p_if','150070001-150070018.py',248),
+  ('elseblock -> ELSE LBRACE fbody RBRACE','elseblock',4,'p_else','150070001-150070018.py',257),
+  ('elseblock -> ELSE statement','elseblock',2,'p_else','150070001-150070018.py',258),
+  ('whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE','whileblock',7,'p_while','150070001-150070018.py',266),
+  ('conditional -> CS','conditional',1,'p_conditional','150070001-150070018.py',271),
+  ('conditional -> conditional LESSTHANEQ conditional','conditional',3,'p_conditional','150070001-150070018.py',272),
+  ('conditional -> conditional GREATERTHANEQ conditional','conditional',3,'p_conditional','150070001-150070018.py',273),
+  ('conditional -> conditional UNEQUAL conditional','conditional',3,'p_conditional','150070001-150070018.py',274),
+  ('conditional -> conditional EQUALCHECK conditional','conditional',3,'p_conditional','150070001-150070018.py',275),
+  ('conditional -> conditional LESSTHAN conditional','conditional',3,'p_conditional','150070001-150070018.py',276),
+  ('conditional -> conditional GREATERTHAN conditional','conditional',3,'p_conditional','150070001-150070018.py',277),
+  ('CS -> expression','CS',1,'p_cs','150070001-150070018.py',296),
+  ('CS -> NOT LPAREN expression RPAREN','CS',4,'p_cs','150070001-150070018.py',297),
+  ('declaration -> TYPE dlist1 SEMICOLON','declaration',3,'p_declaration1','150070001-150070018.py',305),
+  ('dlist1 -> NAME','dlist1',1,'p_dlistname','150070001-150070018.py',311),
+  ('dlist1 -> NAME COMMA dlist1','dlist1',3,'p_dlistname','150070001-150070018.py',312),
+  ('dlist1 -> specialvar','dlist1',1,'p_dlistpointer','150070001-150070018.py',319),
+  ('dlist1 -> specialvar COMMA dlist1','dlist1',3,'p_dlistpointer','150070001-150070018.py',320),
+  ('specialvar -> TIMES specialvar','specialvar',2,'p_specialvar','150070001-150070018.py',327),
+  ('specialvar -> TIMES NAME','specialvar',2,'p_specialvar','150070001-150070018.py',328),
+  ('assignment -> assignment_base SEMICOLON','assignment',2,'p_assignment','150070001-150070018.py',333),
+  ('assignment_base -> TIMES pointervar EQUALS expression','assignment_base',4,'p_assignment_base_pointer','150070001-150070018.py',342),
+  ('assignment_base -> NAME EQUALS expression','assignment_base',3,'p_assignment_base_pointer','150070001-150070018.py',343),
+  ('expression -> expression PLUS expression','expression',3,'p_expression1','150070001-150070018.py',363),
+  ('expression -> expression MINUS expression','expression',3,'p_expression1','150070001-150070018.py',364),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression1','150070001-150070018.py',365),
+  ('expression -> expression TIMES expression','expression',3,'p_expression_mul','150070001-150070018.py',382),
+  ('expression -> MINUS expression','expression',2,'p_expression_uminus','150070001-150070018.py',390),
+  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_paren','150070001-150070018.py',397),
+  ('expression -> NUMBER','expression',1,'p_expression_base_number','150070001-150070018.py',403),
+  ('expression -> pointervar','expression',1,'p_expression_base_pointer','150070001-150070018.py',409),
+  ('pointervar -> TIMES pointervar','pointervar',2,'p_pointervar1','150070001-150070018.py',416),
+  ('pointervar -> ADDROF pointervar','pointervar',2,'p_pointervar2','150070001-150070018.py',422),
+  ('pointervar -> NAME','pointervar',1,'p_pointervar3','150070001-150070018.py',429),
 ]
