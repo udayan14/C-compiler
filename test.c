@@ -13,7 +13,13 @@
     	if(*f==6)
     		*rygtdhg = 6;
     	else
+    	{
+    		while(*p<0)
+    		{
+    			p=q;
+    		}
     		* ef = a-5;
+    	}
     }
     
     

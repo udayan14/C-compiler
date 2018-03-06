@@ -201,7 +201,7 @@ def p_function(p):
 	else:
 		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
 		oldstdout = sys.stdout
-		sys.stdout = open(output_f,'w')		
+		sys.stdout = open(output_f,'w+')		
 		p[6].printit(0)
 		sys.stdout.close()
 		sys.stdout = oldstdout

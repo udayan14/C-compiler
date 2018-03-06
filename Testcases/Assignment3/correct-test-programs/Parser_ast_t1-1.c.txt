@@ -1,0 +1,10 @@
+ASGN
+(
+	DEREF
+	(
+		VAR(year)
+	)
+	,
+	CONST(1990)
+)
+
