@@ -50,12 +50,19 @@ WHILE
 	,
 	ASGN
 	(
+<<<<<<< HEAD
 		DEREF
 		(
 			VAR(a)
 		)
 		,
 		MUL
+=======
+	)
+	THEN
+	(
+		ASGN
+>>>>>>> ec239f2afa4da8407ee989d56f565b109d4030d9
 		(
 			DEREF
 			(
@@ -83,7 +90,45 @@ WHILE
 	(
 		DEREF
 		(
+<<<<<<< HEAD
 			VAR(a)
+=======
+			WHILE
+			(
+				LT
+				(
+					DEREF
+					(
+						VAR(p)
+					)
+					,
+					CONST(0)
+				)
+				,
+				ASGN
+				(
+					VAR(p)
+					,
+					VAR(q)
+				)
+
+			)
+			ASGN
+			(
+				DEREF
+				(
+					VAR(ef)
+				)
+				,
+				MINUS
+				(
+					VAR(a)
+					,
+					CONST(5)
+				)
+			)
+
+>>>>>>> ec239f2afa4da8407ee989d56f565b109d4030d9
 		)
 	)
 	THEN
