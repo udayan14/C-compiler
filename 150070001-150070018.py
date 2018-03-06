@@ -122,6 +122,30 @@ class AST:
 			printhelper(",",i+1)
 			self.l[1].printit(i+1)
 			printhelper(")",i)
+
+		elif(self.Type == "ITE"):
+			printhelper("IF",i)
+			printhelper("(",i)
+			self.l[0].printit(i+1)
+			printhelper(")",i)
+			printhelper("THEN",i)
+			printhelper("(",i)
+			self.l[1].printit(i+1)
+			printhelper(")",i)
+			printhelper("ELSE",i)
+			printhelper("(",i)
+			self.l[2].printit(i+1)
+			printhelper(")",i)	
+
+		elif(self.Type == "IF"):
+			printhelper("IF",i)
+			printhelper("(",i)
+			self.l[0].printit(i+1)
+			printhelper(")",i)
+			printhelper("THEN",i)
+			printhelper("(",i)
+			self.l[1].printit(i+1)
+			printhelper(")",i)	
 		elif(self.Type == "PLUS" or self.Type == "MINUS" or self.Type == "MUL" or self.Type == "DIV" or self.Type == "ASGN" or self.Type == "LTE" or self.Type == "GTE" or self.Type == "GT" or self.Type == "LT" or self.Type == "EQ" or self.Type == "UNEQ" ):
 			printhelper(self.Type,i)
 			printhelper("(",i)
@@ -240,32 +264,43 @@ def p_statement_expr(p):
 	"""
 	p[0] = p[1]
 
-def p_unmatchedstatement_expr(p):
+def p_unmatchedstatement_expr1(p):
 	"""
 	unmatchedstatement : IF LPAREN conditional RPAREN allstatement
 				| IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
-				| IF LPAREN conditional RPAREN LBRACE fbody RBRACE
 				| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
 	"""
 	if len(p) == 6:
 		p[0] = AST("IF","",[p[3],p[5]])
+	elif len(p) == 10:
+		p[0] = AST("ITE","",[p[3],p[6],p[9]])
 	else:
-		p[0] = AST("IF","",[p[3],p[6]])
+		p[0] = AST("ITE","",[p[3],p[5],p[7]])
 
+def p_unmatchedstatement_expr2(p):
+	"""
+	unmatchedstatement : IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+	"""
+	p[0] = AST("IF","",[p[3],p[6]])
 
-def p_ifblock(p):
+def p_ifblock1(p):
 	"""
 	ifblock : IF LPAREN conditional RPAREN statement ELSE statement
-			| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
 			| IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
 			| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
 	"""
-	if len(p) == 6:
-		p[0] = AST("IF","",[p[3],p[5]])
+	if len(p) == 8:
+		p[0] = AST("ITE","",[p[3],p[5],p[7]])
+	elif len(p) == 10:
+		p[0] = AST("ITE","",[p[3],p[5],p[8]])
 	else:
-		p[0] = AST("IF","",[p[3],p[7]])
+		p[0] = AST("ITE","",[p[3],p[6],p[10]])
 
-
+def p_ifblock2(p):
+	"""
+	ifblock : IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+	"""
+	p[0] = AST("ITE","",[p[3],p[6],p[9]])
 def p_while(p):
 	"""
 	whileblock : WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE

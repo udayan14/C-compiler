@@ -18,3 +18,116 @@ ASGN
 	VAR(b)
 )
 
+IF
+(
+	LT
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		DEREF
+		(
+			VAR(b)
+		)
+	)
+)
+THEN
+(
+	ASGN
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		CONST(3)
+	)
+
+)
+ELSE
+(
+	IF
+	(
+		LTE
+		(
+			MUL
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				DEREF
+				(
+					VAR(b)
+				)
+			)
+			,
+			DEREF
+			(
+				VAR(c)
+			)
+		)
+	)
+	THEN
+	(
+		ASGN
+		(
+			DEREF
+			(
+				VAR(h)
+			)
+			,
+			CONST(5)
+		)
+
+	)
+	ELSE
+	(
+		IF
+		(
+			EQ
+			(
+				DEREF
+				(
+					VAR(f)
+				)
+				,
+				CONST(6)
+			)
+		)
+		THEN
+		(
+			ASGN
+			(
+				DEREF
+				(
+					VAR(rygtdhg)
+				)
+				,
+				CONST(6)
+			)
+
+		)
+		ELSE
+		(
+			ASGN
+			(
+				DEREF
+				(
+					VAR(ef)
+				)
+				,
+				MINUS
+				(
+					VAR(a)
+					,
+					CONST(5)
+				)
+			)
+
+		)
+	)
+)
