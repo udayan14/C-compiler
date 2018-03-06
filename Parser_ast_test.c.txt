@@ -50,26 +50,6 @@ ELSE
 (
 	IF
 	(
-		LTE
-		(
-			MUL
-			(
-				DEREF
-				(
-					VAR(a)
-				)
-				,
-				DEREF
-				(
-					VAR(b)
-				)
-			)
-			,
-			DEREF
-			(
-				VAR(c)
-			)
-		)
 	)
 	THEN
 	(
@@ -113,6 +93,26 @@ ELSE
 		)
 		ELSE
 		(
+			WHILE
+			(
+				LT
+				(
+					DEREF
+					(
+						VAR(p)
+					)
+					,
+					CONST(0)
+				)
+				,
+				ASGN
+				(
+					VAR(p)
+					,
+					VAR(q)
+				)
+
+			)
 			ASGN
 			(
 				DEREF

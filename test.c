@@ -6,7 +6,7 @@
     {
     	*a = 3;
     } 
-    else if(*a**b<= *c)
+    else if(*a & *b<= *c)
     	*h = 5;
     else
     {
