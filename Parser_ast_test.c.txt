@@ -35,6 +35,19 @@ IF
 )
 THEN
 (
+)
+WHILE
+(
+	GT
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		CONST(12324124234)
+	)
+	,
 	ASGN
 	(
 		DEREF
@@ -42,92 +55,38 @@ THEN
 			VAR(a)
 		)
 		,
-		CONST(3)
+		MUL
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			CONST(2)
+		)
 	)
 
 )
-ELSE
+WHILE
 (
+	LT
+	(
+		DEREF
+		(
+			VAR(c)
+		)
+		,
+		CONST(12312)
+	)
+	,
 	IF
 	(
-		LTE
+		DEREF
 		(
-			MUL
-			(
-				DEREF
-				(
-					VAR(a)
-				)
-				,
-				DEREF
-				(
-					VAR(b)
-				)
-			)
-			,
-			DEREF
-			(
-				VAR(c)
-			)
+			VAR(a)
 		)
 	)
 	THEN
 	(
-		ASGN
-		(
-			DEREF
-			(
-				VAR(h)
-			)
-			,
-			CONST(5)
-		)
-
-	)
-	ELSE
-	(
-		IF
-		(
-			EQ
-			(
-				DEREF
-				(
-					VAR(f)
-				)
-				,
-				CONST(6)
-			)
-		)
-		THEN
-		(
-			ASGN
-			(
-				DEREF
-				(
-					VAR(rygtdhg)
-				)
-				,
-				CONST(6)
-			)
-
-		)
-		ELSE
-		(
-			ASGN
-			(
-				DEREF
-				(
-					VAR(ef)
-				)
-				,
-				MINUS
-				(
-					VAR(a)
-					,
-					CONST(5)
-				)
-			)
-
-		)
 	)
 )

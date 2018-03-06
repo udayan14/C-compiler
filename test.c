@@ -2,19 +2,17 @@
 {
     *c = x ;
     *a = b;
-    if(*a < *b)
-    {
-    	*a = 3;
-    } 
-    else if(*a**b<= *c)
-    	*h = 5;
-    else
-    {
-    	if(*f==6)
-    		*rygtdhg = 6;
-    	else
-    		* ef = a-5;
-    }
+    if(*a < *b);
+
+    while(*a > 12324124234)
+        *a = *a * 2;
+
+    while(*c < 12312)
+        if(*a){
+
+        }
+
+
     
     
     

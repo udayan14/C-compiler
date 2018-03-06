@@ -12,6 +12,7 @@ is_error = 0
 main_found = 0
 assignment_error = 0
 return_error = 0
+counter = 0
 tokens = (
 	'NUMBER',
 	'TYPE',
@@ -106,6 +107,9 @@ class AST:
 
 		if(self.Type == "CONST"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
+
+		elif(self.Type == "DUMMY" or self.Type == "DECL"):
+			pass
 		elif(self.Type == "VAR"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
 
@@ -159,7 +163,7 @@ class AST:
 			if(not self.l):
 				pass
 			else:
-				for j in range(len(self.l)-1,-1,-1):
+				for j in range(0,len(self.l)):
 					self.l[j].printit(i)
 					if(j!=0):
 						# print("")
@@ -167,6 +171,57 @@ class AST:
 
 	def appendchild(self,ast):
 		self.l.append(ast)
+
+	def getcode(self):
+		if self.Type == "PLUS":
+			return self.l[0].getcode() + "+" + self.l[1].getcode()
+		elif self.Type == "MINUS":
+			return self.l[0].getcode() + "-" + self.l[1].getcode()
+		elif self.Type == "MUL":
+			return self.l[0].getcode() + "*" + self.l[1].getcode()
+		elif self.Type == "DIV":
+			return self.l[0].getcode() + "/" + self.l[1].getcode()
+		elif self.Type == "ASGN":
+			return self.l[0].getcode() + "=" + self.l[1].getcode()
+		elif self.Type == "LTE":
+			return self.l[0].getcode() + "<=" + self.l[1].getcode()
+		elif self.Type == "GTE":
+			return self.l[0].getcode() + ">=" + self.l[1].getcode()
+		elif self.Type == "LT":
+			return self.l[0].getcode() + "<" + self.l[1].getcode()
+		elif self.Type == "GT":
+			return self.l[0].getcode() + ">" + self.l[1].getcode()
+		elif self.Type == "EQ":
+			return self.l[0].getcode() + "==" + self.l[1].getcode()
+		elif self.Type == "UNEQ":
+			return self.l[0].getcode() + "!=" + self.l[1].getcode()
+		elif self.Type == "LTE":
+			return self.l[0].getcode() + "<=" + self.l[1].getcode()
+		elif self.Type == "CONST":
+			return str(self.Name)
+		elif self.Type == "VAR":
+			return str(self.Name)
+		elif self.Type == "DEREF":
+			return "*" + self.l[0].getcode()
+		elif self.Type == "UMINUS":
+			return "-" + self.l[0].getcode()
+		elif self.Type == "ADDR":
+			return "&" + self.l[0].getcode()
+		elif self.Type == "NOT":
+			return "!" + self.l[0].getcode()
+	def printCFG(self):
+		global counter
+		print("<bb '{0}''>".format(counter))
+		counter = counter + 1
+		for i in self.l:
+			
+
+	def isjump(self):
+		if self.Type in ["IF","ITE","WHILE"]:
+			return True
+		else:
+			return False
+
 
 def printhelper(s,i):
 	print("\t"*i + s)
@@ -223,10 +278,14 @@ def p_function(p):
 		is_error = 1
 		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
-		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
+		output_f1 = "Parser_ast_" + str(sys.argv[1]) + ".txt"
+		output_f1 = "Control_flow_graph_" + str(sys.argv[1]) + ".txt"
 		oldstdout = sys.stdout
-		sys.stdout = open(output_f,'w')		
+		sys.stdout = open(output_f1,'w')
+		p[6].l.reverse()		
 		p[6].printit(0)
+		sys.stdout = open(output_f2,'w')
+		p[6].printCFG()
 		sys.stdout.close()
 		sys.stdout = oldstdout
 
@@ -299,13 +358,22 @@ def p_ifblock1(p):
 def p_ifblock2(p):
 	"""
 	ifblock : IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+			| IF LPAREN conditional RPAREN SEMICOLON
+			| IF LPAREN conditional RPAREN LBRACE RBRACE 
 	"""
-	p[0] = AST("ITE","",[p[3],p[6],p[9]])
+	if len(p)==10:
+		p[0] = AST("ITE","",[p[3],p[6],p[9]])
+	else:
+		p[0] = AST("IF","",[p[3],AST("DUMMY","",[])])
 def p_while(p):
 	"""
 	whileblock : WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+				| WHILE LPAREN conditional RPAREN statement
 	"""
-	p[0] = AST("WHILE","",[p[3],p[6]])
+	if len(p) == 7:
+		p[0] = AST("WHILE","",[p[3],p[6]])
+	else:
+		p[0] = AST("WHILE","",[p[3],p[5]])
 def p_conditional(p):
 	"""
 	conditional : CS
