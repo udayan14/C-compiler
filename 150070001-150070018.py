@@ -208,8 +208,8 @@ def p_function(p):
 
 def p_fbody(p):
 	"""
-	fbody : statement
-			| statement fbody
+	fbody : allstatement
+			| allstatement fbody
 	"""
 	if(len(p)==2):
 		p[0] = [p[1]]
@@ -224,6 +224,13 @@ def p_fbody(p):
 			# p[0].append(p[1])
 			p[0].appendchild(p[1])
 
+def p_allstatement_expr(p):
+	"""
+	allstatement : statement
+				| unmatchedstatement
+	"""
+	p[0] = p[1]
+
 def p_statement_expr(p):
 	"""
 	statement : assignment
@@ -233,34 +240,32 @@ def p_statement_expr(p):
 	"""
 	p[0] = p[1]
 
-def p_ifblock(p):
+def p_unmatchedstatement_expr(p):
 	"""
-	ifblock : justifblock
-			| justifblock elseblock
-	"""
-	if len(p) == 2:
-		p[0] = p[1]
-	else:
-		p[0] = AST("IF ELSE","",[p[1].l[0],p[1].l[1],p[2]])
-def p_if(p):
-	"""
-	justifblock : IF LPAREN conditional RPAREN LBRACE fbody RBRACE
-			| IF LPAREN conditional RPAREN statement
+	unmatchedstatement : IF LPAREN conditional RPAREN allstatement
+				| IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+				| IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+				| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
 	"""
 	if len(p) == 6:
 		p[0] = AST("IF","",[p[3],p[5]])
 	else:
 		p[0] = AST("IF","",[p[3],p[6]])
 
-def p_else(p):
+
+def p_ifblock(p):
 	"""
-	elseblock : ELSE LBRACE fbody RBRACE
-			| ELSE statement	
+	ifblock : IF LPAREN conditional RPAREN statement ELSE statement
+			| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+			| IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+			| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
 	"""
-	if len(p) == 3:
-		p[0] = AST("ELSE","",[p[2]])
+	if len(p) == 6:
+		p[0] = AST("IF","",[p[3],p[5]])
 	else:
-		p[0] = AST("ELSE","",[p[3]])
+		p[0] = AST("IF","",[p[3],p[7]])
+
+
 def p_while(p):
 	"""
 	whileblock : WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE

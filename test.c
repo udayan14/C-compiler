@@ -2,14 +2,20 @@
 {
     *c = x ;
     *a = b;
-    if(*a < *b){
+    if(*a < *b)
+    {
     	*a = 3;
-    } else if(*a < *c){
-    	*a = *b + 4;
-    }
+    } 
+    else if(*a**b<= *c)
+    	*h = 5;
     else
-    	*a = 324234;
+    {
+    	if(*f==6)
+    		*rygtdhg = 6;
+    	else
+    		* ef = a-5;
+    }
     
-    	
+    
     
 }
