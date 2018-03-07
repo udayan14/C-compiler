@@ -12,13 +12,12 @@ is_error = 0
 main_found = 0
 assignment_error = 0
 return_error = 0
-counter = 0
 tokens = (
 	'NUMBER',
 	'TYPE',
 	'SEMICOLON', 'EQUALS', 'COMMA',
 	'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
-	'ANDOPERATOR',
+	'ANDOPERATOR','OROPERATOR','ADDROF',
 	'NAME',
 	'PLUS','MINUS','TIMES','DIVIDE',
 	'WHILE','IF','ELSE',
@@ -41,7 +40,9 @@ t_RPAREN = r'\)'
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
-t_ANDOPERATOR = r'&'
+t_ADDROF = r'&'
+t_ANDOPERATOR = "&&"
+t_OROPERATOR = r'\|\|'
 t_TIMES = r'\*'
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -85,6 +86,7 @@ def t_error(t):
 	t.lexer.skip(1)
 
 precedence = (
+	('left','OROPERATOR'),
 	('left','ANDOPERATOR'),
 	('left','EQUALCHECK','UNEQUAL'),
 	('left','LESSTHANEQ','LESSTHAN','GREATERTHANEQ','GREATERTHAN'),
@@ -108,9 +110,6 @@ class AST:
 
 		if(self.Type == "CONST"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
-
-		elif(self.Type == "DUMMY" or self.Type == "DECL"):
-			pass
 		elif(self.Type == "VAR"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
 
@@ -121,37 +120,37 @@ class AST:
 			printhelper(")",i)
 
 		elif(self.Type == "WHILE"):
-			printhelper(self.Type,i)
-			printhelper("(",i)
+			printhelper(self.Type+"(",i)
+			# printhelper("(",i)
 			self.l[0].printit(i+1)
 			printhelper(",",i+1)
 			self.l[1].printit(i+1)
 			printhelper(")",i)
 
 		elif(self.Type == "ITE"):
-			printhelper("IF",i)
-			printhelper("(",i)
+			printhelper("IF(",i)
+			# printhelper("(",i)
 			self.l[0].printit(i+1)
-			printhelper(")",i)
-			printhelper("THEN",i)
-			printhelper("(",i)
+			printhelper(",",i+1)
+			# printhelper("THEN",i)
+			# printhelper("(",i)
 			self.l[1].printit(i+1)
-			printhelper(")",i)
-			printhelper("ELSE",i)
-			printhelper("(",i)
+			# printhelper(")",i)
+			printhelper(",",i+1)
+			# printhelper("(",i)
 			self.l[2].printit(i+1)
 			printhelper(")",i)	
 
 		elif(self.Type == "IF"):
-			printhelper("IF",i)
-			printhelper("(",i)
+			printhelper("IF"+"(",i)
+			# printhelper("(",i)
 			self.l[0].printit(i+1)
-			printhelper(")",i)
-			printhelper("THEN",i)
-			printhelper("(",i)
+			# printhelper(")",i)
+			printhelper(",",i+1)
+			# printhelper("(",i)
 			self.l[1].printit(i+1)
 			printhelper(")",i)	
-		elif(self.Type == "PLUS" or self.Type == "MINUS" or self.Type == "MUL" or self.Type == "DIV" or self.Type == "ASGN" or self.Type == "LTE" or self.Type == "GTE" or self.Type == "GT" or self.Type == "LT" or self.Type == "EQ" or self.Type == "UNEQ" ):
+		elif(self.Type == "PLUS" or self.Type == "MINUS" or self.Type == "MUL" or self.Type == "DIV" or self.Type == "ASGN" or self.Type == "LE" or self.Type == "GE" or self.Type == "GT" or self.Type == "LT" or self.Type == "EQ" or self.Type == "NE" or self.Type == "AND" or self.Type == "OR"):
 			printhelper(self.Type,i)
 			printhelper("(",i)
 			self.l[0].printit(i+1)
@@ -164,7 +163,7 @@ class AST:
 			if(not self.l):
 				pass
 			else:
-				for j in range(0,len(self.l)):
+				for j in range(len(self.l)-1,-1,-1):
 					self.l[j].printit(i)
 					if(j!=0):
 						# print("")
@@ -184,9 +183,9 @@ class AST:
 			return self.l[0].getcode() + "/" + self.l[1].getcode()
 		elif self.Type == "ASGN":
 			return self.l[0].getcode() + "=" + self.l[1].getcode()
-		elif self.Type == "LTE":
+		elif self.Type == "LE":
 			return self.l[0].getcode() + "<=" + self.l[1].getcode()
-		elif self.Type == "GTE":
+		elif self.Type == "GE":
 			return self.l[0].getcode() + ">=" + self.l[1].getcode()
 		elif self.Type == "LT":
 			return self.l[0].getcode() + "<" + self.l[1].getcode()
@@ -194,10 +193,8 @@ class AST:
 			return self.l[0].getcode() + ">" + self.l[1].getcode()
 		elif self.Type == "EQ":
 			return self.l[0].getcode() + "==" + self.l[1].getcode()
-		elif self.Type == "UNEQ":
+		elif self.Type == "NE":
 			return self.l[0].getcode() + "!=" + self.l[1].getcode()
-		elif self.Type == "LTE":
-			return self.l[0].getcode() + "<=" + self.l[1].getcode()
 		elif self.Type == "CONST":
 			return str(self.Name)
 		elif self.Type == "VAR":
@@ -210,19 +207,6 @@ class AST:
 			return "&" + self.l[0].getcode()
 		elif self.Type == "NOT":
 			return "!" + self.l[0].getcode()
-	# def printCFG(self):
-	# 	global counter
-	# 	print("<bb '{0}''>".format(counter))
-	# 	counter = counter + 1
-	# 	for i in self.l:
-			
-
-	# def isjump(self):
-	# 	if self.Type in ["IF","ITE","WHILE"]:
-	# 		return True
-	# 	else:
-	# 		return False
-
 
 def printhelper(s,i):
 	print("\t"*i + s)
@@ -279,14 +263,10 @@ def p_function(p):
 		is_error = 1
 		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
-		output_f1 = "Parser_ast_" + str(sys.argv[1]) + ".txt"
-		output_f2 = "Control_flow_graph_" + str(sys.argv[1]) + ".txt"
+		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
 		oldstdout = sys.stdout
-		sys.stdout = open(output_f1,'w')
-		p[6].l.reverse()
+		sys.stdout = open(output_f,'w+')		
 		p[6].printit(0)
-		sys.stdout = open(output_f2,'w')
-		# p[6].printCFG()
 		sys.stdout.close()
 		sys.stdout = oldstdout
 
@@ -359,49 +339,71 @@ def p_ifblock1(p):
 def p_ifblock2(p):
 	"""
 	ifblock : IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
-			| IF LPAREN conditional RPAREN SEMICOLON
-			| IF LPAREN conditional RPAREN LBRACE RBRACE 
 	"""
-	if len(p)==10:
-		p[0] = AST("ITE","",[p[3],p[6],p[9]])
-	else:
-		p[0] = AST("IF","",[p[3],AST("DUMMY","",[])])
+	p[0] = AST("ITE","",[p[3],p[6],p[9]])
 def p_while(p):
 	"""
 	whileblock : WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
-				| WHILE LPAREN conditional RPAREN statement
 	"""
-	if len(p) == 7:
-		p[0] = AST("WHILE","",[p[3],p[6]])
-	else:
-		p[0] = AST("WHILE","",[p[3],p[5]])
+	p[0] = AST("WHILE","",[p[3],p[6]])
+
 def p_conditional(p):
 	"""
-	conditional : CS LESSTHANEQ CS
-				| CS GREATERTHANEQ CS
-				| CS UNEQUAL CS
-				| CS EQUALCHECK CS
-				| CS LESSTHAN CS
-				| CS GREATERTHAN CS
-				| CS ANDOPERATOR CS
+	conditional : conditionbase
+				| conditional LESSTHANEQ conditional
+				| conditional GREATERTHANEQ conditional
+				| conditional UNEQUAL conditional
+				| conditional EQUALCHECK conditional
+				| conditional LESSTHAN conditional
+				| conditional GREATERTHAN conditional
+				| conditional ANDOPERATOR conditional
+				| conditional OROPERATOR conditional
 	"""
 	if len(p)==2:
 		p[0] = p[1]
 	else:
 		if p[2] == '<=':
-			p[0] = AST("LTE","",[p[1],p[3]])
+			p[0] = AST("LE","",[p[1],p[3]])
 		elif p[2] == '>=':
-			p[0] = AST("GTE","",[p[1],p[3]])
+			p[0] = AST("GE","",[p[1],p[3]])
 		elif p[2] == '!=':
-			p[0] = AST("UNEQ","",[p[1],p[3]])
+			p[0] = AST("NE","",[p[1],p[3]])
 		elif p[2] == '==':
 			p[0] = AST("EQ","",[p[1],p[3]])
 		elif p[2] == '<':
 			p[0] = AST("LT","",[p[1],p[3]])
 		elif p[2] == '>':
 			p[0] = AST("GT","",[p[1],p[3]])
-		elif p[2] == '&':
+		elif p[2] == '&&':
 			p[0] = AST("AND","",[p[1],p[3]])
+		elif p[2] == '||':
+			p[0] = AST("OR","",[p[1],p[3]])
+
+def p_conditionbase(p):
+	"""
+	conditionbase : CS LESSTHANEQ CS
+				| CS GREATERTHANEQ CS
+				| CS UNEQUAL CS
+				| CS EQUALCHECK CS
+				| CS LESSTHAN CS
+				| CS GREATERTHAN CS
+	"""
+	if len(p)==2:
+		p[0] = p[1]
+	else:
+		if p[2] == '<=':
+			p[0] = AST("LE","",[p[1],p[3]])
+		elif p[2] == '>=':
+			p[0] = AST("GE","",[p[1],p[3]])
+		elif p[2] == '!=':
+			p[0] = AST("NE","",[p[1],p[3]])
+		elif p[2] == '==':
+			p[0] = AST("EQ","",[p[1],p[3]])
+		elif p[2] == '<':
+			p[0] = AST("LT","",[p[1],p[3]])
+		elif p[2] == '>':
+			p[0] = AST("GT","",[p[1],p[3]])
+
 def p_cs(p):
 	"""
 	CS : expression
@@ -530,7 +532,7 @@ def p_pointervar1(p):
 	p[0] = AST("DEREF","",[p[2]])
 def p_pointervar2(p):
 	"""
-	pointervar : ANDOPERATOR pointervar %prec ADDROF
+	pointervar : ADDROF pointervar 
 	"""
 	p[0] = ["ADDR",p[2]]
 	p[0] = AST("ADDR","",[p[2]])
