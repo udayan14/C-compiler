@@ -44,79 +44,56 @@ IF(
 		)
 	)
 
-	,
-	ASGN
-	(
-		DEREF
+	IF(
+		EQ
 		(
 			VAR(a)
-		)
-		,
-		MUL
-		(
-			DEREF
-			(
-				VAR(a)
-			)
 			,
-			CONST(2)
-		)
-	)
-
-)
-WHILE(
-	GT
-	(
-		DEREF
-		(
-			VAR(a)
+			CONST(6)
 		)
 		,
-		CONST(12324124234)
-	)
-	,
-	ASGN
-	(
-		DEREF
+		ASGN
 		(
-			VAR(a)
-		)
-		,
-		MUL
-		(
-			DEREF
-			(
-				VAR(a)
-			)
+			VAR(q)
 			,
-			CONST(2)
-		)
-	)
-
-)
-WHILE(
-	LT
-	(
-		DEREF
-		(
-			VAR(c)
-		)
-		,
-		CONST(12312)
-	)
-	,
-	ASGN
-	(
-		DEREF
-		(
-			VAR(a)
-		)
-		,
-		PLUS
-		(
 			VAR(p)
+		)
+
+		,
+		ASGN
+		(
+			DEREF
+			(
+				VAR(p)
+			)
 			,
-			CONST(1)
+			VAR(q)
+		)
+
+	)
+	ASGN
+	(
+		VAR(p)
+		,
+		VAR(q)
+	)
+
+	,
+	ASGN
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		MUL
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			CONST(2)
 		)
 	)
 

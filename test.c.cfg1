@@ -1,0 +1,27 @@
+
+<bb 1>
+*c=x
+*a=b
+
+<bb 2>
+t0 = 4==5
+if(t0) goto <bb 3>
+else goto <bb 4>
+
+<bb 3>
+*a=*a*2
+
+<bb 4>
+t1 = a==6
+if(t1) goto <bb 5>
+else goto <bb 6>
+
+<bb 5>
+q=p
+
+<bb 6>
+*p=q
+p=q
+
+<bb 7>
+*a=*a*2

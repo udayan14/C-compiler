@@ -12,6 +12,9 @@ is_error = 0
 main_found = 0
 assignment_error = 0
 return_error = 0
+counter1 = 1
+counter2 = 0
+previous = 1
 tokens = (
 	'NUMBER',
 	'TYPE',
@@ -195,6 +198,10 @@ class AST:
 			return self.l[0].getcode() + "==" + self.l[1].getcode()
 		elif self.Type == "NE":
 			return self.l[0].getcode() + "!=" + self.l[1].getcode()
+		elif self.Type == "AND":
+			return self.l[0].getcode() + "&&" + self.l[1].getcode()
+		elif self.Type == "OR":
+			return self.l[0].getcode() + "||" + self.l[1].getcode()
 		elif self.Type == "CONST":
 			return str(self.Name)
 		elif self.Type == "VAR":
@@ -207,6 +214,64 @@ class AST:
 			return "&" + self.l[0].getcode()
 		elif self.Type == "NOT":
 			return "!" + self.l[0].getcode()
+
+	def isjump(self):
+		if self.Type in ["IF","ITE","WHILE"]:
+			return True
+		return False
+
+	def printCFG(self, statenumber):
+
+		global counter1,counter2,previous
+		if(self.Type == "FUNC"):
+			if(not self.l):
+				pass
+			else:
+				x = 1
+				for j in range(len(self.l)-1,-1,-1):
+					x = self.l[j].printCFG(x)
+					if(j!=0):
+						# print("")
+						pass
+		elif(self.Type == "IF"):
+			previous = 1
+			print("")
+			print("<bb {0}>".format(statenumber))
+			counter1 = counter1 + 1
+			print("t{0} = ".format(counter2) + self.l[0].getcode())
+			print("if(t{0}) goto <bb {1}>".format(counter2,counter1))
+			print("else goto <bb {0}>".format(counter1))
+			print("")
+			counter2 = counter2 + 1
+			self.l[1].printCFG(counter1)
+			print("<bb {0}>".format(counter1))
+
+		elif(self.Type == "ITE"):
+			previous = 1
+			print("")
+			print("<bb {0}>".format(statenumber))
+			statenumber = statenumber + 1
+			counter1 = counter1 + 1
+			print("t{0} = ".format(counter2) + self.l[0].getcode())
+			print("if(t{0}) goto <bb {1}>".format(counter2,counter1))
+			print("else goto <bb {0}>".format(counter1 + 1))
+			counter2 = counter2 + 1
+			# counter1 = counter1 + 2
+			self.l[1].printCFG(counter1-2)
+			previous = 1
+			self.l[2].printCFG(counter1-1)
+
+		else:
+			if previous==1:
+				print("")
+				print("<bb {0}>".format(statenumber))
+				counter1 = counter1 + 1
+				print(self.getcode())
+				previous = 0
+				return statenumber + 1
+			else:
+				print(self.getcode())
+				return statenumber
 
 def printhelper(s,i):
 	print("\t"*i + s)
@@ -263,10 +328,13 @@ def p_function(p):
 		is_error = 1
 		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
-		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt"
+		output_f1 = str(sys.argv[1]) + ".ast1"
+		output_f2 = str(sys.argv[1]) + ".cfg1"
 		oldstdout = sys.stdout
-		sys.stdout = open(output_f,'w+')		
+		sys.stdout = open(output_f1,'w+')		
 		p[6].printit(0)
+		sys.stdout = open(output_f2,'w+')
+		p[6].printCFG(1)
 		sys.stdout.close()
 		sys.stdout = oldstdout
 
