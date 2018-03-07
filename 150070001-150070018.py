@@ -280,13 +280,9 @@ def p_function(p):
 		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
 		output_f1 = "Parser_ast_" + str(sys.argv[1]) + ".txt"
-		output_f1 = "Control_flow_graph_" + str(sys.argv[1]) + ".txt"
+		output_f2 = "Control_flow_graph_" + str(sys.argv[1]) + ".txt"
 		oldstdout = sys.stdout
-<<<<<<< HEAD
-		sys.stdout = open(output_f1,'w')
-		p[6].l.reverse()		
-=======		
->>>>>>> ec239f2afa4da8407ee989d56f565b109d4030d9
+		p[6].l.reverse()
 		p[6].printit(0)
 		sys.stdout = open(output_f2,'w')
 		p[6].printCFG()
