@@ -1,0 +1,20 @@
+ASGN
+(
+	DEREF
+	(
+		VAR(i1)
+	)
+	,
+	CONST(3)
+)
+
+ASGN
+(
+	DEREF
+	(
+		VAR(f1)
+	)
+	,
+	CONST(2)
+)
+

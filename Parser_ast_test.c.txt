@@ -18,3 +18,120 @@ ASGN
 	VAR(b)
 )
 
+IF
+(
+	LT
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		DEREF
+		(
+			VAR(b)
+		)
+	)
+)
+THEN
+(
+)
+WHILE
+(
+	GT
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		CONST(12324124234)
+	)
+	,
+	ASGN
+	(
+<<<<<<< HEAD
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		MUL
+=======
+	)
+	THEN
+	(
+		ASGN
+>>>>>>> ec239f2afa4da8407ee989d56f565b109d4030d9
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			CONST(2)
+		)
+	)
+
+)
+WHILE
+(
+	LT
+	(
+		DEREF
+		(
+			VAR(c)
+		)
+		,
+		CONST(12312)
+	)
+	,
+	IF
+	(
+		DEREF
+		(
+<<<<<<< HEAD
+			VAR(a)
+=======
+			WHILE
+			(
+				LT
+				(
+					DEREF
+					(
+						VAR(p)
+					)
+					,
+					CONST(0)
+				)
+				,
+				ASGN
+				(
+					VAR(p)
+					,
+					VAR(q)
+				)
+
+			)
+			ASGN
+			(
+				DEREF
+				(
+					VAR(ef)
+				)
+				,
+				MINUS
+				(
+					VAR(a)
+					,
+					CONST(5)
+				)
+			)
+
+>>>>>>> ec239f2afa4da8407ee989d56f565b109d4030d9
+		)
+	)
+	THEN
+	(
+	)
+)

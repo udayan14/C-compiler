@@ -1,0 +1,90 @@
+ASGN
+(
+	DEREF
+	(
+		VAR(n)
+	)
+	,
+	CONST(3)
+)
+
+IF
+(
+)
+THEN
+(
+	ASGN
+	(
+		DEREF
+		(
+			VAR(cntr)
+		)
+		,
+		CONST(1)
+	)
+
+)
+ELSE
+(
+	ASGN
+	(
+		DEREF
+		(
+			VAR(cntr)
+		)
+		,
+		CONST(2)
+	)
+
+)
+IF
+(
+	EQ
+	(
+		MUL
+		(
+			DIV
+			(
+				DEREF
+				(
+					VAR(n)
+				)
+				,
+				CONST(2)
+			)
+			,
+			CONST(2)
+		)
+		,
+		DEREF
+		(
+			VAR(n)
+		)
+	)
+)
+THEN
+(
+	ASGN
+	(
+		DEREF
+		(
+			VAR(cntr)
+		)
+		,
+		CONST(3)
+	)
+
+)
+ELSE
+(
+	ASGN
+	(
+		DEREF
+		(
+			VAR(cntr)
+		)
+		,
+		CONST(4)
+	)
+
+)
