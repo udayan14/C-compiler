@@ -10,7 +10,7 @@ void main(){
 	pu=&u;
 	pv=&v;
 	if(*pl<4){
-		*pv=1;
+		*pv=2;
 		while(*pt<50){
 			*pa=10;
 		}
