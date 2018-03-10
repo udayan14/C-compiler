@@ -19,11 +19,17 @@ ASGN
 )
 
 IF(
-	EQ
+	GT
 	(
-		CONST(4)
+		DEREF
+		(
+			VAR(a)
+		)
 		,
-		CONST(5)
+		DEREF
+		(
+			VAR(b)
+		)
 	)
 	,
 	ASGN
@@ -35,49 +41,132 @@ IF(
 		,
 		MUL
 		(
+			CONST(3)
+			,
 			DEREF
 			(
-				VAR(a)
+				VAR(b)
 			)
-			,
-			CONST(2)
 		)
 	)
 
 	IF(
-		EQ
+		LT
 		(
-			VAR(a)
+			CONST(1)
 			,
-			CONST(6)
+			CONST(2)
 		)
-		,
-		ASGN
-		(
-			VAR(q)
-			,
-			VAR(p)
-		)
-
 		,
 		ASGN
 		(
 			DEREF
 			(
-				VAR(p)
+				VAR(a)
 			)
 			,
-			VAR(q)
+			PLUS
+			(
+				CONST(2)
+				,
+				CONST(3)
+			)
 		)
 
-	)
-	ASGN
-	(
-		VAR(p)
-		,
-		VAR(q)
-	)
+		ASGN
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			MINUS
+			(
+				CONST(3)
+				,
+				CONST(1)
+			)
+		)
 
+		,
+		IF(
+			LT
+			(
+				CONST(2)
+				,
+				CONST(3)
+			)
+			,
+			ASGN
+			(
+				DEREF
+				(
+					VAR(b)
+				)
+				,
+				PLUS
+				(
+					CONST(2)
+					,
+					CONST(3)
+				)
+			)
+
+			ASGN
+			(
+				DEREF
+				(
+					VAR(b)
+				)
+				,
+				MINUS
+				(
+					CONST(3)
+					,
+					CONST(1)
+				)
+			)
+
+			,
+			ASGN
+			(
+				DEREF
+				(
+					VAR(c)
+				)
+				,
+				CONST(1)
+			)
+
+			WHILE(
+				LT
+				(
+					CONST(1)
+					,
+					CONST(2)
+				)
+				,
+				ASGN
+				(
+					DEREF
+					(
+						VAR(a)
+					)
+					,
+					PLUS
+					(
+						DEREF
+						(
+							VAR(a)
+						)
+						,
+						CONST(1)
+					)
+				)
+
+			)
+		)
+	)
 	,
 	ASGN
 	(
@@ -86,15 +175,33 @@ IF(
 			VAR(a)
 		)
 		,
-		MUL
+		PLUS
 		(
 			DEREF
 			(
-				VAR(a)
+				VAR(b)
 			)
 			,
-			CONST(2)
+			CONST(1)
 		)
 	)
 
 )
+ASGN
+(
+	DEREF
+	(
+		VAR(a)
+	)
+	,
+	MINUS
+	(
+		DEREF
+		(
+			VAR(b)
+		)
+		,
+		CONST(1)
+	)
+)
+

@@ -101,6 +101,64 @@ precedence = (
 
 	)
 
+class node:
+		def __init__(self,Type,l):
+			self.Type = Type
+			self.l = l
+			self.code = []
+
+		def addCode(self,c):
+			self.code.append(c)
+
+class CFG:
+	def __init__(self):
+		self.end = node("End",[])		
+		self.insertnode = node("Normal",[self.end])
+		self.head = node("Start",[self.insertnode])
+
+	def insert(self,ast):
+		if(ast.Type == "FUNC"):
+			if(not ast.l):
+				pass
+			else:
+				for j in range(len(ast.l)-1,-1,-1):
+					self.insert(ast.l[j])
+
+		elif (not ast.isjump()):
+			self.insertnode.addCode(ast.getcode())
+
+		elif (ast.Type == "ITE"):
+			c_common = node("Normal",self.insertnode.l)
+			c_true = node("Normal",[])
+			c_false = node("Normal",[])
+			c_if = node("ITE",[c_true,c_false,c_common])
+			c_if.addCode(ast.l[0].getcode())
+			self.insertnode.l = [c_if]
+			self.insertnode = c_true
+			self.insert(ast.l[1])
+			self.insertnode = c_false
+			self.insert(ast.l[2])
+			self.insertnode = c_common
+
+		elif(ast.Type == "IF"):
+			c_common = node("Normal",self.insertnode.l)
+			c_true = node("Normal",[])
+			c_if = node("IF",[c_true,c_common])
+			c_if.addCode(ast.l[0].getcode())
+			self.insertnode.l = [c_if]
+			self.insertnode = c_true
+			self.insert(ast.l[1])
+			self.insertnode = c_common
+
+		elif(ast.Type == "WHILE"):
+			c_common = node("Normal",self.insertnode.l)
+			c_true = node("Normal",[])
+			c_while = node("WHILE",[c_true,c_common])
+			c_while.addCode(ast.l[0].getcode())
+			self.insertnode.l = [c_while]
+			self.insertnode = c_true
+			self.insert(ast.l[1])
+			self.insertnode = c_common
 
 class AST:
 	def __init__(self,Type,Name,l):
@@ -215,64 +273,47 @@ class AST:
 		elif self.Type == "NOT":
 			return "!" + self.l[0].getcode()
 
+
 	def isjump(self):
 		if self.Type in ["IF","ITE","WHILE"]:
 			return True
 		return False
 
-	def printCFG(self, statenumber):
+def printCFG(ast):
+	cfg = CFG()
+	cfg.insert(ast)
+	# cfg.giveNumbering(cfg.head,0)
+	printCFGhelper(cfg.head)
 
-		global counter1,counter2,previous
-		if(self.Type == "FUNC"):
-			if(not self.l):
-				pass
-			else:
-				x = 1
-				for j in range(len(self.l)-1,-1,-1):
-					x = self.l[j].printCFG(x)
-					if(j!=0):
-						# print("")
-						pass
-		elif(self.Type == "IF"):
-			previous = 1
-			print("")
-			print("<bb {0}>".format(statenumber))
-			counter1 = counter1 + 1
-			print("t{0} = ".format(counter2) + self.l[0].getcode())
-			print("if(t{0}) goto <bb {1}>".format(counter2,counter1))
-			print("else goto <bb {0}>".format(counter1))
-			print("")
-			counter2 = counter2 + 1
-			self.l[1].printCFG(counter1)
-			print("<bb {0}>".format(counter1))
+# def CFG
 
-		elif(self.Type == "ITE"):
-			previous = 1
-			print("")
-			print("<bb {0}>".format(statenumber))
-			statenumber = statenumber + 1
-			counter1 = counter1 + 1
-			print("t{0} = ".format(counter2) + self.l[0].getcode())
-			print("if(t{0}) goto <bb {1}>".format(counter2,counter1))
-			print("else goto <bb {0}>".format(counter1 + 1))
-			counter2 = counter2 + 1
-			# counter1 = counter1 + 2
-			self.l[1].printCFG(counter1-2)
-			previous = 1
-			self.l[2].printCFG(counter1-1)
-
-		else:
-			if previous==1:
-				print("")
-				print("<bb {0}>".format(statenumber))
-				counter1 = counter1 + 1
-				print(self.getcode())
-				previous = 0
-				return statenumber + 1
-			else:
-				print(self.getcode())
-				return statenumber
-
+def printCFGhelper(n1):
+	if n1.Type == "End":
+		pass
+	elif n1.Type == "Start":
+		printCFGhelper(n1.l[0])
+	elif n1.Type == "Normal":
+		for c in n1.code:
+			print(c)
+		if n1.l != []:	
+			printCFGhelper(n1.l[0])
+	elif n1.Type == "ITE":
+		for c in n1.code:
+			print(c)
+		printCFGhelper(n1.l[0])
+		printCFGhelper(n1.l[1])
+		printCFGhelper(n1.l[2])
+	elif n1.Type == "IF":
+		for c in n1.code:
+			print(c)
+		printCFGhelper(n1.l[0])
+		printCFGhelper(n1.l[1])
+	elif n1.Type == "WHILE":			
+		for c in n1.code:
+			print(c)
+		printCFGhelper(n1.l[0])
+		printCFGhelper(n1.l[1])
+	
 def printhelper(s,i):
 	print("\t"*i + s)
 
@@ -334,7 +375,7 @@ def p_function(p):
 		sys.stdout = open(output_f1,'w+')		
 		p[6].printit(0)
 		sys.stdout = open(output_f2,'w+')
-		p[6].printCFG(1)
+		printCFG(p[6])
 		sys.stdout.close()
 		sys.stdout = oldstdout
 
