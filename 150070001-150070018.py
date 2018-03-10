@@ -12,8 +12,7 @@ is_error = 0
 main_found = 0
 assignment_error = 0
 return_error = 0
-counter1 = 1
-counter2 = 0
+temp = 0
 previous = 1
 tokens = (
 	'NUMBER',
@@ -106,7 +105,7 @@ class node:
 			self.Type = Type
 			self.l = l
 			self.code = []
-
+			self.num = -1
 		def addCode(self,c):
 			self.code.append(c)
 
@@ -282,37 +281,80 @@ class AST:
 def printCFG(ast):
 	cfg = CFG()
 	cfg.insert(ast)
-	# cfg.giveNumbering(cfg.head,0)
-	printCFGhelper(cfg.head)
+	giveNumbering(cfg.head,0)
+	printCFGhelper(cfg.head,-1)
 
-# def CFG
 
-def printCFGhelper(n1):
+#####TODO  how many numbers in one node?##############
+def giveNumbering(n,i):
+	if n.Type in ["Start","Normal","End"]:
+		n.num = i
+		if n.l!=[]:
+			i1 = giveNumbering(n.l[0],i+1)
+			return i1
+		return i+1
+	elif n.Type == "ITE":
+		n.num = i
+		i1 = giveNumbering(n.l[0],i+1)
+		i2 = giveNumbering(n.l[1],i1)
+		i3 = giveNumbering(n.l[2],i2)
+		return i3
+	elif n.Type == "IF":
+		n.num = i
+		i1 = giveNumbering(n.l[0],i+1)
+		i2 = giveNumbering(n.l[1],i1)
+		return i2
+	elif n.Type == "WHILE":
+		n.num = i
+		i1 = giveNumbering(n.l[0],i+1)
+		i2 = giveNumbering(n.l[1],i1)
+		return i2
+
+#######################
+def printCFGhelper(n1,nextstatenum):
 	if n1.Type == "End":
+		print("<bb {0}>".format(n1.num))
+		print("End")
 		pass
 	elif n1.Type == "Start":
-		printCFGhelper(n1.l[0])
+		printCFGhelper(n1.l[0],nextstatenum)
 	elif n1.Type == "Normal":
+		print("<bb {0}>".format(n1.num))
 		for c in n1.code:
 			print(c)
+		if nextstatenum > 0:
+			print("goto <bb {0}>".format(nextstatenum))
+			print("")
+		else:
+			print("goto <bb {0}>".format(n1.num+1))
+			print("")
 		if n1.l != []:	
-			printCFGhelper(n1.l[0])
+			printCFGhelper(n1.l[0],nextstatenum)
 	elif n1.Type == "ITE":
-		for c in n1.code:
-			print(c)
-		printCFGhelper(n1.l[0])
-		printCFGhelper(n1.l[1])
-		printCFGhelper(n1.l[2])
+		print("<bb {0}>".format(n1.num))
+		print("t{0} = {1}".format(temp,n1.code[0]))
+		print("if (t{0}) goto <bb {1}>".format(temp,n1.l[0].num))
+		print("else goto <bb {0}>".format(n1.l[1].num))
+		print("")
+		printCFGhelper(n1.l[0],n1.l[2].num)
+		printCFGhelper(n1.l[1],n1.l[2].num)
+		printCFGhelper(n1.l[2],nextstatenum)
 	elif n1.Type == "IF":
-		for c in n1.code:
-			print(c)
-		printCFGhelper(n1.l[0])
-		printCFGhelper(n1.l[1])
-	elif n1.Type == "WHILE":			
-		for c in n1.code:
-			print(c)
-		printCFGhelper(n1.l[0])
-		printCFGhelper(n1.l[1])
+		print("<bb {0}>".format(n1.num))
+		print("t{0} = {1}".format(temp,n1.code[0]))
+		print("if (t{0}) goto <bb {1}>".format(temp,n1.l[0].num))
+		print("else goto <bb {0}>".format(n1.l[1].num))
+		print("")
+		printCFGhelper(n1.l[0],n1.l[1].num)
+		printCFGhelper(n1.l[1],nextstatenum)
+	elif n1.Type == "WHILE":
+		print("<bb {0}>".format(n1.num))			
+		print("t{0} = {1}".format(temp,n1.code[0]))
+		print("if (t{0}) goto <bb {1}>".format(temp,n1.l[0].num))
+		print("else goto <bb {0}>".format(n1.l[1].num))
+		print("")
+		printCFGhelper(n1.l[0],n1.num)
+		printCFGhelper(n1.l[1],nextstatenum)
 	
 def printhelper(s,i):
 	print("\t"*i + s)
