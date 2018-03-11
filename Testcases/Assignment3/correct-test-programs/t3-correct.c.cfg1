@@ -13,7 +13,7 @@ else goto <bb 4>
 
 <bb 3>
 *cntr=1
-goto <bb 13>
+goto <bb 11>
 
 <bb 4>
 goto <bb 5>
@@ -25,36 +25,3 @@ t5 = t4==*year
 if (t5) goto <bb 6>
 else goto <bb 7>
 
-<bb 6>
-*cntr=2
-goto <bb 12>
-
-<bb 7>
-goto <bb 8>
-
-<bb 8>
-t6 = *year/4
-t7 = t6*4
-t8 = t7==*year
-if (t8) goto <bb 9>
-else goto <bb 10>
-
-<bb 9>
-*cntr=3
-goto <bb 11>
-
-<bb 10>
-*cntr=4
-goto <bb 11>
-
-<bb 11>
-goto <bb 12>
-
-<bb 12>
-goto <bb 13>
-
-<bb 13>
-goto <bb 14>
-
-<bb 14>
-End

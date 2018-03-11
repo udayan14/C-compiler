@@ -125,6 +125,7 @@ class node:
 			self.code = []
 			self.num = -1
 			self.num1 = -1
+			self.blank = 0
 		def addCode(self,c):
 			self.code.append(c)
 
@@ -359,8 +360,28 @@ class AST:
 def printCFG(ast):
 	cfg = CFG()
 	cfg.insert(ast)
+	cleanup(cfg.head)
 	giveNumbering(cfg.head,0)
 	printCFGhelper(cfg.head,-1)
+
+def cleanup(n):
+	if n.Type == "ITE":
+		c = n.l[2]
+		if not c.code:
+			c.blank = 1
+		cleanup(n.l[0])
+		cleanup(n.l[1])
+	elif n.Type == "IF" or n.Type == "WHILE":
+		c = n.l[1]
+		if not c.code:
+			c.blank = 1
+		cleanup(n.l[0])
+	elif not n.l:
+		return
+	else:
+		cleanup(n.l[0])
+
+  
 
 def printList(l): 
 	if not l:
@@ -369,6 +390,11 @@ def printList(l):
 		print(i)
 
 def giveNumbering(n,i):
+	if n.blank==1:
+		if not n.l:
+			i1 = giveNumbering(n.l[0],i)
+			return i1
+		return i
 	if n.Type in ["Start","Normal","End"]:
 		n.num = i
 		if n.l!=[]:
@@ -404,7 +430,9 @@ def printCFGhelper(n1,nextstatenum):
 
 	elif n1.Type == "Normal":
 		print("<bb {0}>".format(n1.num))
-		# print("{0} has child {1}".format(n1.num,n1.l))	
+		# print("{0} has child {1}".format(n1.num,n1.l))
+		if n1.blank == 1:
+			print("BLANK")	
 		for c in n1.code:
 			printList(c)
 		if n1.l:			

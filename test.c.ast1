@@ -8,25 +8,7 @@ ASGN
 	VAR(x)
 )
 
-ASGN
-(
-	DEREF
-	(
-		VAR(a)
-	)
-	,
-	PLUS
-	(
-		DEREF
-		(
-			VAR(b)
-		)
-		,
-		CONST(4)
-	)
-)
-
-WHILE(
+IF(
 	GT
 	(
 		DEREF
@@ -34,7 +16,10 @@ WHILE(
 			VAR(a)
 		)
 		,
-		CONST(3)
+		DEREF
+		(
+			VAR(b)
+		)
 	)
 	,
 	ASGN
@@ -44,44 +29,25 @@ WHILE(
 			VAR(a)
 		)
 		,
-		PLUS
-		(
-			DEREF
-			(
-				VAR(a)
-			)
-			,
-			CONST(1)
-		)
+		CONST(3)
 	)
 
-)
-ASGN
-(
-	DEREF
+	ASGN
 	(
-		VAR(a)
-	)
-	,
-	DIV
-	(
-		MUL
-		(
-			DEREF
-			(
-				VAR(a)
-			)
-			,
-			DEREF
-			(
-				VAR(a)
-			)
-		)
-		,
 		DEREF
 		(
-			VAR(gcd)
+			VAR(b)
+		)
+		,
+		MINUS
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			CONST(9)
 		)
 	)
-)
 
+)
