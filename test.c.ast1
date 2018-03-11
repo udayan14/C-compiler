@@ -26,25 +26,15 @@ ASGN
 	)
 )
 
-IF(
-	AND
+WHILE(
+	GT
 	(
-		GT
+		DEREF
 		(
-			DEREF
-			(
-				VAR(a)
-			)
-			,
-			CONST(3)
+			VAR(a)
 		)
 		,
-		LT
-		(
-			CONST(2)
-			,
-			CONST(4)
-		)
+		CONST(3)
 	)
 	,
 	ASGN
@@ -61,19 +51,37 @@ IF(
 				VAR(a)
 			)
 			,
-			MUL
-			(
-				DEREF
-				(
-					VAR(b)
-				)
-				,
-				DEREF
-				(
-					VAR(c)
-				)
-			)
+			CONST(1)
 		)
 	)
 
 )
+ASGN
+(
+	DEREF
+	(
+		VAR(a)
+	)
+	,
+	DIV
+	(
+		MUL
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			DEREF
+			(
+				VAR(a)
+			)
+		)
+		,
+		DEREF
+		(
+			VAR(gcd)
+		)
+	)
+)
+

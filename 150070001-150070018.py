@@ -287,7 +287,7 @@ class AST:
 
 	def getcode(self):
 		global temp
-		if self.Type in ["PLUS","MINUS","MUL","DIVIDE","AND","OR","LE","GE","LT","GT","EQ","NE"]:
+		if self.Type in ["PLUS","MINUS","MUL","DIV","AND","OR","LE","GE","LT","GT","EQ","NE"]:
 			if self.l[0].isSimple():
 				if self.l[1].isSimple():
 					l = ["t{0} = {1}{2}{3}".format(temp,self.l[0].getcode(),getSymbol[self.Type],self.l[1].getcode())]
