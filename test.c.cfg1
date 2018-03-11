@@ -1,24 +1,24 @@
 <bb 1>
 *c=x
-*a=b
+t0 = *b+4
+*a=t0
 goto <bb 2>
 
 <bb 2>
-t0 = *a>*b
-if (t0) goto <bb 3>
+t1 = *a>3
+t2 = 2<4
+t3 = t1&&t2
+if (t3) goto <bb 3>
 else goto <bb 4>
 
 <bb 3>
-*a=3**b
-goto <bb 5>
+t4 = *b**c
+t5 = *a+t4
+*a=t5
+goto <bb 4>
 
 <bb 4>
-*a=*b+1
 goto <bb 5>
 
 <bb 5>
-*a=*b-1
-goto <bb 6>
-
-<bb 6>
 End
