@@ -458,40 +458,50 @@ def giveNumbering(n,i):
 			i3 = giveNumbering(n.middle,i2)
 			return i3
 		elif n.left!=-1 and n.right!=-1:
+			# print(n.Type + "calling " + n.left.Type + " " + n.right.Type)
 			i1 = giveNumbering(n.left,i+1)
 			i2 = giveNumbering(n.right,i1)
 			return i2
 		elif n.middle!=-1 and n.right!=-1:
+			# print(n.Type + "calling " +  n.middle.Type + " " + n.right.Type)
 			i1 = giveNumbering(n.right,i+1)
 			i2 = giveNumbering(n.middle,i1)
 			return i2
 		elif n.left!=-1 and n.middle!=-1:
+			# print(n.Type + "calling " + n.left.Type + " " + n.middle.Type )
 			i1 = giveNumbering(n.left,i+1)
 			i2 = giveNumbering(n.middle,i1)
 			return i2
 		elif n.right!=-1:
+			# print(n.Type + "calling " + n.right.Type)
 			i1 = giveNumbering(n.right,i+1)
 			return i1
 		elif n.left!=-1:
+			# print(n.Type + "calling " + n.left.Type)
 			i1 = giveNumbering(n.left,i+1)
 			return i1
 		elif n.middle!=-1:
-
+			# print(n.Type + "calling " + n.middle.Type)
 			i1 = giveNumbering(n.middle,i+1)
 			return i1
 	elif n.Type == "IF" or n.Type == "WHILE":
 		# print("sdbsnbson")
 		n.num = i
 		if n.left!=-1 and n.middle!=-1:
+			# print(n.Type + "calling " + n.left.Type + " " + n.middle.Type )
 			i1 = giveNumbering(n.left,i+1)
 			i2 = giveNumbering(n.middle,i1)
 			return i2
 		elif n.left!=-1:
+			# print(n.Type + "calling " + n.left.Type)
 			i1 = giveNumbering(n.left,i+1)
 			return i1
-		else:
+		elif n.middle!=-1:
+			# print(n.Type + "calling " + n.middle.Type)
 			i1 = giveNumbering(n.middle,i+1)
 			return i1
+		else:
+			return i
 
 
 

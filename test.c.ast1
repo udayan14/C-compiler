@@ -9,21 +9,14 @@ ASGN
 )
 
 IF(
-	LT
+	GE
 	(
-		CONST(5)
-		,
-		CONST(6)
-	)
-	,
-	,
-	IF(
-		LT
+		DEREF
 		(
-			CONST(5)
-			,
-			CONST(6)
+			VAR(a)
 		)
 		,
+		CONST(1)
 	)
+	,
 )
