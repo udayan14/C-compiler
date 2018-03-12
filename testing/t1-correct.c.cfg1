@@ -1,3 +1,7 @@
+Startcalling Normal
+Normalcalling ITE
+sgrfh
+ITEcalling Normal End Normal
 <bb 1>
 a = &e
 b = &f
@@ -15,9 +19,9 @@ t3 = *a + 1
 *a = t3
 goto <bb 5>
 
-<bb 3>
-t3 = *a + 1
-*a = t3
+<bb 4>
+t4 = *b + 1
+*b = t4
 goto <bb 5>
 
 <bb 5>

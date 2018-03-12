@@ -1,3 +1,6 @@
+Startcalling Normal
+Normalcalling WHILE
+Normalcalling End
 <bb 1>
 a = &e
 b = &f

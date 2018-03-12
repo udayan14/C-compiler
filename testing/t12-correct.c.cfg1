@@ -1,3 +1,8 @@
+Startcalling Normal
+Normalcalling WHILE
+Normalcalling ITE
+sgrfh
+ITEcalling Normal Normal Normal
 <bb 1>
 pl = &l
 pt = &t
@@ -27,8 +32,8 @@ else goto <bb 6>
 *pa = 40
 goto <bb 7>
 
-<bb 5>
-*pa = 40
+<bb 6>
+*pb = 0
 goto <bb 7>
 
 <bb 7>

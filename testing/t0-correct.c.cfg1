@@ -1,3 +1,5 @@
+Startcalling Normal
+Normalcalling WHILE
 <bb 1>
 a = &e
 goto <bb 2>

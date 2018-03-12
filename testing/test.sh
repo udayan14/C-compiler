@@ -3,7 +3,7 @@ find . -name '*.c' | while read line; do
 	echo ${NAME}
 	 python3 better.py ${NAME};
 	./Parser ${NAME};
-	 diff -bB ${NAME}.ast ${NAME}.ast1 
+	 diff -bB ${NAME}.cfg ${NAME}.cfg1 
 	 echo   
 
 done

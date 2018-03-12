@@ -1,3 +1,9 @@
+Startcalling Normal
+Normalcalling ITE
+sgrfh
+ITEcalling Normal ITE Normal
+sgrfh
+ITEcalling Normal End Normal
 <bb 1>
 n = &a
 cntr = &b
@@ -15,8 +21,8 @@ else goto <bb 4>
 *cntr = 1
 goto <bb 5>
 
-<bb 3>
-*cntr = 1
+<bb 4>
+*cntr = 2
 goto <bb 5>
 
 <bb 5>
@@ -30,8 +36,8 @@ else goto <bb 7>
 *cntr = 3
 goto <bb 8>
 
-<bb 6>
-*cntr = 3
+<bb 7>
+*cntr = 4
 goto <bb 8>
 
 <bb 8>

@@ -444,15 +444,15 @@ def giveNumbering(n,i):
 	if n.Type in ["Start","Normal","End"]:
 		n.num = i
 		if (not(n.left==-1 and n.middle==-1 and n.right==-1)):
-			print(n.Type + "calling " + n.left.Type)
+			# print(n.Type + "calling " + n.left.Type)
 			i1 = giveNumbering(n.left,i+1)
 			return i1
 		return i+1
 	elif n.Type == "ITE":
-		print("sgrfh")
+		# print("sgrfh")
 		n.num = i
 		if n.left!=-1 and n.middle!=-1 and n.right!=-1:
-			print(n.Type + "calling " + n.left.Type + " " + n.middle.Type + " " + n.right.Type)
+			# print(n.Type + "calling " + n.left.Type + " " + n.middle.Type + " " + n.right.Type)
 			i1 = giveNumbering(n.left,i+1)
 			i2 = giveNumbering(n.right,i1)
 			i3 = giveNumbering(n.middle,i2)
