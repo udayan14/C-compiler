@@ -12,7 +12,7 @@ goto <bb 2>
 <bb 2>
 t0 = *pl < 4
 if(t0) goto <bb 3>
-else goto <bb 10>
+else goto <bb 8>
 
 <bb 3>
 *pv = 1
@@ -28,19 +28,13 @@ else goto <bb 6>
 goto <bb 4>
 
 <bb 6>
-goto <bb 7>
+t2 = *pu < 25
+if(t2) goto <bb 7>
+else goto <bb 8>
 
 <bb 7>
-t2 = *pu < 25
-if(t2) goto <bb 8>
-else goto <bb 9>
+*pm = 30
+goto <bb 6>
 
 <bb 8>
-*pm = 30
-goto <bb 7>
-
-<bb 9>
-goto <bb 10>
-
-<bb 10>
 End

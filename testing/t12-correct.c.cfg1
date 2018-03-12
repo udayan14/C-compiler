@@ -27,8 +27,8 @@ else goto <bb 6>
 *pa = 40
 goto <bb 7>
 
-<bb 6>
-*pb = 0
+<bb 5>
+*pa = 40
 goto <bb 7>
 
 <bb 7>

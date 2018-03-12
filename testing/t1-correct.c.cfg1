@@ -15,9 +15,9 @@ t3 = *a + 1
 *a = t3
 goto <bb 5>
 
-<bb 4>
-t4 = *b + 1
-*b = t4
+<bb 3>
+t3 = *a + 1
+*a = t3
 goto <bb 5>
 
 <bb 5>

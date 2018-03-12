@@ -1,3 +1,5 @@
+Startcalling Normal
+Normalcalling IF
 <bb 1>
 t0 = *b / 12121
 t1 = *a + t0
@@ -10,30 +12,10 @@ goto <bb 2>
 <bb 2>
 t5 = 3 - 2
 t6 = 1 * *a
-t7 = t6 * *B
-t8 = t5 - t7
-t9 = *a > t8
-if(t9) goto <bb 3>
-else goto <bb 6>
+t7 = t5 - t6
+t8 = *a > t7
+if(t8) goto <bb 3>
+else goto <bb 3>
 
 <bb 3>
-t10 = *b / *b
-*b = t10
-goto <bb 4>
-
-<bb 4>
-t11 = *a > *b
-t12 = 8 + *a
-t13 = t12 - *b
-t14 = *b < t13
-t15 = t11 && t14
-if(t15) goto <bb 5>
-else goto <bb 6>
-
-<bb 5>
-t16 = *a + 1
-*a = t16
-goto <bb 4>
-
-<bb 6>
 End

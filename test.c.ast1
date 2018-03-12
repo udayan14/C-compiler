@@ -64,105 +64,15 @@ IF(
 			,
 			MUL
 			(
-				MUL
-				(
-					CONST(1)
-					,
-					DEREF
-					(
-						VAR(a)
-					)
-				)
+				CONST(1)
 				,
 				DEREF
 				(
-					VAR(B)
+					VAR(a)
 				)
 			)
 		)
 	)
 	,
-	ASGN
-	(
-		DEREF
-		(
-			VAR(b)
-		)
-		,
-		DIV
-		(
-			DEREF
-			(
-				VAR(b)
-			)
-			,
-			DEREF
-			(
-				VAR(b)
-			)
-		)
-	)
-
-	WHILE(
-		AND
-		(
-			GT
-			(
-				DEREF
-				(
-					VAR(a)
-				)
-				,
-				DEREF
-				(
-					VAR(b)
-				)
-			)
-			,
-			LT
-			(
-				DEREF
-				(
-					VAR(b)
-				)
-				,
-				MINUS
-				(
-					PLUS
-					(
-						CONST(8)
-						,
-						DEREF
-						(
-							VAR(a)
-						)
-					)
-					,
-					DEREF
-					(
-						VAR(b)
-					)
-				)
-			)
-		)
-		,
-		ASGN
-		(
-			DEREF
-			(
-				VAR(a)
-			)
-			,
-			PLUS
-			(
-				DEREF
-				(
-					VAR(a)
-				)
-				,
-				CONST(1)
-			)
-		)
-
-	)
+	,
 )

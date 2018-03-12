@@ -15,8 +15,8 @@ else goto <bb 4>
 *cntr = 1
 goto <bb 5>
 
-<bb 4>
-*cntr = 2
+<bb 3>
+*cntr = 1
 goto <bb 5>
 
 <bb 5>
@@ -30,8 +30,8 @@ else goto <bb 7>
 *cntr = 3
 goto <bb 8>
 
-<bb 7>
-*cntr = 4
+<bb 6>
+*cntr = 3
 goto <bb 8>
 
 <bb 8>

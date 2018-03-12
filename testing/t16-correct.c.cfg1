@@ -27,26 +27,8 @@ else goto <bb 6>
 *pa = 40
 goto <bb 11>
 
-<bb 6>
-t2 = *pm < 30
-if(t2) goto <bb 7>
-else goto <bb 8>
-
-<bb 7>
-*pt = 0
-goto <bb 11>
-
-<bb 8>
-t3 = *pu < 30
-if(t3) goto <bb 9>
-else goto <bb 10>
-
-<bb 9>
-*pv = 0
-goto <bb 11>
-
-<bb 10>
-*pb = 0
+<bb 5>
+*pa = 40
 goto <bb 11>
 
 <bb 11>

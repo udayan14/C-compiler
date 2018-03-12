@@ -17,12 +17,13 @@ else goto <bb 5>
 *iftmp0 = 1
 goto <bb 7>
 
-<bb 5>
-*iftmp0 = 0
-goto <bb 7>
+<bb 3>
+t1 = *f2 != 0
+if(t1) goto <bb 4>
+else goto <bb 5>
 
-<bb 6>
-*iftmp0 = 0
+<bb 4>
+*iftmp0 = 1
 goto <bb 7>
 
 <bb 7>
