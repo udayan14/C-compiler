@@ -88,8 +88,6 @@ def t_error(t):
 	t.lexer.skip(1)
 
 precedence = (
-	
-	
 	('left','OROPERATOR'),
 	('left','ANDOPERATOR'),
 	('left','EQUALCHECK','UNEQUAL'),
@@ -99,8 +97,7 @@ precedence = (
 	('right','VALOF','ADDROF'),
 	('right','NOT'),
 	('right','UMINUS'),
-	('nonassoc', 'BLANK'),
-	('nonassoc', 'IFX'),
+
 	)
 
 getSymbol = {
@@ -696,9 +693,9 @@ def p_function(p):
 
 def p_fbody(p):
 	"""
-	fbody : allstatement %prec IFX
-			| allstatement fbody %prec IFX
-			| %prec BLANK
+	fbody : allstatement
+			| allstatement fbody
+			|
 	"""
 	if(len(p)==1):
 		p[0] = AST("BLANKBODY","",[])
