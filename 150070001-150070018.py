@@ -101,19 +101,19 @@ precedence = (
 	)
 
 getSymbol = {
-	"PLUS" : "+" ,
-	"MINUS": "-" ,
-	"MUL"  : "*" ,
-	"DIV"  : "/" ,
-	"ASGN" : "=" ,
-	"LE"   : "<=",
-	"GE"   : ">=",
-	"LT"   : "<" ,
-	"GT"   : ">" ,
-	"EQ"   : "==",
-	"NE"   : "!=",
-	"AND"  : "&&",
-	"OR"   : "||",
+	"PLUS" : " + " ,
+	"MINUS": " - " ,
+	"MUL"  : " * " ,
+	"DIV"  : " / " ,
+	"ASGN" : " = " ,
+	"LE"   : " <= ",
+	"GE"   : " >= ",
+	"LT"   : " < " ,
+	"GT"   : " > " ,
+	"EQ"   : " == ",
+	"NE"   : " != ",
+	"AND"  : " && ",
+	"OR"   : " || ",
 }
 
 
@@ -463,7 +463,7 @@ def printCFGhelper(n1,nextstatenum):
 	elif n1.Type == "ITE":
 		print("<bb {0}>".format(n1.num))
 		printList(n1.code[0])
-		print("if (t{0}) goto <bb {1}>".format(n1.num1,n1.l[0].num))
+		print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.l[0].num))
 		print("else goto <bb {0}>".format(n1.l[1].num))
 		print("")
 		if len(n1.l)==3:
@@ -476,7 +476,7 @@ def printCFGhelper(n1,nextstatenum):
 	elif n1.Type == "IF":
 		print("<bb {0}>".format(n1.num))
 		printList(n1.code[0])
-		print("if (t{0}) goto <bb {1}>".format(n1.num1,n1.l[0].num))
+		print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.l[0].num))
 		if len(n1.l)==2:
 			print("else goto <bb {0}>".format(n1.l[1].num))
 		else:
@@ -490,7 +490,7 @@ def printCFGhelper(n1,nextstatenum):
 	elif n1.Type == "WHILE":
 		print("<bb {0}>".format(n1.num))			
 		printList(n1.code[0])
-		print("if (t{0}) goto <bb {1}>".format(n1.num1,n1.l[0].num))
+		print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.l[0].num))
 		if len(n1.l)==2:
 			print("else goto <bb {0}>".format(n1.l[1].num))
 		else:
@@ -500,7 +500,7 @@ def printCFGhelper(n1,nextstatenum):
 			printCFGhelper(n1.l[0],n1.num)
 			printCFGhelper(n1.l[1],nextstatenum)
 		else:
-			printCFGhelper(n1.l[0],nextstatenum)
+			printCFGhelper(n1.l[0],n1.num)
 	
 def printhelper(s,i):
 	print("\t"*i + s)
