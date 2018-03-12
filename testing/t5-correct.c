@@ -10,13 +10,10 @@ void main()
 
  
    if ( *n> 5 || 1 == 0 )
-   {
       *cntr = 1;
-   }
-   else
-   { 
+   else 
       *cntr = 2;
-   }
+ 
 
    if ( (*n/2)*2 == *n )	
       *cntr = 3;

@@ -37,34 +37,4 @@ WHILE(
 		)
 	)
 
-	WHILE(
-		LT
-		(
-			DEREF
-			(
-				VAR(b)
-			)
-			,
-			CONST(321)
-		)
-		,
-		ASGN
-		(
-			DEREF
-			(
-				VAR(t)
-			)
-			,
-			PLUS
-			(
-				DEREF
-				(
-					VAR(t)
-				)
-				,
-				CONST(1)
-			)
-		)
-
-	)
 )
