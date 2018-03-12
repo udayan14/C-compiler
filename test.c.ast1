@@ -1,13 +1,3 @@
-ASGN
-(
-	DEREF
-	(
-		VAR(a)
-	)
-	,
-	CONST(4)
-)
-
 IF(
 	LT
 	(
@@ -16,14 +6,4 @@ IF(
 		CONST(6)
 	)
 	,
-	,
-	IF(
-		LT
-		(
-			CONST(5)
-			,
-			CONST(6)
-		)
-		,
-	)
 )

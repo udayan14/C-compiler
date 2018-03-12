@@ -1,19 +1,9 @@
-Startcalling Normal
-Normalcalling ITE
-ITEcalling End IF
+Startcalling IF
+IFcalling End
 <bb 1>
-*a = 4
-goto <bb 2>
+t0 = 5 < 6
+if(t0) goto <bb 2>
+else goto <bb 2>
 
 <bb 2>
-t0 = 5 < 6
-if(t0) goto <bb 3>
-else goto <bb 3>
-
-<bb 3>
-t1 = 5 < 6
-if(t1) goto <bb 3>
-else goto <bb 3>
-
-<bb 3>
 End

@@ -428,6 +428,12 @@ def cleanup(n):
 			cleanup(n.left)
 	elif (n.left==-1 and n.right==-1 and n.middle==-1):
 		return
+	elif n.Type == "Start":
+		c = n.left
+		if not c.code:
+			if c.left.Type in ["End","IF","ITE","WHILE"]:
+				n.left = c.left
+				cleanup(n.left)
 	else:
 		cleanup(n.left)
 
