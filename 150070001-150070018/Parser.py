@@ -97,7 +97,7 @@ precedence = (
 	('right','VALOF','ADDROF'),
 	('right','NOT'),
 	('right','UMINUS'),
-
+	
 	)
 
 getSymbol = {
@@ -693,9 +693,8 @@ def p_function(p):
 
 def p_fbody(p):
 	"""
-	fbody : allstatement
-			| allstatement fbody
-			|
+	fbody : allstatement fbody
+			| 
 	"""
 	if(len(p)==1):
 		p[0] = AST("BLANKBODY","",[])
@@ -704,6 +703,10 @@ def p_fbody(p):
 		p[0] = AST("FUNC","",[p[1]])
 	elif(len(p)==3):
 		if(not p[2]):
+			p[0] = [p[1]]
+			p[0] = AST("FUNC","",[p[1]])
+		
+		elif(p[2].Type=="BLANKBODY"):
 			p[0] = [p[1]]
 			p[0] = AST("FUNC","",[p[1]])
 		else:
