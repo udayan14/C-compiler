@@ -2,10 +2,47 @@ ASGN
 (
 	DEREF
 	(
-		VAR(c)
+		VAR(a)
 	)
 	,
-	VAR(x)
+	MINUS
+	(
+		PLUS
+		(
+			PLUS
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				DIV
+				(
+					DEREF
+					(
+						VAR(b)
+					)
+					,
+					CONST(12121)
+				)
+			)
+			,
+			CONST(2123)
+		)
+		,
+		MUL
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			DEREF
+			(
+				VAR(b)
+			)
+		)
+	)
 )
 
 IF(
@@ -16,9 +53,32 @@ IF(
 			VAR(a)
 		)
 		,
-		DEREF
+		MINUS
 		(
-			VAR(b)
+			MINUS
+			(
+				CONST(3)
+				,
+				CONST(2)
+			)
+			,
+			MUL
+			(
+				MUL
+				(
+					CONST(1)
+					,
+					DEREF
+					(
+						VAR(a)
+					)
+				)
+				,
+				DEREF
+				(
+					VAR(B)
+				)
+			)
 		)
 	)
 	,
@@ -26,28 +86,83 @@ IF(
 	(
 		DEREF
 		(
-			VAR(a)
-		)
-		,
-		CONST(3)
-	)
-
-	ASGN
-	(
-		DEREF
-		(
 			VAR(b)
 		)
 		,
-		MINUS
+		DIV
+		(
+			DEREF
+			(
+				VAR(b)
+			)
+			,
+			DEREF
+			(
+				VAR(b)
+			)
+		)
+	)
+
+	WHILE(
+		AND
+		(
+			GT
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				DEREF
+				(
+					VAR(b)
+				)
+			)
+			,
+			LT
+			(
+				DEREF
+				(
+					VAR(b)
+				)
+				,
+				MINUS
+				(
+					PLUS
+					(
+						CONST(8)
+						,
+						DEREF
+						(
+							VAR(a)
+						)
+					)
+					,
+					DEREF
+					(
+						VAR(b)
+					)
+				)
+			)
+		)
+		,
+		ASGN
 		(
 			DEREF
 			(
 				VAR(a)
 			)
 			,
-			CONST(9)
+			PLUS
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				CONST(1)
+			)
 		)
-	)
 
+	)
 )
