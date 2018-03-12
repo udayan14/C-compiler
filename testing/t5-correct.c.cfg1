@@ -20,25 +20,19 @@ goto <bb 5>
 goto <bb 5>
 
 <bb 5>
-goto <bb 6>
-
-<bb 6>
 t3 = *n / 2
 t4 = t3 * 2
 t5 = t4 == *n
-if(t5) goto <bb 7>
-else goto <bb 8>
+if(t5) goto <bb 6>
+else goto <bb 7>
+
+<bb 6>
+*cntr = 3
+goto <bb 8>
 
 <bb 7>
-*cntr = 3
-goto <bb 9>
+*cntr = 4
+goto <bb 8>
 
 <bb 8>
-*cntr = 4
-goto <bb 9>
-
-<bb 9>
-goto <bb 10>
-
-<bb 10>
 End
