@@ -88,6 +88,8 @@ def t_error(t):
 	t.lexer.skip(1)
 
 precedence = (
+	
+	
 	('left','OROPERATOR'),
 	('left','ANDOPERATOR'),
 	('left','EQUALCHECK','UNEQUAL'),
@@ -97,7 +99,8 @@ precedence = (
 	('right','VALOF','ADDROF'),
 	('right','NOT'),
 	('right','UMINUS'),
-
+	('nonassoc', 'BLANK'),
+	('nonassoc', 'IFX'),
 	)
 
 getSymbol = {
@@ -603,17 +606,28 @@ def printCFGhelper(n1,nextstatenum):
 	elif n1.Type == "WHILE":
 		print("<bb {0}>".format(n1.num))			
 		printList(n1.code[0])
-		print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+		
+		# print("")
 		if (n1.left!=-1 and n1.middle!=-1):
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
 			print("else goto <bb {0}>".format(n1.middle.num))
-		else:
-			print("else goto <bb {0}>".format(nextstatenum))
-		print("")
-		if (n1.left!=-1 and n1.middle!=-1):
+			print("")
 			printCFGhelper(n1.left,n1.num)
 			printCFGhelper(n1.middle,nextstatenum)
-		else:
+		elif n1.left!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
 			printCFGhelper(n1.left,n1.num)
+		elif n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printCFGhelper(n1.middle,nextstatenum)
+		else:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,nextstatenum))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
 	
 def printhelper(s,i):
 	print("\t"*i + s)
@@ -682,9 +696,9 @@ def p_function(p):
 
 def p_fbody(p):
 	"""
-	fbody : allstatement
-			| allstatement fbody
-			|
+	fbody : allstatement %prec IFX
+			| allstatement fbody %prec IFX
+			| %prec BLANK
 	"""
 	if(len(p)==1):
 		p[0] = AST("BLANKBODY","",[])
@@ -716,6 +730,12 @@ def p_statement_expr(p):
 			| ifblock
 	"""
 	p[0] = p[1]
+
+def p_empty_statement(p):
+	"""
+	statement : SEMICOLON
+	"""
+	p[0] = AST("BLANKBODY","",[])
 
 def p_unmatchedstatement_expr1(p):
 	"""

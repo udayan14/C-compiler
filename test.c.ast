@@ -6,72 +6,14 @@ ASGN
 		VAR(a)
 	)
 	,
-	MINUS
-	(
-		PLUS
-		(
-			PLUS
-			(
-				DEREF
-				(
-					VAR(a)
-				)
-				,
-				DIV
-				(
-					DEREF
-					(
-						VAR(b)
-					)
-					,
-					CONST(12121)
-				)
-			)
-			,
-			CONST(2123)
-		)
-		,
-		MUL
-		(
-			DEREF
-			(
-				VAR(a)
-			)
-			,
-			DEREF
-			(
-				VAR(b)
-			)
-		)
-	)
+	CONST(4)
 )
 IF(
-	GT
+	LT
 	(
-		DEREF
-		(
-			VAR(a)
-		)
+		CONST(5)
 		,
-		MINUS
-		(
-			MINUS
-			(
-				CONST(3)
-				,
-				CONST(2)
-			)
-			,
-			MUL
-			(
-				CONST(1)
-				,
-				DEREF
-				(
-					VAR(a)
-				)
-			)
-		)
+		CONST(6)
 	)
 	,
 

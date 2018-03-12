@@ -1,6 +1,3 @@
-Startcalling Normal
-Normalcalling WHILE
-Normalcalling End
 <bb 1>
 pl = &l
 pt = &t
