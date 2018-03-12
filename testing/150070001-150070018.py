@@ -374,6 +374,8 @@ def cleanup(n):
 			elif c.l[0].Type in ["End","IF","ITE","WHILE"]:
 				n.l[2] = c.l[0]
 				cleanup(n.l[2])
+		else:
+			cleanup(n.l[2])
 		c = n.l[1]
 		if not c.code:
 			if c.l:
@@ -389,9 +391,12 @@ def cleanup(n):
 		if not c.code:
 			if not c.l:
 				n.l = n.l[0:1]
+
 			elif c.l[0].Type in ["End","IF","ITE","WHILE"]:
 				n.l[1] = c.l[0]
 				cleanup(n.l[1])
+		else:
+			cleanup(n.l[1])
 		c = n.l[0]
 		if not c.code:
 			if c.l:
