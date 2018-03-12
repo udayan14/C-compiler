@@ -97,7 +97,7 @@ precedence = (
 	('right','VALOF','ADDROF'),
 	('right','NOT'),
 	('right','UMINUS'),
-	
+
 	)
 
 getSymbol = {
@@ -681,8 +681,8 @@ def p_function(p):
 		is_error = 1
 		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
-		output_f1 = str(sys.argv[1]) + ".ast1"
-		output_f2 = str(sys.argv[1]) + ".cfg1"
+		output_f1 = str(sys.argv[1]) + ".ast"
+		output_f2 = str(sys.argv[1]) + ".cfg"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f1,'w+')		
 		p[6].printit(0)
@@ -693,8 +693,9 @@ def p_function(p):
 
 def p_fbody(p):
 	"""
-	fbody : allstatement fbody
-			| 
+	fbody : allstatement
+			| allstatement fbody
+			|
 	"""
 	if(len(p)==1):
 		p[0] = AST("BLANKBODY","",[])
@@ -703,10 +704,6 @@ def p_fbody(p):
 		p[0] = AST("FUNC","",[p[1]])
 	elif(len(p)==3):
 		if(not p[2]):
-			p[0] = [p[1]]
-			p[0] = AST("FUNC","",[p[1]])
-		
-		elif(p[2].Type=="BLANKBODY"):
 			p[0] = [p[1]]
 			p[0] = AST("FUNC","",[p[1]])
 		else:
