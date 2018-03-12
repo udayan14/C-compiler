@@ -9,7 +9,8 @@ ASGN
 		VAR(e)
 	)
 )
-WHILE(
+WHILE
+(
 	LE
 	(
 		DEREF

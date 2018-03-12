@@ -83,7 +83,8 @@ ASGN
 		VAR(v)
 	)
 )
-WHILE(
+WHILE
+(
 	LT
 	(
 		DEREF
@@ -94,7 +95,8 @@ WHILE(
 		CONST(4)
 	)
 	,
-	WHILE(
+	WHILE
+	(
 		LT
 		(
 			DEREF

@@ -78,7 +78,8 @@ ASGN
 	)
 )
 
-IF(
+IF
+(
 	LT
 	(
 		DEREF
@@ -100,7 +101,8 @@ IF(
 	)
 
 	,
-	IF(
+	IF
+	(
 		LT
 		(
 			DEREF
@@ -122,7 +124,8 @@ IF(
 		)
 
 		,
-		IF(
+		IF
+		(
 			LT
 			(
 				DEREF

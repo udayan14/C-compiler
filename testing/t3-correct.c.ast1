@@ -28,7 +28,8 @@ ASGN
 	CONST(1990)
 )
 
-IF(
+IF
+(
 	EQ
 	(
 		MUL
@@ -63,7 +64,8 @@ IF(
 	)
 
 	,
-	IF(
+	IF
+	(
 		EQ
 		(
 			MUL
@@ -98,7 +100,8 @@ IF(
 		)
 
 		,
-		IF(
+		IF
+		(
 			EQ
 			(
 				MUL

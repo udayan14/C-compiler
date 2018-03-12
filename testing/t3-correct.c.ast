@@ -32,7 +32,8 @@ ASGN
 	,
 	CONST(1990)
 )
-IF(
+IF
+(
 	EQ
 	(
 		MUL
@@ -66,7 +67,8 @@ IF(
 		CONST(1)
 	)
 	,
-	IF(
+	IF
+	(
 		EQ
 		(
 			MUL
@@ -100,7 +102,8 @@ IF(
 			CONST(2)
 		)
 		,
-		IF(
+		IF
+		(
 			EQ
 			(
 				MUL

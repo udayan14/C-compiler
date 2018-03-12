@@ -119,7 +119,8 @@ ASGN
 		VAR(y)
 	)
 )
-WHILE(
+WHILE
+(
 	NE
 	(
 		DEREF

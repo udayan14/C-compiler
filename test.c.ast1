@@ -1,0 +1,640 @@
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		CONST(33)
+	)
+)
+
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(g)
+		)
+		,
+		CONST(42)
+	)
+)
+
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		CONST(21)
+	)
+)
+
+IF(
+	NOT
+	(
+		AND
+		(
+			AND
+			(
+				LT
+				(
+					DEREF
+					(
+						VAR(a)
+					)
+					,
+					CONST(3)
+				)
+				,
+				LT
+				(
+					DEREF
+					(
+						VAR(b)
+					)
+					,
+					DEREF
+					(
+						VAR(a)
+					)
+				)
+			)
+			,
+			LT
+			(
+				DEREF
+				(
+					VAR(b)
+				)
+				,
+				DEREF
+				(
+					VAR(g)
+				)
+			)
+		)
+	)
+	,
+	ASGN
+	(
+		DEREF
+		(
+			VAR(b)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(b)
+			)
+			,
+			DEREF
+			(
+				VAR(a)
+			)
+		)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(b)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(b)
+			)
+			,
+			MUL
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				CONST(3)
+			)
+		)
+	)
+
+)
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		CONST(33)
+	)
+)
+
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(g)
+		)
+		,
+		CONST(42)
+	)
+)
+
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		CONST(21)
+	)
+)
+
+WHILE(
+	LT
+	(
+		VAR(f)
+		,
+		VAR(g)
+	)
+	,
+	ASGN
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(f)
+			)
+			,
+			CONST(3)
+		)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(g)
+			)
+			,
+			CONST(4)
+		)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(f)
+			)
+			,
+			CONST(2)
+		)
+	)
+
+	IF(
+		EQ
+		(
+			VAR(f)
+			,
+			VAR(g)
+		)
+		,
+		ASGN
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			PLUS
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				CONST(1)
+			)
+		)
+
+		ASGN
+		(
+			DEREF
+			(
+				VAR(b)
+			)
+			,
+			PLUS
+			(
+				DEREF
+				(
+					VAR(b)
+				)
+				,
+				CONST(2)
+			)
+		)
+
+		,
+		ASGN
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			PLUS
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				CONST(3)
+			)
+		)
+
+	)
+	ASGN
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(f)
+			)
+			,
+			CONST(3)
+		)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(g)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(g)
+			)
+			,
+			CONST(11)
+		)
+	)
+
+)
+IF(
+	LT
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		DEREF
+		(
+			VAR(b)
+		)
+	)
+	,
+	IF(
+		GT
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			DEREF
+			(
+				VAR(b)
+			)
+		)
+		,
+		IF(
+			NE
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				DEREF
+				(
+					VAR(b)
+				)
+			)
+			,
+			ASGN
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				PLUS
+				(
+					DEREF
+					(
+						VAR(b)
+					)
+					,
+					CONST(21)
+				)
+			)
+
+			,
+			ASGN
+			(
+				DEREF
+				(
+					VAR(b)
+				)
+				,
+				PLUS
+				(
+					DEREF
+					(
+						VAR(b)
+					)
+					,
+					MUL
+					(
+						DEREF
+						(
+							VAR(a)
+						)
+						,
+						DEREF
+						(
+							VAR(f)
+						)
+					)
+				)
+			)
+
+			ASGN
+			(
+				DEREF
+				(
+					VAR(a)
+				)
+				,
+				PLUS
+				(
+					DEREF
+					(
+						VAR(b)
+					)
+					,
+					MUL
+					(
+						DEREF
+						(
+							VAR(a)
+						)
+						,
+						DEREF
+						(
+							VAR(g)
+						)
+					)
+				)
+			)
+
+		)
+	)
+)
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		CONST(12345)
+	)
+)
+
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		CONST(123678)
+	)
+)
+
+IF(
+	LT
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		DEREF
+		(
+			VAR(g)
+		)
+	)
+	,
+)
+ASGN
+(
+	DEREF
+	(
+		VAR(f)
+	)
+	,
+	PLUS
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		CONST(123)
+	)
+)
+
+IF(
+	GT
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		DEREF
+		(
+			VAR(g)
+		)
+	)
+	,
+	ASGN
+	(
+		DEREF
+		(
+			VAR(b)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			CONST(112)
+		)
+	)
+
+)
+WHILE(
+	GT
+	(
+		DEREF
+		(
+			VAR(f)
+		)
+		,
+		DEREF
+		(
+			VAR(g)
+		)
+	)
+	,
+	ASGN
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			CONST(1)
+		)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(b)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(b)
+			)
+			,
+			CONST(2)
+		)
+	)
+
+)

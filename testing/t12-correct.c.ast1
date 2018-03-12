@@ -78,7 +78,8 @@ ASGN
 	)
 )
 
-WHILE(
+WHILE
+(
 	LT
 	(
 		DEREF
@@ -99,7 +100,8 @@ WHILE(
 		CONST(20)
 	)
 
-	IF(
+	IF
+	(
 		LT
 		(
 			DEREF

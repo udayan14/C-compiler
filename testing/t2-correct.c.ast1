@@ -114,7 +114,8 @@ ASGN
 	)
 )
 
-WHILE(
+WHILE
+(
 	NE
 	(
 		DEREF

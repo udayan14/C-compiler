@@ -229,16 +229,16 @@ class AST:
 			printhelper(")",i)
 
 		elif(self.Type == "WHILE"):
-			printhelper(self.Type+"(",i)
-			# printhelper("(",i)
+			printhelper(self.Type,i)
+			printhelper("(",i)
 			self.l[0].printit(i+1)
 			printhelper(",",i+1)
 			self.l[1].printit(i+1)
 			printhelper(")",i)
 
 		elif(self.Type == "ITE"):
-			printhelper("IF(",i)
-			# printhelper("(",i)
+			printhelper("IF",i)
+			printhelper("(",i)
 			self.l[0].printit(i+1)
 			printhelper(",",i+1)
 			# printhelper("THEN",i)
@@ -251,8 +251,8 @@ class AST:
 			printhelper(")",i)	
 
 		elif(self.Type == "IF"):
-			printhelper("IF"+"(",i)
-			# printhelper("(",i)
+			printhelper("IF",i)
+			printhelper("(",i)
 			self.l[0].printit(i+1)
 			# printhelper(")",i)
 			printhelper(",",i+1)
@@ -428,12 +428,12 @@ def cleanup(n):
 			cleanup(n.left)
 	elif (n.left==-1 and n.right==-1 and n.middle==-1):
 		return
-	elif n.Type == "Start":
-		c = n.left
-		if not c.code:
-			if c.left.Type in ["End","IF","ITE","WHILE"]:
-				n.left = c.left
-				cleanup(n.left)
+	# elif n.Type == "Start":
+	# 	c = n.left
+	# 	if not c.code:
+	# 		if c.left.Type in ["End","IF","ITE","WHILE"]:
+	# 			n.left = c.left
+	# 			cleanup(n.left)
 	else:
 		cleanup(n.left)
 
@@ -796,9 +796,16 @@ def p_while(p):
 	"""
 	p[0] = AST("WHILE","",[p[3],p[6]])
 
+def p_conditional1(p):
+	"""
+	conditional : LPAREN conditional RPAREN
+	"""
+	p[0] = p[2]
+
 def p_conditional(p):
 	"""
 	conditional : conditionbase
+				| NOT LPAREN conditional RPAREN
 				| conditional LESSTHANEQ conditional
 				| conditional GREATERTHANEQ conditional
 				| conditional UNEQUAL conditional
@@ -810,6 +817,8 @@ def p_conditional(p):
 	"""
 	if len(p)==2:
 		p[0] = p[1]
+	elif len(p)==5:
+		p[0] = AST("NOT","",[p[3]])	
 	else:
 		if p[2] == '<=':
 			p[0] = AST("LE","",[p[1],p[3]])

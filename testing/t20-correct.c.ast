@@ -82,7 +82,8 @@ ASGN
 		VAR(v)
 	)
 )
-WHILE(
+WHILE
+(
 	LT
 	(
 		DEREF
@@ -93,7 +94,8 @@ WHILE(
 		CONST(2)
 	)
 	,
-	IF(
+	IF
+	(
 		LT
 		(
 			DEREF
@@ -114,7 +116,8 @@ WHILE(
 			CONST(40)
 		)
 		,
-		IF(
+		IF
+		(
 			LT
 			(
 				DEREF
@@ -135,7 +138,8 @@ WHILE(
 				CONST(0)
 			)
 			,
-			IF(
+			IF
+			(
 				LT
 				(
 					DEREF

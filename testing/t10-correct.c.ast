@@ -90,7 +90,8 @@ ASGN
 		VAR(v)
 	)
 )
-IF(
+IF
+(
 	LT
 	(
 		DEREF
@@ -110,7 +111,8 @@ IF(
 		,
 		CONST(20)
 	)
-	IF(
+	IF
+	(
 		LT
 		(
 			DEREF
@@ -131,7 +133,8 @@ IF(
 			CONST(40)
 		)
 		,
-		IF(
+		IF
+		(
 			LT
 			(
 				DEREF
@@ -152,7 +155,8 @@ IF(
 				CONST(0)
 			)
 			,
-			IF(
+			IF
+			(
 				LT
 				(
 					DEREF
@@ -207,7 +211,8 @@ IF(
 		,
 		CONST(20)
 	)
-	IF(
+	IF
+	(
 		LT
 		(
 			DEREF
@@ -228,7 +233,8 @@ IF(
 			CONST(40)
 		)
 		,
-		IF(
+		IF
+		(
 			LT
 			(
 				DEREF
@@ -249,7 +255,8 @@ IF(
 				CONST(0)
 			)
 			,
-			IF(
+			IF
+			(
 				LT
 				(
 					DEREF

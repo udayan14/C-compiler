@@ -22,7 +22,8 @@ ASGN
 	,
 	CONST(4)
 )
-IF(
+IF
+(
 	NE
 	(
 		DEREF
@@ -33,7 +34,8 @@ IF(
 		CONST(0)
 	)
 	,
-	IF(
+	IF
+	(
 		NE
 		(
 			DEREF

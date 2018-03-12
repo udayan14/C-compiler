@@ -32,7 +32,8 @@ ASGN
 	,
 	CONST(3)
 )
-IF(
+IF
+(
 	OR
 	(
 		GT
@@ -74,7 +75,8 @@ IF(
 	)
 
 )
-IF(
+IF
+(
 	EQ
 	(
 		MUL
