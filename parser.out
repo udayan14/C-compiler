@@ -1,0 +1,3205 @@
+Created by PLY version 3.10 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> master
+Rule 1     master -> program
+Rule 2     program -> function
+Rule 3     program -> function program
+Rule 4     program -> declaration program
+Rule 5     function -> TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+Rule 6     paramlist -> <empty>
+Rule 7     paramlist -> TYPE NAME paramlist2
+Rule 8     paramlist -> TYPE specialvar paramlist2
+Rule 9     paramlist2 -> <empty>
+Rule 10    paramlist2 -> COMMA TYPE NAME paramlist2
+Rule 11    paramlist2 -> COMMA TYPE specialvar paramlist2
+Rule 12    fbody -> allstatement fbody
+Rule 13    fbody -> <empty>
+Rule 14    allstatement -> statement
+Rule 15    allstatement -> unmatchedstatement
+Rule 16    statement -> assignment
+Rule 17    statement -> declaration
+Rule 18    statement -> whileblock
+Rule 19    statement -> ifblock
+Rule 20    statement -> SEMICOLON
+Rule 21    unmatchedstatement -> IF LPAREN conditional RPAREN allstatement
+Rule 22    unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+Rule 23    unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+Rule 24    unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+Rule 25    ifblock -> IF LPAREN conditional RPAREN statement ELSE statement
+Rule 26    ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+Rule 27    ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+Rule 28    ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+Rule 29    whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+Rule 30    conditional -> LPAREN conditional RPAREN
+Rule 31    conditional -> conditionbase
+Rule 32    conditional -> NOT LPAREN conditional RPAREN
+Rule 33    conditional -> conditional LESSTHANEQ conditional
+Rule 34    conditional -> conditional GREATERTHANEQ conditional
+Rule 35    conditional -> conditional UNEQUAL conditional
+Rule 36    conditional -> conditional EQUALCHECK conditional
+Rule 37    conditional -> conditional LESSTHAN conditional
+Rule 38    conditional -> conditional GREATERTHAN conditional
+Rule 39    conditional -> conditional ANDOPERATOR conditional
+Rule 40    conditional -> conditional OROPERATOR conditional
+Rule 41    conditionbase -> CS LESSTHANEQ CS
+Rule 42    conditionbase -> CS GREATERTHANEQ CS
+Rule 43    conditionbase -> CS UNEQUAL CS
+Rule 44    conditionbase -> CS EQUALCHECK CS
+Rule 45    conditionbase -> CS LESSTHAN CS
+Rule 46    conditionbase -> CS GREATERTHAN CS
+Rule 47    CS -> expression
+Rule 48    CS -> NOT LPAREN expression RPAREN
+Rule 49    declaration -> TYPE dlist1 SEMICOLON
+Rule 50    dlist1 -> NAME
+Rule 51    dlist1 -> NAME COMMA dlist1
+Rule 52    dlist1 -> specialvar
+Rule 53    dlist1 -> specialvar COMMA dlist1
+Rule 54    specialvar -> TIMES specialvar
+Rule 55    specialvar -> TIMES NAME
+Rule 56    assignment -> assignment_base SEMICOLON
+Rule 57    assignment_base -> TIMES pointervar EQUALS expression
+Rule 58    assignment_base -> NAME EQUALS expression
+Rule 59    expression -> expression PLUS expression
+Rule 60    expression -> expression MINUS expression
+Rule 61    expression -> expression DIVIDE expression
+Rule 62    expression -> expression TIMES expression
+Rule 63    expression -> MINUS expression
+Rule 64    expression -> LPAREN expression RPAREN
+Rule 65    expression -> NUMBER
+Rule 66    expression -> pointervar
+Rule 67    pointervar -> TIMES pointervar
+Rule 68    pointervar -> ADDROF pointervar
+Rule 69    pointervar -> NAME
+
+Terminals, with rules where they appear
+
+ADDROF               : 68
+ANDOPERATOR          : 39
+COMMA                : 10 11 51 53
+DIVIDE               : 61
+ELSE                 : 22 23 25 26 27 28
+EQUALCHECK           : 36 44
+EQUALS               : 57 58
+GREATERTHAN          : 38 46
+GREATERTHANEQ        : 34 42
+IF                   : 21 22 23 24 25 26 27 28
+LBRACE               : 5 23 24 26 27 27 28 29
+LESSTHAN             : 37 45
+LESSTHANEQ           : 33 41
+LPAREN               : 5 21 22 23 24 25 26 27 28 29 30 32 48 64
+MINUS                : 60 63
+NAME                 : 5 7 10 50 51 55 58 69
+NOT                  : 32 48
+NUMBER               : 65
+OROPERATOR           : 40
+PLUS                 : 59
+RBRACE               : 5 23 24 26 27 27 28 29
+RPAREN               : 5 21 22 23 24 25 26 27 28 29 30 32 48 64
+SEMICOLON            : 20 49 56
+TIMES                : 54 55 57 62 67
+TYPE                 : 5 7 8 10 11 49
+UNEQUAL              : 35 43
+WHILE                : 29
+error                : 
+
+Nonterminals, with rules where they appear
+
+CS                   : 41 41 42 42 43 43 44 44 45 45 46 46
+allstatement         : 12 21
+assignment           : 16
+assignment_base      : 56
+conditional          : 21 22 23 24 25 26 27 28 29 30 32 33 33 34 34 35 35 36 36 37 37 38 38 39 39 40 40
+conditionbase        : 31
+declaration          : 4 17
+dlist1               : 49 51 53
+expression           : 47 48 57 58 59 59 60 60 61 61 62 62 63 64
+fbody                : 5 12 23 24 26 27 27 28 29
+function             : 2 3
+ifblock              : 19
+master               : 0
+paramlist            : 5
+paramlist2           : 7 8 10 11
+pointervar           : 57 66 67 68
+program              : 1 3 4
+specialvar           : 8 11 52 53 54
+statement            : 14 22 25 25 26 28
+unmatchedstatement   : 15 22 23
+whileblock           : 18
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . master
+    (1) master -> . program
+    (2) program -> . function
+    (3) program -> . function program
+    (4) program -> . declaration program
+    (5) function -> . TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+
+    TYPE            shift and go to state 5
+
+    master                         shift and go to state 1
+    program                        shift and go to state 2
+    function                       shift and go to state 3
+    declaration                    shift and go to state 4
+
+state 1
+
+    (0) S' -> master .
+
+
+
+state 2
+
+    (1) master -> program .
+
+    $end            reduce using rule 1 (master -> program .)
+
+
+state 3
+
+    (2) program -> function .
+    (3) program -> function . program
+    (2) program -> . function
+    (3) program -> . function program
+    (4) program -> . declaration program
+    (5) function -> . TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+
+    $end            reduce using rule 2 (program -> function .)
+    TYPE            shift and go to state 5
+
+    function                       shift and go to state 3
+    program                        shift and go to state 6
+    declaration                    shift and go to state 4
+
+state 4
+
+    (4) program -> declaration . program
+    (2) program -> . function
+    (3) program -> . function program
+    (4) program -> . declaration program
+    (5) function -> . TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+
+    TYPE            shift and go to state 5
+
+    declaration                    shift and go to state 4
+    program                        shift and go to state 7
+    function                       shift and go to state 3
+
+state 5
+
+    (5) function -> TYPE . NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+    (49) declaration -> TYPE . dlist1 SEMICOLON
+    (50) dlist1 -> . NAME
+    (51) dlist1 -> . NAME COMMA dlist1
+    (52) dlist1 -> . specialvar
+    (53) dlist1 -> . specialvar COMMA dlist1
+    (54) specialvar -> . TIMES specialvar
+    (55) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 8
+    TIMES           shift and go to state 11
+
+    dlist1                         shift and go to state 9
+    specialvar                     shift and go to state 10
+
+state 6
+
+    (3) program -> function program .
+
+    $end            reduce using rule 3 (program -> function program .)
+
+
+state 7
+
+    (4) program -> declaration program .
+
+    $end            reduce using rule 4 (program -> declaration program .)
+
+
+state 8
+
+    (5) function -> TYPE NAME . LPAREN paramlist RPAREN LBRACE fbody RBRACE
+    (50) dlist1 -> NAME .
+    (51) dlist1 -> NAME . COMMA dlist1
+
+    LPAREN          shift and go to state 12
+    SEMICOLON       reduce using rule 50 (dlist1 -> NAME .)
+    COMMA           shift and go to state 13
+
+
+state 9
+
+    (49) declaration -> TYPE dlist1 . SEMICOLON
+
+    SEMICOLON       shift and go to state 14
+
+
+state 10
+
+    (52) dlist1 -> specialvar .
+    (53) dlist1 -> specialvar . COMMA dlist1
+
+    SEMICOLON       reduce using rule 52 (dlist1 -> specialvar .)
+    COMMA           shift and go to state 15
+
+
+state 11
+
+    (54) specialvar -> TIMES . specialvar
+    (55) specialvar -> TIMES . NAME
+    (54) specialvar -> . TIMES specialvar
+    (55) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 17
+    TIMES           shift and go to state 11
+
+    specialvar                     shift and go to state 16
+
+state 12
+
+    (5) function -> TYPE NAME LPAREN . paramlist RPAREN LBRACE fbody RBRACE
+    (6) paramlist -> .
+    (7) paramlist -> . TYPE NAME paramlist2
+    (8) paramlist -> . TYPE specialvar paramlist2
+
+    RPAREN          reduce using rule 6 (paramlist -> .)
+    TYPE            shift and go to state 18
+
+    paramlist                      shift and go to state 19
+
+state 13
+
+    (51) dlist1 -> NAME COMMA . dlist1
+    (50) dlist1 -> . NAME
+    (51) dlist1 -> . NAME COMMA dlist1
+    (52) dlist1 -> . specialvar
+    (53) dlist1 -> . specialvar COMMA dlist1
+    (54) specialvar -> . TIMES specialvar
+    (55) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 20
+    TIMES           shift and go to state 11
+
+    dlist1                         shift and go to state 21
+    specialvar                     shift and go to state 10
+
+state 14
+
+    (49) declaration -> TYPE dlist1 SEMICOLON .
+
+    TYPE            reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+    SEMICOLON       reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+    IF              reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+    WHILE           reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+    TIMES           reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+    NAME            reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+    RBRACE          reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+    ELSE            reduce using rule 49 (declaration -> TYPE dlist1 SEMICOLON .)
+
+
+state 15
+
+    (53) dlist1 -> specialvar COMMA . dlist1
+    (50) dlist1 -> . NAME
+    (51) dlist1 -> . NAME COMMA dlist1
+    (52) dlist1 -> . specialvar
+    (53) dlist1 -> . specialvar COMMA dlist1
+    (54) specialvar -> . TIMES specialvar
+    (55) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 20
+    TIMES           shift and go to state 11
+
+    specialvar                     shift and go to state 10
+    dlist1                         shift and go to state 22
+
+state 16
+
+    (54) specialvar -> TIMES specialvar .
+
+    COMMA           reduce using rule 54 (specialvar -> TIMES specialvar .)
+    SEMICOLON       reduce using rule 54 (specialvar -> TIMES specialvar .)
+    RPAREN          reduce using rule 54 (specialvar -> TIMES specialvar .)
+
+
+state 17
+
+    (55) specialvar -> TIMES NAME .
+
+    COMMA           reduce using rule 55 (specialvar -> TIMES NAME .)
+    SEMICOLON       reduce using rule 55 (specialvar -> TIMES NAME .)
+    RPAREN          reduce using rule 55 (specialvar -> TIMES NAME .)
+
+
+state 18
+
+    (7) paramlist -> TYPE . NAME paramlist2
+    (8) paramlist -> TYPE . specialvar paramlist2
+    (54) specialvar -> . TIMES specialvar
+    (55) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 23
+    TIMES           shift and go to state 11
+
+    specialvar                     shift and go to state 24
+
+state 19
+
+    (5) function -> TYPE NAME LPAREN paramlist . RPAREN LBRACE fbody RBRACE
+
+    RPAREN          shift and go to state 25
+
+
+state 20
+
+    (50) dlist1 -> NAME .
+    (51) dlist1 -> NAME . COMMA dlist1
+
+    SEMICOLON       reduce using rule 50 (dlist1 -> NAME .)
+    COMMA           shift and go to state 13
+
+
+state 21
+
+    (51) dlist1 -> NAME COMMA dlist1 .
+
+    SEMICOLON       reduce using rule 51 (dlist1 -> NAME COMMA dlist1 .)
+
+
+state 22
+
+    (53) dlist1 -> specialvar COMMA dlist1 .
+
+    SEMICOLON       reduce using rule 53 (dlist1 -> specialvar COMMA dlist1 .)
+
+
+state 23
+
+    (7) paramlist -> TYPE NAME . paramlist2
+    (9) paramlist2 -> .
+    (10) paramlist2 -> . COMMA TYPE NAME paramlist2
+    (11) paramlist2 -> . COMMA TYPE specialvar paramlist2
+
+    RPAREN          reduce using rule 9 (paramlist2 -> .)
+    COMMA           shift and go to state 27
+
+    paramlist2                     shift and go to state 26
+
+state 24
+
+    (8) paramlist -> TYPE specialvar . paramlist2
+    (9) paramlist2 -> .
+    (10) paramlist2 -> . COMMA TYPE NAME paramlist2
+    (11) paramlist2 -> . COMMA TYPE specialvar paramlist2
+
+    RPAREN          reduce using rule 9 (paramlist2 -> .)
+    COMMA           shift and go to state 27
+
+    paramlist2                     shift and go to state 28
+
+state 25
+
+    (5) function -> TYPE NAME LPAREN paramlist RPAREN . LBRACE fbody RBRACE
+
+    LBRACE          shift and go to state 29
+
+
+state 26
+
+    (7) paramlist -> TYPE NAME paramlist2 .
+
+    RPAREN          reduce using rule 7 (paramlist -> TYPE NAME paramlist2 .)
+
+
+state 27
+
+    (10) paramlist2 -> COMMA . TYPE NAME paramlist2
+    (11) paramlist2 -> COMMA . TYPE specialvar paramlist2
+
+    TYPE            shift and go to state 30
+
+
+state 28
+
+    (8) paramlist -> TYPE specialvar paramlist2 .
+
+    RPAREN          reduce using rule 8 (paramlist -> TYPE specialvar paramlist2 .)
+
+
+state 29
+
+    (5) function -> TYPE NAME LPAREN paramlist RPAREN LBRACE . fbody RBRACE
+    (12) fbody -> . allstatement fbody
+    (13) fbody -> .
+    (14) allstatement -> . statement
+    (15) allstatement -> . unmatchedstatement
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    RBRACE          reduce using rule 13 (fbody -> .)
+    SEMICOLON       shift and go to state 41
+    IF              shift and go to state 42
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    fbody                          shift and go to state 33
+    allstatement                   shift and go to state 34
+    statement                      shift and go to state 35
+    unmatchedstatement             shift and go to state 36
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 30
+
+    (10) paramlist2 -> COMMA TYPE . NAME paramlist2
+    (11) paramlist2 -> COMMA TYPE . specialvar paramlist2
+    (54) specialvar -> . TIMES specialvar
+    (55) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 46
+    TIMES           shift and go to state 11
+
+    specialvar                     shift and go to state 47
+
+state 31
+
+    (49) declaration -> TYPE . dlist1 SEMICOLON
+    (50) dlist1 -> . NAME
+    (51) dlist1 -> . NAME COMMA dlist1
+    (52) dlist1 -> . specialvar
+    (53) dlist1 -> . specialvar COMMA dlist1
+    (54) specialvar -> . TIMES specialvar
+    (55) specialvar -> . TIMES NAME
+
+    NAME            shift and go to state 20
+    TIMES           shift and go to state 11
+
+    dlist1                         shift and go to state 9
+    specialvar                     shift and go to state 10
+
+state 32
+
+    (58) assignment_base -> NAME . EQUALS expression
+
+    EQUALS          shift and go to state 48
+
+
+state 33
+
+    (5) function -> TYPE NAME LPAREN paramlist RPAREN LBRACE fbody . RBRACE
+
+    RBRACE          shift and go to state 49
+
+
+state 34
+
+    (12) fbody -> allstatement . fbody
+    (12) fbody -> . allstatement fbody
+    (13) fbody -> .
+    (14) allstatement -> . statement
+    (15) allstatement -> . unmatchedstatement
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    RBRACE          reduce using rule 13 (fbody -> .)
+    SEMICOLON       shift and go to state 41
+    IF              shift and go to state 42
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    allstatement                   shift and go to state 34
+    fbody                          shift and go to state 50
+    statement                      shift and go to state 35
+    unmatchedstatement             shift and go to state 36
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 35
+
+    (14) allstatement -> statement .
+
+    SEMICOLON       reduce using rule 14 (allstatement -> statement .)
+    IF              reduce using rule 14 (allstatement -> statement .)
+    TYPE            reduce using rule 14 (allstatement -> statement .)
+    WHILE           reduce using rule 14 (allstatement -> statement .)
+    TIMES           reduce using rule 14 (allstatement -> statement .)
+    NAME            reduce using rule 14 (allstatement -> statement .)
+    RBRACE          reduce using rule 14 (allstatement -> statement .)
+
+
+state 36
+
+    (15) allstatement -> unmatchedstatement .
+
+    SEMICOLON       reduce using rule 15 (allstatement -> unmatchedstatement .)
+    IF              reduce using rule 15 (allstatement -> unmatchedstatement .)
+    TYPE            reduce using rule 15 (allstatement -> unmatchedstatement .)
+    WHILE           reduce using rule 15 (allstatement -> unmatchedstatement .)
+    TIMES           reduce using rule 15 (allstatement -> unmatchedstatement .)
+    NAME            reduce using rule 15 (allstatement -> unmatchedstatement .)
+    RBRACE          reduce using rule 15 (allstatement -> unmatchedstatement .)
+
+
+state 37
+
+    (16) statement -> assignment .
+
+    SEMICOLON       reduce using rule 16 (statement -> assignment .)
+    IF              reduce using rule 16 (statement -> assignment .)
+    TYPE            reduce using rule 16 (statement -> assignment .)
+    WHILE           reduce using rule 16 (statement -> assignment .)
+    TIMES           reduce using rule 16 (statement -> assignment .)
+    NAME            reduce using rule 16 (statement -> assignment .)
+    RBRACE          reduce using rule 16 (statement -> assignment .)
+    ELSE            reduce using rule 16 (statement -> assignment .)
+
+
+state 38
+
+    (17) statement -> declaration .
+
+    SEMICOLON       reduce using rule 17 (statement -> declaration .)
+    IF              reduce using rule 17 (statement -> declaration .)
+    TYPE            reduce using rule 17 (statement -> declaration .)
+    WHILE           reduce using rule 17 (statement -> declaration .)
+    TIMES           reduce using rule 17 (statement -> declaration .)
+    NAME            reduce using rule 17 (statement -> declaration .)
+    RBRACE          reduce using rule 17 (statement -> declaration .)
+    ELSE            reduce using rule 17 (statement -> declaration .)
+
+
+state 39
+
+    (18) statement -> whileblock .
+
+    SEMICOLON       reduce using rule 18 (statement -> whileblock .)
+    IF              reduce using rule 18 (statement -> whileblock .)
+    TYPE            reduce using rule 18 (statement -> whileblock .)
+    WHILE           reduce using rule 18 (statement -> whileblock .)
+    TIMES           reduce using rule 18 (statement -> whileblock .)
+    NAME            reduce using rule 18 (statement -> whileblock .)
+    RBRACE          reduce using rule 18 (statement -> whileblock .)
+    ELSE            reduce using rule 18 (statement -> whileblock .)
+
+
+state 40
+
+    (19) statement -> ifblock .
+
+    SEMICOLON       reduce using rule 19 (statement -> ifblock .)
+    IF              reduce using rule 19 (statement -> ifblock .)
+    TYPE            reduce using rule 19 (statement -> ifblock .)
+    WHILE           reduce using rule 19 (statement -> ifblock .)
+    TIMES           reduce using rule 19 (statement -> ifblock .)
+    NAME            reduce using rule 19 (statement -> ifblock .)
+    RBRACE          reduce using rule 19 (statement -> ifblock .)
+    ELSE            reduce using rule 19 (statement -> ifblock .)
+
+
+state 41
+
+    (20) statement -> SEMICOLON .
+
+    SEMICOLON       reduce using rule 20 (statement -> SEMICOLON .)
+    IF              reduce using rule 20 (statement -> SEMICOLON .)
+    TYPE            reduce using rule 20 (statement -> SEMICOLON .)
+    WHILE           reduce using rule 20 (statement -> SEMICOLON .)
+    TIMES           reduce using rule 20 (statement -> SEMICOLON .)
+    NAME            reduce using rule 20 (statement -> SEMICOLON .)
+    RBRACE          reduce using rule 20 (statement -> SEMICOLON .)
+    ELSE            reduce using rule 20 (statement -> SEMICOLON .)
+
+
+state 42
+
+    (21) unmatchedstatement -> IF . LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> IF . LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> IF . LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> IF . LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> IF . LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> IF . LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> IF . LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> IF . LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+
+    LPAREN          shift and go to state 51
+
+
+state 43
+
+    (56) assignment -> assignment_base . SEMICOLON
+
+    SEMICOLON       shift and go to state 52
+
+
+state 44
+
+    (29) whileblock -> WHILE . LPAREN conditional RPAREN LBRACE fbody RBRACE
+
+    LPAREN          shift and go to state 53
+
+
+state 45
+
+    (57) assignment_base -> TIMES . pointervar EQUALS expression
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    pointervar                     shift and go to state 55
+
+state 46
+
+    (10) paramlist2 -> COMMA TYPE NAME . paramlist2
+    (9) paramlist2 -> .
+    (10) paramlist2 -> . COMMA TYPE NAME paramlist2
+    (11) paramlist2 -> . COMMA TYPE specialvar paramlist2
+
+    RPAREN          reduce using rule 9 (paramlist2 -> .)
+    COMMA           shift and go to state 27
+
+    paramlist2                     shift and go to state 58
+
+state 47
+
+    (11) paramlist2 -> COMMA TYPE specialvar . paramlist2
+    (9) paramlist2 -> .
+    (10) paramlist2 -> . COMMA TYPE NAME paramlist2
+    (11) paramlist2 -> . COMMA TYPE specialvar paramlist2
+
+    RPAREN          reduce using rule 9 (paramlist2 -> .)
+    COMMA           shift and go to state 27
+
+    paramlist2                     shift and go to state 59
+
+state 48
+
+    (58) assignment_base -> NAME EQUALS . expression
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 60
+    pointervar                     shift and go to state 64
+
+state 49
+
+    (5) function -> TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE .
+
+    TYPE            reduce using rule 5 (function -> TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE .)
+    $end            reduce using rule 5 (function -> TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE .)
+
+
+state 50
+
+    (12) fbody -> allstatement fbody .
+
+    RBRACE          reduce using rule 12 (fbody -> allstatement fbody .)
+
+
+state 51
+
+    (21) unmatchedstatement -> IF LPAREN . conditional RPAREN allstatement
+    (22) unmatchedstatement -> IF LPAREN . conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> IF LPAREN . conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> IF LPAREN . conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> IF LPAREN . conditional RPAREN statement ELSE statement
+    (26) ifblock -> IF LPAREN . conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> IF LPAREN . conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> IF LPAREN . conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 66
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 52
+
+    (56) assignment -> assignment_base SEMICOLON .
+
+    SEMICOLON       reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+    IF              reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+    TYPE            reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+    WHILE           reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+    TIMES           reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+    NAME            reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+    RBRACE          reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+    ELSE            reduce using rule 56 (assignment -> assignment_base SEMICOLON .)
+
+
+state 53
+
+    (29) whileblock -> WHILE LPAREN . conditional RPAREN LBRACE fbody RBRACE
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 71
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 54
+
+    (67) pointervar -> TIMES . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    pointervar                     shift and go to state 72
+
+state 55
+
+    (57) assignment_base -> TIMES pointervar . EQUALS expression
+
+    EQUALS          shift and go to state 73
+
+
+state 56
+
+    (68) pointervar -> ADDROF . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    pointervar                     shift and go to state 74
+
+state 57
+
+    (69) pointervar -> NAME .
+
+    EQUALS          reduce using rule 69 (pointervar -> NAME .)
+    PLUS            reduce using rule 69 (pointervar -> NAME .)
+    MINUS           reduce using rule 69 (pointervar -> NAME .)
+    DIVIDE          reduce using rule 69 (pointervar -> NAME .)
+    TIMES           reduce using rule 69 (pointervar -> NAME .)
+    SEMICOLON       reduce using rule 69 (pointervar -> NAME .)
+    LESSTHANEQ      reduce using rule 69 (pointervar -> NAME .)
+    GREATERTHANEQ   reduce using rule 69 (pointervar -> NAME .)
+    UNEQUAL         reduce using rule 69 (pointervar -> NAME .)
+    EQUALCHECK      reduce using rule 69 (pointervar -> NAME .)
+    LESSTHAN        reduce using rule 69 (pointervar -> NAME .)
+    GREATERTHAN     reduce using rule 69 (pointervar -> NAME .)
+    RPAREN          reduce using rule 69 (pointervar -> NAME .)
+    ANDOPERATOR     reduce using rule 69 (pointervar -> NAME .)
+    OROPERATOR      reduce using rule 69 (pointervar -> NAME .)
+
+
+state 58
+
+    (10) paramlist2 -> COMMA TYPE NAME paramlist2 .
+
+    RPAREN          reduce using rule 10 (paramlist2 -> COMMA TYPE NAME paramlist2 .)
+
+
+state 59
+
+    (11) paramlist2 -> COMMA TYPE specialvar paramlist2 .
+
+    RPAREN          reduce using rule 11 (paramlist2 -> COMMA TYPE specialvar paramlist2 .)
+
+
+state 60
+
+    (58) assignment_base -> NAME EQUALS expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    SEMICOLON       reduce using rule 58 (assignment_base -> NAME EQUALS expression .)
+    PLUS            shift and go to state 75
+    MINUS           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+
+
+state 61
+
+    (63) expression -> MINUS . expression
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 79
+    pointervar                     shift and go to state 64
+
+state 62
+
+    (64) expression -> LPAREN . expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 80
+    pointervar                     shift and go to state 64
+
+state 63
+
+    (65) expression -> NUMBER .
+
+    PLUS            reduce using rule 65 (expression -> NUMBER .)
+    MINUS           reduce using rule 65 (expression -> NUMBER .)
+    DIVIDE          reduce using rule 65 (expression -> NUMBER .)
+    TIMES           reduce using rule 65 (expression -> NUMBER .)
+    SEMICOLON       reduce using rule 65 (expression -> NUMBER .)
+    LESSTHANEQ      reduce using rule 65 (expression -> NUMBER .)
+    GREATERTHANEQ   reduce using rule 65 (expression -> NUMBER .)
+    UNEQUAL         reduce using rule 65 (expression -> NUMBER .)
+    EQUALCHECK      reduce using rule 65 (expression -> NUMBER .)
+    LESSTHAN        reduce using rule 65 (expression -> NUMBER .)
+    GREATERTHAN     reduce using rule 65 (expression -> NUMBER .)
+    RPAREN          reduce using rule 65 (expression -> NUMBER .)
+    ANDOPERATOR     reduce using rule 65 (expression -> NUMBER .)
+    OROPERATOR      reduce using rule 65 (expression -> NUMBER .)
+
+
+state 64
+
+    (66) expression -> pointervar .
+
+    PLUS            reduce using rule 66 (expression -> pointervar .)
+    MINUS           reduce using rule 66 (expression -> pointervar .)
+    DIVIDE          reduce using rule 66 (expression -> pointervar .)
+    TIMES           reduce using rule 66 (expression -> pointervar .)
+    SEMICOLON       reduce using rule 66 (expression -> pointervar .)
+    LESSTHANEQ      reduce using rule 66 (expression -> pointervar .)
+    GREATERTHANEQ   reduce using rule 66 (expression -> pointervar .)
+    UNEQUAL         reduce using rule 66 (expression -> pointervar .)
+    EQUALCHECK      reduce using rule 66 (expression -> pointervar .)
+    LESSTHAN        reduce using rule 66 (expression -> pointervar .)
+    GREATERTHAN     reduce using rule 66 (expression -> pointervar .)
+    RPAREN          reduce using rule 66 (expression -> pointervar .)
+    ANDOPERATOR     reduce using rule 66 (expression -> pointervar .)
+    OROPERATOR      reduce using rule 66 (expression -> pointervar .)
+
+
+state 65
+
+    (30) conditional -> LPAREN . conditional RPAREN
+    (64) expression -> LPAREN . expression RPAREN
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 81
+    expression                     shift and go to state 82
+    conditionbase                  shift and go to state 67
+    pointervar                     shift and go to state 64
+    CS                             shift and go to state 69
+
+state 66
+
+    (21) unmatchedstatement -> IF LPAREN conditional . RPAREN allstatement
+    (22) unmatchedstatement -> IF LPAREN conditional . RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> IF LPAREN conditional . RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> IF LPAREN conditional . RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> IF LPAREN conditional . RPAREN statement ELSE statement
+    (26) ifblock -> IF LPAREN conditional . RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> IF LPAREN conditional . RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> IF LPAREN conditional . RPAREN LBRACE fbody RBRACE ELSE statement
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          shift and go to state 83
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    UNEQUAL         shift and go to state 86
+    EQUALCHECK      shift and go to state 87
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+    ANDOPERATOR     shift and go to state 90
+    OROPERATOR      shift and go to state 91
+
+
+state 67
+
+    (31) conditional -> conditionbase .
+
+    RPAREN          reduce using rule 31 (conditional -> conditionbase .)
+    LESSTHANEQ      reduce using rule 31 (conditional -> conditionbase .)
+    GREATERTHANEQ   reduce using rule 31 (conditional -> conditionbase .)
+    UNEQUAL         reduce using rule 31 (conditional -> conditionbase .)
+    EQUALCHECK      reduce using rule 31 (conditional -> conditionbase .)
+    LESSTHAN        reduce using rule 31 (conditional -> conditionbase .)
+    GREATERTHAN     reduce using rule 31 (conditional -> conditionbase .)
+    ANDOPERATOR     reduce using rule 31 (conditional -> conditionbase .)
+    OROPERATOR      reduce using rule 31 (conditional -> conditionbase .)
+
+
+state 68
+
+    (32) conditional -> NOT . LPAREN conditional RPAREN
+    (48) CS -> NOT . LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 92
+
+
+state 69
+
+    (41) conditionbase -> CS . LESSTHANEQ CS
+    (42) conditionbase -> CS . GREATERTHANEQ CS
+    (43) conditionbase -> CS . UNEQUAL CS
+    (44) conditionbase -> CS . EQUALCHECK CS
+    (45) conditionbase -> CS . LESSTHAN CS
+    (46) conditionbase -> CS . GREATERTHAN CS
+
+    LESSTHANEQ      shift and go to state 93
+    GREATERTHANEQ   shift and go to state 94
+    UNEQUAL         shift and go to state 95
+    EQUALCHECK      shift and go to state 96
+    LESSTHAN        shift and go to state 97
+    GREATERTHAN     shift and go to state 98
+
+
+state 70
+
+    (47) CS -> expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    LESSTHANEQ      reduce using rule 47 (CS -> expression .)
+    GREATERTHANEQ   reduce using rule 47 (CS -> expression .)
+    UNEQUAL         reduce using rule 47 (CS -> expression .)
+    EQUALCHECK      reduce using rule 47 (CS -> expression .)
+    LESSTHAN        reduce using rule 47 (CS -> expression .)
+    GREATERTHAN     reduce using rule 47 (CS -> expression .)
+    RPAREN          reduce using rule 47 (CS -> expression .)
+    ANDOPERATOR     reduce using rule 47 (CS -> expression .)
+    OROPERATOR      reduce using rule 47 (CS -> expression .)
+    PLUS            shift and go to state 75
+    MINUS           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+
+
+state 71
+
+    (29) whileblock -> WHILE LPAREN conditional . RPAREN LBRACE fbody RBRACE
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          shift and go to state 99
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    UNEQUAL         shift and go to state 86
+    EQUALCHECK      shift and go to state 87
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+    ANDOPERATOR     shift and go to state 90
+    OROPERATOR      shift and go to state 91
+
+
+state 72
+
+    (67) pointervar -> TIMES pointervar .
+
+    EQUALS          reduce using rule 67 (pointervar -> TIMES pointervar .)
+    PLUS            reduce using rule 67 (pointervar -> TIMES pointervar .)
+    MINUS           reduce using rule 67 (pointervar -> TIMES pointervar .)
+    DIVIDE          reduce using rule 67 (pointervar -> TIMES pointervar .)
+    TIMES           reduce using rule 67 (pointervar -> TIMES pointervar .)
+    SEMICOLON       reduce using rule 67 (pointervar -> TIMES pointervar .)
+    LESSTHANEQ      reduce using rule 67 (pointervar -> TIMES pointervar .)
+    GREATERTHANEQ   reduce using rule 67 (pointervar -> TIMES pointervar .)
+    UNEQUAL         reduce using rule 67 (pointervar -> TIMES pointervar .)
+    EQUALCHECK      reduce using rule 67 (pointervar -> TIMES pointervar .)
+    LESSTHAN        reduce using rule 67 (pointervar -> TIMES pointervar .)
+    GREATERTHAN     reduce using rule 67 (pointervar -> TIMES pointervar .)
+    RPAREN          reduce using rule 67 (pointervar -> TIMES pointervar .)
+    ANDOPERATOR     reduce using rule 67 (pointervar -> TIMES pointervar .)
+    OROPERATOR      reduce using rule 67 (pointervar -> TIMES pointervar .)
+
+
+state 73
+
+    (57) assignment_base -> TIMES pointervar EQUALS . expression
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    pointervar                     shift and go to state 64
+    expression                     shift and go to state 100
+
+state 74
+
+    (68) pointervar -> ADDROF pointervar .
+
+    EQUALS          reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    PLUS            reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    MINUS           reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    DIVIDE          reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    TIMES           reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    SEMICOLON       reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    LESSTHANEQ      reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    GREATERTHANEQ   reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    UNEQUAL         reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    EQUALCHECK      reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    LESSTHAN        reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    GREATERTHAN     reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    RPAREN          reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    ANDOPERATOR     reduce using rule 68 (pointervar -> ADDROF pointervar .)
+    OROPERATOR      reduce using rule 68 (pointervar -> ADDROF pointervar .)
+
+
+state 75
+
+    (59) expression -> expression PLUS . expression
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 101
+    pointervar                     shift and go to state 64
+
+state 76
+
+    (60) expression -> expression MINUS . expression
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 102
+    pointervar                     shift and go to state 64
+
+state 77
+
+    (61) expression -> expression DIVIDE . expression
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 103
+    pointervar                     shift and go to state 64
+
+state 78
+
+    (62) expression -> expression TIMES . expression
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 104
+    pointervar                     shift and go to state 64
+
+state 79
+
+    (63) expression -> MINUS expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 63 (expression -> MINUS expression .)
+    MINUS           reduce using rule 63 (expression -> MINUS expression .)
+    DIVIDE          reduce using rule 63 (expression -> MINUS expression .)
+    TIMES           reduce using rule 63 (expression -> MINUS expression .)
+    SEMICOLON       reduce using rule 63 (expression -> MINUS expression .)
+    LESSTHANEQ      reduce using rule 63 (expression -> MINUS expression .)
+    GREATERTHANEQ   reduce using rule 63 (expression -> MINUS expression .)
+    UNEQUAL         reduce using rule 63 (expression -> MINUS expression .)
+    EQUALCHECK      reduce using rule 63 (expression -> MINUS expression .)
+    LESSTHAN        reduce using rule 63 (expression -> MINUS expression .)
+    GREATERTHAN     reduce using rule 63 (expression -> MINUS expression .)
+    RPAREN          reduce using rule 63 (expression -> MINUS expression .)
+    ANDOPERATOR     reduce using rule 63 (expression -> MINUS expression .)
+    OROPERATOR      reduce using rule 63 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 75 ]
+  ! MINUS           [ shift and go to state 76 ]
+  ! DIVIDE          [ shift and go to state 77 ]
+  ! TIMES           [ shift and go to state 78 ]
+
+
+state 80
+
+    (64) expression -> LPAREN expression . RPAREN
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    RPAREN          shift and go to state 105
+    PLUS            shift and go to state 75
+    MINUS           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+
+
+state 81
+
+    (30) conditional -> LPAREN conditional . RPAREN
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          shift and go to state 106
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    UNEQUAL         shift and go to state 86
+    EQUALCHECK      shift and go to state 87
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+    ANDOPERATOR     shift and go to state 90
+    OROPERATOR      shift and go to state 91
+
+
+state 82
+
+    (64) expression -> LPAREN expression . RPAREN
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+    (47) CS -> expression .
+
+    RPAREN          shift and go to state 105
+    PLUS            shift and go to state 75
+    MINUS           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+    LESSTHANEQ      reduce using rule 47 (CS -> expression .)
+    GREATERTHANEQ   reduce using rule 47 (CS -> expression .)
+    UNEQUAL         reduce using rule 47 (CS -> expression .)
+    EQUALCHECK      reduce using rule 47 (CS -> expression .)
+    LESSTHAN        reduce using rule 47 (CS -> expression .)
+    GREATERTHAN     reduce using rule 47 (CS -> expression .)
+
+
+state 83
+
+    (21) unmatchedstatement -> IF LPAREN conditional RPAREN . allstatement
+    (22) unmatchedstatement -> IF LPAREN conditional RPAREN . statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> IF LPAREN conditional RPAREN . LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> IF LPAREN conditional RPAREN . LBRACE fbody RBRACE
+    (25) ifblock -> IF LPAREN conditional RPAREN . statement ELSE statement
+    (26) ifblock -> IF LPAREN conditional RPAREN . statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> IF LPAREN conditional RPAREN . LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> IF LPAREN conditional RPAREN . LBRACE fbody RBRACE ELSE statement
+    (14) allstatement -> . statement
+    (15) allstatement -> . unmatchedstatement
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    LBRACE          shift and go to state 109
+    SEMICOLON       shift and go to state 41
+    IF              shift and go to state 42
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    allstatement                   shift and go to state 107
+    statement                      shift and go to state 108
+    unmatchedstatement             shift and go to state 36
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 84
+
+    (33) conditional -> conditional LESSTHANEQ . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 110
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 85
+
+    (34) conditional -> conditional GREATERTHANEQ . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 111
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 86
+
+    (35) conditional -> conditional UNEQUAL . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 112
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 87
+
+    (36) conditional -> conditional EQUALCHECK . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 113
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 88
+
+    (37) conditional -> conditional LESSTHAN . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 114
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 89
+
+    (38) conditional -> conditional GREATERTHAN . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 115
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 90
+
+    (39) conditional -> conditional ANDOPERATOR . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 116
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 91
+
+    (40) conditional -> conditional OROPERATOR . conditional
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 117
+    conditionbase                  shift and go to state 67
+    CS                             shift and go to state 69
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 92
+
+    (32) conditional -> NOT LPAREN . conditional RPAREN
+    (48) CS -> NOT LPAREN . expression RPAREN
+    (30) conditional -> . LPAREN conditional RPAREN
+    (31) conditional -> . conditionbase
+    (32) conditional -> . NOT LPAREN conditional RPAREN
+    (33) conditional -> . conditional LESSTHANEQ conditional
+    (34) conditional -> . conditional GREATERTHANEQ conditional
+    (35) conditional -> . conditional UNEQUAL conditional
+    (36) conditional -> . conditional EQUALCHECK conditional
+    (37) conditional -> . conditional LESSTHAN conditional
+    (38) conditional -> . conditional GREATERTHAN conditional
+    (39) conditional -> . conditional ANDOPERATOR conditional
+    (40) conditional -> . conditional OROPERATOR conditional
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (41) conditionbase -> . CS LESSTHANEQ CS
+    (42) conditionbase -> . CS GREATERTHANEQ CS
+    (43) conditionbase -> . CS UNEQUAL CS
+    (44) conditionbase -> . CS EQUALCHECK CS
+    (45) conditionbase -> . CS LESSTHAN CS
+    (46) conditionbase -> . CS GREATERTHAN CS
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 65
+    NOT             shift and go to state 68
+    MINUS           shift and go to state 61
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    conditional                    shift and go to state 118
+    expression                     shift and go to state 119
+    conditionbase                  shift and go to state 67
+    pointervar                     shift and go to state 64
+    CS                             shift and go to state 69
+
+state 93
+
+    (41) conditionbase -> CS LESSTHANEQ . CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    NOT             shift and go to state 121
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    CS                             shift and go to state 120
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 94
+
+    (42) conditionbase -> CS GREATERTHANEQ . CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    NOT             shift and go to state 121
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    CS                             shift and go to state 122
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 95
+
+    (43) conditionbase -> CS UNEQUAL . CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    NOT             shift and go to state 121
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    CS                             shift and go to state 123
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 96
+
+    (44) conditionbase -> CS EQUALCHECK . CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    NOT             shift and go to state 121
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    CS                             shift and go to state 124
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 97
+
+    (45) conditionbase -> CS LESSTHAN . CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    NOT             shift and go to state 121
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    CS                             shift and go to state 125
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 98
+
+    (46) conditionbase -> CS GREATERTHAN . CS
+    (47) CS -> . expression
+    (48) CS -> . NOT LPAREN expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    NOT             shift and go to state 121
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    CS                             shift and go to state 126
+    expression                     shift and go to state 70
+    pointervar                     shift and go to state 64
+
+state 99
+
+    (29) whileblock -> WHILE LPAREN conditional RPAREN . LBRACE fbody RBRACE
+
+    LBRACE          shift and go to state 127
+
+
+state 100
+
+    (57) assignment_base -> TIMES pointervar EQUALS expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    SEMICOLON       reduce using rule 57 (assignment_base -> TIMES pointervar EQUALS expression .)
+    PLUS            shift and go to state 75
+    MINUS           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+
+
+state 101
+
+    (59) expression -> expression PLUS expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 59 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 59 (expression -> expression PLUS expression .)
+    SEMICOLON       reduce using rule 59 (expression -> expression PLUS expression .)
+    LESSTHANEQ      reduce using rule 59 (expression -> expression PLUS expression .)
+    GREATERTHANEQ   reduce using rule 59 (expression -> expression PLUS expression .)
+    UNEQUAL         reduce using rule 59 (expression -> expression PLUS expression .)
+    EQUALCHECK      reduce using rule 59 (expression -> expression PLUS expression .)
+    LESSTHAN        reduce using rule 59 (expression -> expression PLUS expression .)
+    GREATERTHAN     reduce using rule 59 (expression -> expression PLUS expression .)
+    RPAREN          reduce using rule 59 (expression -> expression PLUS expression .)
+    ANDOPERATOR     reduce using rule 59 (expression -> expression PLUS expression .)
+    OROPERATOR      reduce using rule 59 (expression -> expression PLUS expression .)
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+
+  ! DIVIDE          [ reduce using rule 59 (expression -> expression PLUS expression .) ]
+  ! TIMES           [ reduce using rule 59 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 75 ]
+  ! MINUS           [ shift and go to state 76 ]
+
+
+state 102
+
+    (60) expression -> expression MINUS expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 60 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 60 (expression -> expression MINUS expression .)
+    SEMICOLON       reduce using rule 60 (expression -> expression MINUS expression .)
+    LESSTHANEQ      reduce using rule 60 (expression -> expression MINUS expression .)
+    GREATERTHANEQ   reduce using rule 60 (expression -> expression MINUS expression .)
+    UNEQUAL         reduce using rule 60 (expression -> expression MINUS expression .)
+    EQUALCHECK      reduce using rule 60 (expression -> expression MINUS expression .)
+    LESSTHAN        reduce using rule 60 (expression -> expression MINUS expression .)
+    GREATERTHAN     reduce using rule 60 (expression -> expression MINUS expression .)
+    RPAREN          reduce using rule 60 (expression -> expression MINUS expression .)
+    ANDOPERATOR     reduce using rule 60 (expression -> expression MINUS expression .)
+    OROPERATOR      reduce using rule 60 (expression -> expression MINUS expression .)
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+
+  ! DIVIDE          [ reduce using rule 60 (expression -> expression MINUS expression .) ]
+  ! TIMES           [ reduce using rule 60 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 75 ]
+  ! MINUS           [ shift and go to state 76 ]
+
+
+state 103
+
+    (61) expression -> expression DIVIDE expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 61 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 61 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 61 (expression -> expression DIVIDE expression .)
+    TIMES           reduce using rule 61 (expression -> expression DIVIDE expression .)
+    SEMICOLON       reduce using rule 61 (expression -> expression DIVIDE expression .)
+    LESSTHANEQ      reduce using rule 61 (expression -> expression DIVIDE expression .)
+    GREATERTHANEQ   reduce using rule 61 (expression -> expression DIVIDE expression .)
+    UNEQUAL         reduce using rule 61 (expression -> expression DIVIDE expression .)
+    EQUALCHECK      reduce using rule 61 (expression -> expression DIVIDE expression .)
+    LESSTHAN        reduce using rule 61 (expression -> expression DIVIDE expression .)
+    GREATERTHAN     reduce using rule 61 (expression -> expression DIVIDE expression .)
+    RPAREN          reduce using rule 61 (expression -> expression DIVIDE expression .)
+    ANDOPERATOR     reduce using rule 61 (expression -> expression DIVIDE expression .)
+    OROPERATOR      reduce using rule 61 (expression -> expression DIVIDE expression .)
+
+  ! PLUS            [ shift and go to state 75 ]
+  ! MINUS           [ shift and go to state 76 ]
+  ! DIVIDE          [ shift and go to state 77 ]
+  ! TIMES           [ shift and go to state 78 ]
+
+
+state 104
+
+    (62) expression -> expression TIMES expression .
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    PLUS            reduce using rule 62 (expression -> expression TIMES expression .)
+    MINUS           reduce using rule 62 (expression -> expression TIMES expression .)
+    DIVIDE          reduce using rule 62 (expression -> expression TIMES expression .)
+    TIMES           reduce using rule 62 (expression -> expression TIMES expression .)
+    SEMICOLON       reduce using rule 62 (expression -> expression TIMES expression .)
+    LESSTHANEQ      reduce using rule 62 (expression -> expression TIMES expression .)
+    GREATERTHANEQ   reduce using rule 62 (expression -> expression TIMES expression .)
+    UNEQUAL         reduce using rule 62 (expression -> expression TIMES expression .)
+    EQUALCHECK      reduce using rule 62 (expression -> expression TIMES expression .)
+    LESSTHAN        reduce using rule 62 (expression -> expression TIMES expression .)
+    GREATERTHAN     reduce using rule 62 (expression -> expression TIMES expression .)
+    RPAREN          reduce using rule 62 (expression -> expression TIMES expression .)
+    ANDOPERATOR     reduce using rule 62 (expression -> expression TIMES expression .)
+    OROPERATOR      reduce using rule 62 (expression -> expression TIMES expression .)
+
+  ! PLUS            [ shift and go to state 75 ]
+  ! MINUS           [ shift and go to state 76 ]
+  ! DIVIDE          [ shift and go to state 77 ]
+  ! TIMES           [ shift and go to state 78 ]
+
+
+state 105
+
+    (64) expression -> LPAREN expression RPAREN .
+
+    PLUS            reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    TIMES           reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    SEMICOLON       reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    LESSTHANEQ      reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    GREATERTHANEQ   reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    UNEQUAL         reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    EQUALCHECK      reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    LESSTHAN        reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    GREATERTHAN     reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    ANDOPERATOR     reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+    OROPERATOR      reduce using rule 64 (expression -> LPAREN expression RPAREN .)
+
+
+state 106
+
+    (30) conditional -> LPAREN conditional RPAREN .
+
+    RPAREN          reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    LESSTHANEQ      reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    GREATERTHANEQ   reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    UNEQUAL         reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    EQUALCHECK      reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    LESSTHAN        reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    GREATERTHAN     reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    ANDOPERATOR     reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+    OROPERATOR      reduce using rule 30 (conditional -> LPAREN conditional RPAREN .)
+
+
+state 107
+
+    (21) unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .
+
+    SEMICOLON       reduce using rule 21 (unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .)
+    IF              reduce using rule 21 (unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .)
+    TYPE            reduce using rule 21 (unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .)
+    WHILE           reduce using rule 21 (unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .)
+    TIMES           reduce using rule 21 (unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .)
+    NAME            reduce using rule 21 (unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .)
+    RBRACE          reduce using rule 21 (unmatchedstatement -> IF LPAREN conditional RPAREN allstatement .)
+
+
+state 108
+
+    (22) unmatchedstatement -> IF LPAREN conditional RPAREN statement . ELSE unmatchedstatement
+    (25) ifblock -> IF LPAREN conditional RPAREN statement . ELSE statement
+    (26) ifblock -> IF LPAREN conditional RPAREN statement . ELSE LBRACE fbody RBRACE
+    (14) allstatement -> statement .
+
+    ELSE            shift and go to state 128
+    SEMICOLON       reduce using rule 14 (allstatement -> statement .)
+    IF              reduce using rule 14 (allstatement -> statement .)
+    TYPE            reduce using rule 14 (allstatement -> statement .)
+    WHILE           reduce using rule 14 (allstatement -> statement .)
+    TIMES           reduce using rule 14 (allstatement -> statement .)
+    NAME            reduce using rule 14 (allstatement -> statement .)
+    RBRACE          reduce using rule 14 (allstatement -> statement .)
+
+
+state 109
+
+    (23) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE . fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE . fbody RBRACE
+    (27) ifblock -> IF LPAREN conditional RPAREN LBRACE . fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> IF LPAREN conditional RPAREN LBRACE . fbody RBRACE ELSE statement
+    (12) fbody -> . allstatement fbody
+    (13) fbody -> .
+    (14) allstatement -> . statement
+    (15) allstatement -> . unmatchedstatement
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    RBRACE          reduce using rule 13 (fbody -> .)
+    SEMICOLON       shift and go to state 41
+    IF              shift and go to state 42
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    fbody                          shift and go to state 129
+    unmatchedstatement             shift and go to state 36
+    statement                      shift and go to state 35
+    allstatement                   shift and go to state 34
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 110
+
+    (33) conditional -> conditional LESSTHANEQ conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    LESSTHANEQ      reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    GREATERTHANEQ   reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    UNEQUAL         reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    EQUALCHECK      reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    LESSTHAN        reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    GREATERTHAN     reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    ANDOPERATOR     reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+    OROPERATOR      reduce using rule 33 (conditional -> conditional LESSTHANEQ conditional .)
+
+  ! LESSTHANEQ      [ shift and go to state 84 ]
+  ! GREATERTHANEQ   [ shift and go to state 85 ]
+  ! UNEQUAL         [ shift and go to state 86 ]
+  ! EQUALCHECK      [ shift and go to state 87 ]
+  ! LESSTHAN        [ shift and go to state 88 ]
+  ! GREATERTHAN     [ shift and go to state 89 ]
+  ! ANDOPERATOR     [ shift and go to state 90 ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 111
+
+    (34) conditional -> conditional GREATERTHANEQ conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    LESSTHANEQ      reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    GREATERTHANEQ   reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    UNEQUAL         reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    EQUALCHECK      reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    LESSTHAN        reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    GREATERTHAN     reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    ANDOPERATOR     reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+    OROPERATOR      reduce using rule 34 (conditional -> conditional GREATERTHANEQ conditional .)
+
+  ! LESSTHANEQ      [ shift and go to state 84 ]
+  ! GREATERTHANEQ   [ shift and go to state 85 ]
+  ! UNEQUAL         [ shift and go to state 86 ]
+  ! EQUALCHECK      [ shift and go to state 87 ]
+  ! LESSTHAN        [ shift and go to state 88 ]
+  ! GREATERTHAN     [ shift and go to state 89 ]
+  ! ANDOPERATOR     [ shift and go to state 90 ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 112
+
+    (35) conditional -> conditional UNEQUAL conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 35 (conditional -> conditional UNEQUAL conditional .)
+    UNEQUAL         reduce using rule 35 (conditional -> conditional UNEQUAL conditional .)
+    EQUALCHECK      reduce using rule 35 (conditional -> conditional UNEQUAL conditional .)
+    ANDOPERATOR     reduce using rule 35 (conditional -> conditional UNEQUAL conditional .)
+    OROPERATOR      reduce using rule 35 (conditional -> conditional UNEQUAL conditional .)
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+
+  ! LESSTHANEQ      [ reduce using rule 35 (conditional -> conditional UNEQUAL conditional .) ]
+  ! GREATERTHANEQ   [ reduce using rule 35 (conditional -> conditional UNEQUAL conditional .) ]
+  ! LESSTHAN        [ reduce using rule 35 (conditional -> conditional UNEQUAL conditional .) ]
+  ! GREATERTHAN     [ reduce using rule 35 (conditional -> conditional UNEQUAL conditional .) ]
+  ! UNEQUAL         [ shift and go to state 86 ]
+  ! EQUALCHECK      [ shift and go to state 87 ]
+  ! ANDOPERATOR     [ shift and go to state 90 ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 113
+
+    (36) conditional -> conditional EQUALCHECK conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .)
+    UNEQUAL         reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .)
+    EQUALCHECK      reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .)
+    ANDOPERATOR     reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .)
+    OROPERATOR      reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .)
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+
+  ! LESSTHANEQ      [ reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .) ]
+  ! GREATERTHANEQ   [ reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .) ]
+  ! LESSTHAN        [ reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .) ]
+  ! GREATERTHAN     [ reduce using rule 36 (conditional -> conditional EQUALCHECK conditional .) ]
+  ! UNEQUAL         [ shift and go to state 86 ]
+  ! EQUALCHECK      [ shift and go to state 87 ]
+  ! ANDOPERATOR     [ shift and go to state 90 ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 114
+
+    (37) conditional -> conditional LESSTHAN conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    LESSTHANEQ      reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    GREATERTHANEQ   reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    UNEQUAL         reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    EQUALCHECK      reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    LESSTHAN        reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    GREATERTHAN     reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    ANDOPERATOR     reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+    OROPERATOR      reduce using rule 37 (conditional -> conditional LESSTHAN conditional .)
+
+  ! LESSTHANEQ      [ shift and go to state 84 ]
+  ! GREATERTHANEQ   [ shift and go to state 85 ]
+  ! UNEQUAL         [ shift and go to state 86 ]
+  ! EQUALCHECK      [ shift and go to state 87 ]
+  ! LESSTHAN        [ shift and go to state 88 ]
+  ! GREATERTHAN     [ shift and go to state 89 ]
+  ! ANDOPERATOR     [ shift and go to state 90 ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 115
+
+    (38) conditional -> conditional GREATERTHAN conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    LESSTHANEQ      reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    GREATERTHANEQ   reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    UNEQUAL         reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    EQUALCHECK      reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    LESSTHAN        reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    GREATERTHAN     reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    ANDOPERATOR     reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+    OROPERATOR      reduce using rule 38 (conditional -> conditional GREATERTHAN conditional .)
+
+  ! LESSTHANEQ      [ shift and go to state 84 ]
+  ! GREATERTHANEQ   [ shift and go to state 85 ]
+  ! UNEQUAL         [ shift and go to state 86 ]
+  ! EQUALCHECK      [ shift and go to state 87 ]
+  ! LESSTHAN        [ shift and go to state 88 ]
+  ! GREATERTHAN     [ shift and go to state 89 ]
+  ! ANDOPERATOR     [ shift and go to state 90 ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 116
+
+    (39) conditional -> conditional ANDOPERATOR conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .)
+    ANDOPERATOR     reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .)
+    OROPERATOR      reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .)
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    UNEQUAL         shift and go to state 86
+    EQUALCHECK      shift and go to state 87
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+
+  ! LESSTHANEQ      [ reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .) ]
+  ! GREATERTHANEQ   [ reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .) ]
+  ! UNEQUAL         [ reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .) ]
+  ! EQUALCHECK      [ reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .) ]
+  ! LESSTHAN        [ reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .) ]
+  ! GREATERTHAN     [ reduce using rule 39 (conditional -> conditional ANDOPERATOR conditional .) ]
+  ! ANDOPERATOR     [ shift and go to state 90 ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 117
+
+    (40) conditional -> conditional OROPERATOR conditional .
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          reduce using rule 40 (conditional -> conditional OROPERATOR conditional .)
+    OROPERATOR      reduce using rule 40 (conditional -> conditional OROPERATOR conditional .)
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    UNEQUAL         shift and go to state 86
+    EQUALCHECK      shift and go to state 87
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+    ANDOPERATOR     shift and go to state 90
+
+  ! LESSTHANEQ      [ reduce using rule 40 (conditional -> conditional OROPERATOR conditional .) ]
+  ! GREATERTHANEQ   [ reduce using rule 40 (conditional -> conditional OROPERATOR conditional .) ]
+  ! UNEQUAL         [ reduce using rule 40 (conditional -> conditional OROPERATOR conditional .) ]
+  ! EQUALCHECK      [ reduce using rule 40 (conditional -> conditional OROPERATOR conditional .) ]
+  ! LESSTHAN        [ reduce using rule 40 (conditional -> conditional OROPERATOR conditional .) ]
+  ! GREATERTHAN     [ reduce using rule 40 (conditional -> conditional OROPERATOR conditional .) ]
+  ! ANDOPERATOR     [ reduce using rule 40 (conditional -> conditional OROPERATOR conditional .) ]
+  ! OROPERATOR      [ shift and go to state 91 ]
+
+
+state 118
+
+    (32) conditional -> NOT LPAREN conditional . RPAREN
+    (33) conditional -> conditional . LESSTHANEQ conditional
+    (34) conditional -> conditional . GREATERTHANEQ conditional
+    (35) conditional -> conditional . UNEQUAL conditional
+    (36) conditional -> conditional . EQUALCHECK conditional
+    (37) conditional -> conditional . LESSTHAN conditional
+    (38) conditional -> conditional . GREATERTHAN conditional
+    (39) conditional -> conditional . ANDOPERATOR conditional
+    (40) conditional -> conditional . OROPERATOR conditional
+
+    RPAREN          shift and go to state 130
+    LESSTHANEQ      shift and go to state 84
+    GREATERTHANEQ   shift and go to state 85
+    UNEQUAL         shift and go to state 86
+    EQUALCHECK      shift and go to state 87
+    LESSTHAN        shift and go to state 88
+    GREATERTHAN     shift and go to state 89
+    ANDOPERATOR     shift and go to state 90
+    OROPERATOR      shift and go to state 91
+
+
+state 119
+
+    (48) CS -> NOT LPAREN expression . RPAREN
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+    (47) CS -> expression .
+
+    RPAREN          shift and go to state 131
+    PLUS            shift and go to state 75
+    MINUS           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+    LESSTHANEQ      reduce using rule 47 (CS -> expression .)
+    GREATERTHANEQ   reduce using rule 47 (CS -> expression .)
+    UNEQUAL         reduce using rule 47 (CS -> expression .)
+    EQUALCHECK      reduce using rule 47 (CS -> expression .)
+    LESSTHAN        reduce using rule 47 (CS -> expression .)
+    GREATERTHAN     reduce using rule 47 (CS -> expression .)
+
+
+state 120
+
+    (41) conditionbase -> CS LESSTHANEQ CS .
+
+    RPAREN          reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    LESSTHANEQ      reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    GREATERTHANEQ   reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    UNEQUAL         reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    EQUALCHECK      reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    LESSTHAN        reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    GREATERTHAN     reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    ANDOPERATOR     reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+    OROPERATOR      reduce using rule 41 (conditionbase -> CS LESSTHANEQ CS .)
+
+
+state 121
+
+    (48) CS -> NOT . LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 132
+
+
+state 122
+
+    (42) conditionbase -> CS GREATERTHANEQ CS .
+
+    RPAREN          reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    LESSTHANEQ      reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    GREATERTHANEQ   reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    UNEQUAL         reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    EQUALCHECK      reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    LESSTHAN        reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    GREATERTHAN     reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    ANDOPERATOR     reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+    OROPERATOR      reduce using rule 42 (conditionbase -> CS GREATERTHANEQ CS .)
+
+
+state 123
+
+    (43) conditionbase -> CS UNEQUAL CS .
+
+    RPAREN          reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    LESSTHANEQ      reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    GREATERTHANEQ   reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    UNEQUAL         reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    EQUALCHECK      reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    LESSTHAN        reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    GREATERTHAN     reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    ANDOPERATOR     reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+    OROPERATOR      reduce using rule 43 (conditionbase -> CS UNEQUAL CS .)
+
+
+state 124
+
+    (44) conditionbase -> CS EQUALCHECK CS .
+
+    RPAREN          reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    LESSTHANEQ      reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    GREATERTHANEQ   reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    UNEQUAL         reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    EQUALCHECK      reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    LESSTHAN        reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    GREATERTHAN     reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    ANDOPERATOR     reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+    OROPERATOR      reduce using rule 44 (conditionbase -> CS EQUALCHECK CS .)
+
+
+state 125
+
+    (45) conditionbase -> CS LESSTHAN CS .
+
+    RPAREN          reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    LESSTHANEQ      reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    GREATERTHANEQ   reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    UNEQUAL         reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    EQUALCHECK      reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    LESSTHAN        reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    GREATERTHAN     reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    ANDOPERATOR     reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+    OROPERATOR      reduce using rule 45 (conditionbase -> CS LESSTHAN CS .)
+
+
+state 126
+
+    (46) conditionbase -> CS GREATERTHAN CS .
+
+    RPAREN          reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    LESSTHANEQ      reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    GREATERTHANEQ   reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    UNEQUAL         reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    EQUALCHECK      reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    LESSTHAN        reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    GREATERTHAN     reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    ANDOPERATOR     reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+    OROPERATOR      reduce using rule 46 (conditionbase -> CS GREATERTHAN CS .)
+
+
+state 127
+
+    (29) whileblock -> WHILE LPAREN conditional RPAREN LBRACE . fbody RBRACE
+    (12) fbody -> . allstatement fbody
+    (13) fbody -> .
+    (14) allstatement -> . statement
+    (15) allstatement -> . unmatchedstatement
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    RBRACE          reduce using rule 13 (fbody -> .)
+    SEMICOLON       shift and go to state 41
+    IF              shift and go to state 42
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    fbody                          shift and go to state 133
+    allstatement                   shift and go to state 34
+    statement                      shift and go to state 35
+    unmatchedstatement             shift and go to state 36
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 128
+
+    (22) unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE . unmatchedstatement
+    (25) ifblock -> IF LPAREN conditional RPAREN statement ELSE . statement
+    (26) ifblock -> IF LPAREN conditional RPAREN statement ELSE . LBRACE fbody RBRACE
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    LBRACE          shift and go to state 136
+    IF              shift and go to state 42
+    SEMICOLON       shift and go to state 41
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    statement                      shift and go to state 134
+    unmatchedstatement             shift and go to state 135
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 129
+
+    (23) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody . RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody . RBRACE
+    (27) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody . RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody . RBRACE ELSE statement
+
+    RBRACE          shift and go to state 137
+
+
+state 130
+
+    (32) conditional -> NOT LPAREN conditional RPAREN .
+
+    RPAREN          reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    LESSTHANEQ      reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    GREATERTHANEQ   reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    UNEQUAL         reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    EQUALCHECK      reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    LESSTHAN        reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    GREATERTHAN     reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    ANDOPERATOR     reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+    OROPERATOR      reduce using rule 32 (conditional -> NOT LPAREN conditional RPAREN .)
+
+
+state 131
+
+    (48) CS -> NOT LPAREN expression RPAREN .
+
+    LESSTHANEQ      reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    GREATERTHANEQ   reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    UNEQUAL         reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    EQUALCHECK      reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    LESSTHAN        reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    GREATERTHAN     reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    ANDOPERATOR     reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+    OROPERATOR      reduce using rule 48 (CS -> NOT LPAREN expression RPAREN .)
+
+
+state 132
+
+    (48) CS -> NOT LPAREN . expression RPAREN
+    (59) expression -> . expression PLUS expression
+    (60) expression -> . expression MINUS expression
+    (61) expression -> . expression DIVIDE expression
+    (62) expression -> . expression TIMES expression
+    (63) expression -> . MINUS expression
+    (64) expression -> . LPAREN expression RPAREN
+    (65) expression -> . NUMBER
+    (66) expression -> . pointervar
+    (67) pointervar -> . TIMES pointervar
+    (68) pointervar -> . ADDROF pointervar
+    (69) pointervar -> . NAME
+
+    MINUS           shift and go to state 61
+    LPAREN          shift and go to state 62
+    NUMBER          shift and go to state 63
+    TIMES           shift and go to state 54
+    ADDROF          shift and go to state 56
+    NAME            shift and go to state 57
+
+    expression                     shift and go to state 138
+    pointervar                     shift and go to state 64
+
+state 133
+
+    (29) whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody . RBRACE
+
+    RBRACE          shift and go to state 139
+
+
+state 134
+
+    (25) ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .
+
+    SEMICOLON       reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+    IF              reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+    TYPE            reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+    WHILE           reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+    TIMES           reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+    NAME            reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+    RBRACE          reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+    ELSE            reduce using rule 25 (ifblock -> IF LPAREN conditional RPAREN statement ELSE statement .)
+
+
+state 135
+
+    (22) unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .
+
+    SEMICOLON       reduce using rule 22 (unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .)
+    IF              reduce using rule 22 (unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .)
+    TYPE            reduce using rule 22 (unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .)
+    WHILE           reduce using rule 22 (unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .)
+    TIMES           reduce using rule 22 (unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .)
+    NAME            reduce using rule 22 (unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .)
+    RBRACE          reduce using rule 22 (unmatchedstatement -> IF LPAREN conditional RPAREN statement ELSE unmatchedstatement .)
+
+
+state 136
+
+    (26) ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE . fbody RBRACE
+    (12) fbody -> . allstatement fbody
+    (13) fbody -> .
+    (14) allstatement -> . statement
+    (15) allstatement -> . unmatchedstatement
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    RBRACE          reduce using rule 13 (fbody -> .)
+    SEMICOLON       shift and go to state 41
+    IF              shift and go to state 42
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    statement                      shift and go to state 35
+    fbody                          shift and go to state 140
+    allstatement                   shift and go to state 34
+    unmatchedstatement             shift and go to state 36
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 137
+
+    (23) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE . ELSE unmatchedstatement
+    (24) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .
+    (27) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE . ELSE LBRACE fbody RBRACE
+    (28) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE . ELSE statement
+
+    ELSE            shift and go to state 141
+    SEMICOLON       reduce using rule 24 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    IF              reduce using rule 24 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    TYPE            reduce using rule 24 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    WHILE           reduce using rule 24 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    TIMES           reduce using rule 24 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    NAME            reduce using rule 24 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    RBRACE          reduce using rule 24 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+
+
+state 138
+
+    (48) CS -> NOT LPAREN expression . RPAREN
+    (59) expression -> expression . PLUS expression
+    (60) expression -> expression . MINUS expression
+    (61) expression -> expression . DIVIDE expression
+    (62) expression -> expression . TIMES expression
+
+    RPAREN          shift and go to state 131
+    PLUS            shift and go to state 75
+    MINUS           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    TIMES           shift and go to state 78
+
+
+state 139
+
+    (29) whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .
+
+    SEMICOLON       reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    IF              reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    TYPE            reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    WHILE           reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    TIMES           reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    NAME            reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    RBRACE          reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+    ELSE            reduce using rule 29 (whileblock -> WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE .)
+
+
+state 140
+
+    (26) ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody . RBRACE
+
+    RBRACE          shift and go to state 142
+
+
+state 141
+
+    (23) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE . unmatchedstatement
+    (27) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE . LBRACE fbody RBRACE
+    (28) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE . statement
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    LBRACE          shift and go to state 143
+    IF              shift and go to state 42
+    SEMICOLON       shift and go to state 41
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    unmatchedstatement             shift and go to state 144
+    statement                      shift and go to state 145
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 142
+
+    (26) ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .
+
+    SEMICOLON       reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+    IF              reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+    TYPE            reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+    WHILE           reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+    TIMES           reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+    NAME            reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+    RBRACE          reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+    ELSE            reduce using rule 26 (ifblock -> IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE .)
+
+
+state 143
+
+    (27) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE . fbody RBRACE
+    (12) fbody -> . allstatement fbody
+    (13) fbody -> .
+    (14) allstatement -> . statement
+    (15) allstatement -> . unmatchedstatement
+    (16) statement -> . assignment
+    (17) statement -> . declaration
+    (18) statement -> . whileblock
+    (19) statement -> . ifblock
+    (20) statement -> . SEMICOLON
+    (21) unmatchedstatement -> . IF LPAREN conditional RPAREN allstatement
+    (22) unmatchedstatement -> . IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+    (23) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+    (24) unmatchedstatement -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (56) assignment -> . assignment_base SEMICOLON
+    (49) declaration -> . TYPE dlist1 SEMICOLON
+    (29) whileblock -> . WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+    (25) ifblock -> . IF LPAREN conditional RPAREN statement ELSE statement
+    (26) ifblock -> . IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+    (27) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+    (28) ifblock -> . IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+    (57) assignment_base -> . TIMES pointervar EQUALS expression
+    (58) assignment_base -> . NAME EQUALS expression
+
+    RBRACE          reduce using rule 13 (fbody -> .)
+    SEMICOLON       shift and go to state 41
+    IF              shift and go to state 42
+    TYPE            shift and go to state 31
+    WHILE           shift and go to state 44
+    TIMES           shift and go to state 45
+    NAME            shift and go to state 32
+
+    fbody                          shift and go to state 146
+    allstatement                   shift and go to state 34
+    statement                      shift and go to state 35
+    unmatchedstatement             shift and go to state 36
+    assignment                     shift and go to state 37
+    declaration                    shift and go to state 38
+    whileblock                     shift and go to state 39
+    ifblock                        shift and go to state 40
+    assignment_base                shift and go to state 43
+
+state 144
+
+    (23) unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .
+
+    SEMICOLON       reduce using rule 23 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .)
+    IF              reduce using rule 23 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .)
+    TYPE            reduce using rule 23 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .)
+    WHILE           reduce using rule 23 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .)
+    TIMES           reduce using rule 23 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .)
+    NAME            reduce using rule 23 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .)
+    RBRACE          reduce using rule 23 (unmatchedstatement -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement .)
+
+
+state 145
+
+    (28) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .
+
+    SEMICOLON       reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+    IF              reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+    TYPE            reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+    WHILE           reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+    TIMES           reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+    NAME            reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+    RBRACE          reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+    ELSE            reduce using rule 28 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement .)
+
+
+state 146
+
+    (27) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody . RBRACE
+
+    RBRACE          shift and go to state 147
+
+
+state 147
+
+    (27) ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .
+
+    SEMICOLON       reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+    IF              reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+    TYPE            reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+    WHILE           reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+    TIMES           reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+    NAME            reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+    RBRACE          reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+    ELSE            reduce using rule 27 (ifblock -> IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE .)
+

@@ -1,0 +1,54 @@
+int fibonacci(*asdq,*y)
+(
+	IF
+	(
+		EQ
+		(
+			DEREF
+			(
+				VAR(a)
+			)
+			,
+			CONST(4)
+		)
+		,
+	)
+	WHILE
+	(
+		EQ
+		(
+			CONST(4)
+			,
+			CONST(6)
+		)
+		,
+	)
+	ASGN
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		CONST(3)
+	)
+
+)
+
+void main(*****a,*b,c,a)
+(
+	ASGN
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		DEREF
+		(
+			VAR(p)
+		)
+	)
+
+)
+
