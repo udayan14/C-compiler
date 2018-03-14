@@ -12,26 +12,39 @@ is_error = 0
 main_found = 0
 assignment_error = 0
 return_error = 0
+temp = 0
+previous = 1
 tokens = (
 	'NUMBER',
 	'TYPE',
 	'SEMICOLON', 'EQUALS', 'COMMA',
 	'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
-	'ADDROF',
+	'ANDOPERATOR','OROPERATOR','ADDROF',
 	'NAME',
 	'PLUS','MINUS','TIMES','DIVIDE',
+	'WHILE','IF','ELSE',
+	'EQUALCHECK','UNEQUAL','LESSTHAN','LESSTHANEQ','GREATERTHAN','GREATERTHANEQ','NOT',
 	)
 
 t_ignore = " \t"
 t_SEMICOLON = ";"
 t_COMMA = ","
 t_EQUALS = "="
+t_EQUALCHECK = "=="
+t_UNEQUAL = "!="
+t_LESSTHAN = "<"
+t_LESSTHANEQ = "<="
+t_GREATERTHAN = ">"
+t_GREATERTHANEQ = ">="
+t_NOT = "!"
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_LBRACE = r'\{'
 t_RBRACE = r'\}'
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_ADDROF = r'&'
+t_ANDOPERATOR = "&&"
+t_OROPERATOR = r'\|\|'
 t_TIMES = r'\*'
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -41,6 +54,17 @@ def t_TYPE(t):
 	r'\bvoid\b | \bint\b'
 	return t
 
+def t_WHILE(t):
+	r'\bwhile\b'
+	return t
+
+def t_IF(t):
+	r'\bif\b'
+	return t
+
+def t_ELSE(t):
+	r'\belse\b'
+	return t
 
 def t_newline(t):
 	r'\n'
@@ -64,12 +88,123 @@ def t_error(t):
 	t.lexer.skip(1)
 
 precedence = (
+	('left','OROPERATOR'),
+	('left','ANDOPERATOR'),
+	('left','EQUALCHECK','UNEQUAL'),
+	('left','LESSTHANEQ','LESSTHAN','GREATERTHANEQ','GREATERTHAN'),
 	('left','PLUS','MINUS'),
 	('left','TIMES','DIVIDE'),
-	('right','VALOF'),
+	('right','VALOF','ADDROF'),
+	('right','NOT'),
 	('right','UMINUS'),
+	
 	)
 
+getSymbol = {
+	"PLUS" : " + " ,
+	"MINUS": " - " ,
+	"MUL"  : " * " ,
+	"DIV"  : " / " ,
+	"ASGN" : " = " ,
+	"LE"   : " <= ",
+	"GE"   : " >= ",
+	"LT"   : " < " ,
+	"GT"   : " > " ,
+	"EQ"   : " == ",
+	"NE"   : " != ",
+	"AND"  : " && ",
+	"OR"   : " || ",
+}
+
+
+
+class node:
+		def __init__(self,Type,left, middle, right):
+			self.Type = Type
+			self.left = left
+			self.right = right
+			self.middle = middle
+			self.code = []
+			self.num = -1
+			self.num1 = -1
+			self.blank = 0
+		def addCode(self,c):
+			self.code.append(c)
+
+class CFG:
+	def __init__(self):
+		self.end = node("End",-1,-1,-1)		
+		self.insertnode = node("Normal",self.end,-1,-1)
+		self.head = node("Start",self.insertnode,-1,-1)
+
+	def insert(self,ast):
+		if(ast.Type == "BLANKBODY"):
+			return
+		elif(ast.Type == "FUNC"):
+			if(not ast.l):
+				pass
+			else:
+				for j in range(len(ast.l)-1,-1,-1):
+					self.insert(ast.l[j])
+
+		elif (not ast.isjump() and ast.Type!="DECL" and ast.Type!="BLANKBODY"):	
+			a = ast.getcode()	
+			if isinstance(a,str):
+				self.insertnode.addCode([a])
+			else:
+				self.insertnode.addCode(a[0])
+			
+		elif (ast.Type == "ITE"):
+			c_common = node("Normal",self.insertnode.left,-1,-1)
+			c_true = node("Normal",-1,-1,-1)
+			c_false = node("Normal",-1,-1,-1)
+			c_if = node("ITE",c_true,c_common,c_false)
+			a = ast.l[0].getcode()	
+			if isinstance(a,str):
+				c_if.addCode([a])
+				c_if.num1 = temp
+			else:
+				c_if.addCode(a[0])
+				c_if.num1 = a[1]
+			self.insertnode.left = c_if
+			self.insertnode = c_true
+			self.insert(ast.l[1])
+			self.insertnode = c_false
+			self.insert(ast.l[2])
+			self.insertnode = c_common
+
+		elif(ast.Type == "IF"):
+			c_common = node("Normal",self.insertnode.left,-1,-1)
+			c_true = node("Normal",-1,-1,-1)
+			c_if = node("IF",c_true,c_common,-1)
+			a = ast.l[0].getcode()
+
+			if isinstance(a,str):
+				c_if.addCode([a])
+				c_if.num1 = temp
+			else:
+				c_if.addCode(a[0])
+				c_if.num1 = a[1]
+			self.insertnode.left = c_if
+			self.insertnode = c_true
+			self.insert(ast.l[1])
+			self.insertnode = c_common
+
+		elif(ast.Type == "WHILE"):
+			c_common = node("Normal",self.insertnode.left,-1,-1)
+			c_true = node("Normal",-1,-1,-1)
+			c_while = node("WHILE",c_true,c_common,-1)
+			a = ast.l[0].getcode()	
+			if isinstance(a,str):
+				c_while.addCode([a])
+				c_while.num1 = temp
+			else:
+				c_while.addCode(a[0])
+				c_while.num1 = a[1]
+			self.insertnode.left = c_while
+			self.insertnode = c_true
+			self.insert(ast.l[1])
+			self.insertnode = c_common
 
 class AST:
 	def __init__(self,Type,Name,l):
@@ -79,19 +214,53 @@ class AST:
 
 	def printit(self,i):
 
-
-		if(self.Type == "CONST"):
+		if(self.Type == "BLANKBODY"):
+			return
+		elif(self.Type == "CONST"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
+
 		elif(self.Type == "VAR"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
 
-		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR"):
+		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR" or self.Type == "NOT"):
 			printhelper(self.Type,i)
 			printhelper("(",i)
 			self.l[0].printit(i+1)
 			printhelper(")",i)
 
-		elif(self.Type == "PLUS" or self.Type == "MINUS" or self.Type == "MUL" or self.Type == "DIV" or self.Type == "ASGN"):
+		elif(self.Type == "WHILE"):
+			printhelper(self.Type,i)
+			printhelper("(",i)
+			self.l[0].printit(i+1)
+			printhelper(",",i+1)
+			self.l[1].printit(i+1)
+			printhelper(")",i)
+
+		elif(self.Type == "ITE"):
+			printhelper("IF",i)
+			printhelper("(",i)
+			self.l[0].printit(i+1)
+			printhelper(",",i+1)
+			# printhelper("THEN",i)
+			# printhelper("(",i)
+			self.l[1].printit(i+1)
+			# printhelper(")",i)
+			printhelper(",",i+1)
+			# printhelper("(",i)
+			self.l[2].printit(i+1)
+			printhelper(")",i)	
+
+		elif(self.Type == "IF"):
+			printhelper("IF",i)
+			printhelper("(",i)
+			self.l[0].printit(i+1)
+			# printhelper(")",i)
+			printhelper(",",i+1)
+			# printhelper("(",i)
+			self.l[1].printit(i+1)
+			printhelper(")",i)	
+
+		elif(self.Type == "PLUS" or self.Type == "MINUS" or self.Type == "MUL" or self.Type == "DIV" or self.Type == "ASGN" or self.Type == "LE" or self.Type == "GE" or self.Type == "GT" or self.Type == "LT" or self.Type == "EQ" or self.Type == "NE" or self.Type == "AND" or self.Type == "OR"):
 			printhelper(self.Type,i)
 			printhelper("(",i)
 			self.l[0].printit(i+1)
@@ -100,22 +269,379 @@ class AST:
 			printhelper(")",i)
 			if(self.Type == "ASGN"):
 				print("")
+
 		elif(self.Type == "FUNC"):
 			if(not self.l):
 				pass
 			else:
-				for i in range(len(self.l)-1,-1,-1):
-					self.l[i].printit(0)
-					if(i!=0):
+				for j in range(len(self.l)-1,-1,-1):
+					self.l[j].printit(i)
+					if(j!=0):
 						# print("")
 						pass
-
-
-
 
 	def appendchild(self,ast):
 		self.l.append(ast)
 
+	def isSimple(self):
+		if self.Type in ["CONST","VAR","DEREF","ADDR"]:
+			return True
+		elif self.Type in ["PLUS","MINUS","MUL","DIVIDE","AND","OR"]:
+			return False
+		elif self.Type in ["UMINUS","NOT"]:
+			return self.l[0].isSimple()
+
+	def getcode(self):
+		global temp
+		if self.Type in ["PLUS","MINUS","MUL","DIV","AND","OR","LE","GE","LT","GT","EQ","NE"]:
+			if self.l[0].isSimple():
+				if self.l[1].isSimple():
+					l = ["t{0} = {1}{2}{3}".format(temp,self.l[0].getcode(),getSymbol[self.Type],self.l[1].getcode())]
+					temp+=1
+					return (l,temp-1)
+				else:
+					l1,t_val = self.l[1].getcode()
+					s = "t{0} = {1}{2}t{3}".format(temp,self.l[0].getcode(),getSymbol[self.Type],t_val)
+					temp+=1
+					l1.append(s)
+					return (l1,temp-1)
+			else:
+				if self.l[1].isSimple():
+					l1,t_val = self.l[0].getcode()
+					s = "t{0} = t{1}{2}{3}".format(temp,t_val,getSymbol[self.Type],self.l[1].getcode())
+					temp+=1
+					l1.append(s)
+					return (l1,temp-1)
+				else:
+					l1,t_val1 = self.l[0].getcode()
+					l2,t_val2 = self.l[1].getcode()
+					s = "t{0} = t{1}{2}t{3}".format(temp,t_val1,getSymbol[self.Type],t_val2)
+					temp+=1
+					l = l1 + l2
+					l.append(s)
+					return(l,temp-1)
+		elif self.Type == "ASGN":
+			if self.l[1].isSimple():
+				l = ["{0}{1}{2}".format(self.l[0].getcode(),getSymbol[self.Type],self.l[1].getcode())]				
+				return (l,temp)
+			else:
+				l1,t_val1 = self.l[1].getcode()
+				s = "{0}{1}t{2}".format(self.l[0].getcode(),getSymbol[self.Type],t_val1)				
+				l1.append(s)
+				return (l1,temp)
+		elif self.Type == "CONST":
+			return str(self.Name)
+		elif self.Type == "VAR":
+			return str(self.Name)
+		elif self.Type == "DEREF":
+			return "*" + self.l[0].getcode()
+		elif self.Type == "ADDR":
+			return "&" + self.l[0].getcode()
+		elif self.Type == "UMINUS":
+			if self.l[0].isSimple():
+				return "-" + self.l[0].getcode()
+			else:
+				l1,t_val1 = self.l[0].getcode()
+				s = "t{0} = -t{1}".format(temp,t_val1) 
+				temp+=1
+				l1.append(s)
+				return (l1,temp-1)
+		elif self.Type == "NOT":
+			if self.l[0].isSimple():
+				return "!" + self.l[0].getcode()
+			else:
+				l1,t_val1 = self.l[0].getcode()
+				s = "t{0} = !t{1}".format(temp,t_val1) 
+				temp+=1
+				l1.append(s)
+				return (l1,temp-1)
+
+
+	def isjump(self):
+		if self.Type in ["IF","ITE","WHILE"]:
+			return True
+		return False
+
+def printCFG(ast):
+	cfg = CFG()
+	cfg.insert(ast)
+	cleanup(cfg.head)
+	# print(cfg.head.Type)
+	giveNumbering(cfg.head,0)
+	printCFGhelper(cfg.head,-1)
+
+def cleanup(n):
+	# print("soirjcgosij")
+	if n.Type == "ITE":
+		c = n.middle
+		if not c.code:
+			if (c.left==-1 and c.middle==-1 and c.right==-1):
+				n.middle = -1
+			elif c.left.Type in ["End","IF","ITE","WHILE"]:
+				n.middle = c.left
+				cleanup(n.middle)
+		else:
+			cleanup(n.middle)
+		c = n.right
+		if not c.code:
+			
+			if (not (c.left==-1 and c.middle==-1 and c.right==-1)):
+				
+				n.right = c.left
+			else:
+				# print("Empty else block!")
+				n.right = -1
+				# print("Changing type!")
+				n.Type = "IF"
+				# print(n.Type)
+				# return
+		c = n.left
+		if not c.code:
+			if (not (c.left==-1 and c.middle==-1 and c.right==-1)):
+				n.left = c.left
+			else:
+				#### Empty if block in ITE
+				n.left = -1
+		if n.left!=-1:
+			cleanup(n.left)
+		if n.right!=-1:
+			cleanup(n.right)
+	elif n.Type == "IF" or n.Type == "WHILE":
+		c = n.middle
+		if not c.code:
+			if (c.left==-1 and c.middle==-1 and c.right==-1):
+				n.middle = -1
+				n.right = -1
+
+			elif c.left.Type in ["End","IF","ITE","WHILE"]:
+				n.middle = c.left
+				cleanup(n.middle)
+		else:
+			cleanup(n.middle)
+		c = n.left
+		if not c.code:
+			if (not (c.left==-1 and c.middle==-1 and c.right==-1)):
+				n.left = c.left
+			else:
+				n.left = -1
+		if(n.left!=-1):
+			cleanup(n.left)
+	elif (n.left==-1 and n.right==-1 and n.middle==-1):
+		return
+	# elif n.Type == "Start":
+	# 	c = n.left
+	# 	if not c.code:
+	# 		if c.left.Type in ["End","IF","ITE","WHILE"]:
+	# 			n.left = c.left
+	# 			cleanup(n.left)
+	else:
+		cleanup(n.left)
+
+  
+
+def printList(l): 
+	if not l:
+		return
+	for i in l:
+		print(i)
+
+def giveNumbering(n,i):
+
+	if n.Type in ["Start","Normal","End"]:
+		n.num = i
+		if (not(n.left==-1 and n.middle==-1 and n.right==-1)):
+			# print(n.Type + "calling " + n.left.Type)
+			i1 = giveNumbering(n.left,i+1)
+			return i1
+		return i+1
+	elif n.Type == "ITE":
+		# print("sgrfh")
+		n.num = i
+		if n.left!=-1 and n.middle!=-1 and n.right!=-1:
+			# print(n.Type + "calling " + n.left.Type + " " + n.middle.Type + " " + n.right.Type)
+			i1 = giveNumbering(n.left,i+1)
+			i2 = giveNumbering(n.right,i1)
+			i3 = giveNumbering(n.middle,i2)
+			return i3
+		elif n.left!=-1 and n.right!=-1:
+			# print(n.Type + "calling " + n.left.Type + " " + n.right.Type)
+			i1 = giveNumbering(n.left,i+1)
+			i2 = giveNumbering(n.right,i1)
+			return i2
+		elif n.middle!=-1 and n.right!=-1:
+			# print(n.Type + "calling " +  n.middle.Type + " " + n.right.Type)
+			i1 = giveNumbering(n.right,i+1)
+			i2 = giveNumbering(n.middle,i1)
+			return i2
+		elif n.left!=-1 and n.middle!=-1:
+			# print(n.Type + "calling " + n.left.Type + " " + n.middle.Type )
+			i1 = giveNumbering(n.left,i+1)
+			i2 = giveNumbering(n.middle,i1)
+			return i2
+		elif n.right!=-1:
+			# print(n.Type + "calling " + n.right.Type)
+			i1 = giveNumbering(n.right,i+1)
+			return i1
+		elif n.left!=-1:
+			# print(n.Type + "calling " + n.left.Type)
+			i1 = giveNumbering(n.left,i+1)
+			return i1
+		elif n.middle!=-1:
+			# print(n.Type + "calling " + n.middle.Type)
+			i1 = giveNumbering(n.middle,i+1)
+			return i1
+	elif n.Type == "IF" or n.Type == "WHILE":
+		# print("sdbsnbson")
+		n.num = i
+		if n.left!=-1 and n.middle!=-1:
+			# print(n.Type + "calling " + n.left.Type + " " + n.middle.Type )
+			i1 = giveNumbering(n.left,i+1)
+			i2 = giveNumbering(n.middle,i1)
+			return i2
+		elif n.left!=-1:
+			# print(n.Type + "calling " + n.left.Type)
+			i1 = giveNumbering(n.left,i+1)
+			return i1
+		elif n.middle!=-1:
+			# print(n.Type + "calling " + n.middle.Type)
+			i1 = giveNumbering(n.middle,i+1)
+			return i1
+		else:
+			return i
+
+
+
+def printCFGhelper(n1,nextstatenum):
+	if n1==-1:
+		return
+	if n1.Type == "End":
+		print("<bb {0}>".format(n1.num))
+		print("End")
+		pass
+	elif n1.Type == "Start":
+		printCFGhelper(n1.left,nextstatenum)
+
+
+	elif n1.Type == "Normal":
+		print("<bb {0}>".format(n1.num))
+		# print("{0} has child {1}".format(n1.num,n1.l))	
+		for c in n1.code:
+			printList(c)
+		if (not (n1.left==-1 and n1.right==-1 and n1.middle==-1)):			
+			print("goto <bb {0}>".format(n1.num+1))
+			print("")
+			printCFGhelper(n1.left,nextstatenum)
+		else:
+			print("goto <bb {0}>".format(nextstatenum))
+			print("")
+
+	elif n1.Type == "ITE":
+		print("<bb {0}>".format(n1.num))
+		printList(n1.code[0])
+		# if(n1.left==-1):
+		# 	print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.middle.num))
+		# else:
+		# 	print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+		# if(n1.right==-1):
+		# 	print("else goto <bb {0}>".format(n1.middle.num))
+		# else:
+		# 	print("else goto <bb {0}>".format(n1.right.num))
+		# print("")
+		if n1.left!=-1 and n1.right!=-1 and n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printCFGhelper(n1.left,n1.middle.num)
+			printCFGhelper(n1.right,n1.middle.num)
+			printCFGhelper(n1.middle,nextstatenum)
+		elif n1.left!=-1 and n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printCFGhelper(n1.left,n1.middle.num)
+			printCFGhelper(n1.middle,nextstatenum)
+		elif n1.right!=-1 and n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.middle.num))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printCFGhelper(n1.right,n1.middle.num)
+			printCFGhelper(n1.middle,nextstatenum)
+		elif n1.left!=-1 and n1.right!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printCFGhelper(n1.left,nextstatenum)
+			printCFGhelper(n1.right,nextstatenum)
+		elif n1.left!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printCFGhelper(n1.left,nextstatenum)
+		elif n1.right!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,nextstatenum))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printCFGhelper(n1.right,nextstatenum)
+		elif n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,nextstatenum))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printCFGhelper(n1.middle,nextstatenum)
+	elif n1.Type == "IF":
+		print("<bb {0}>".format(n1.num))
+		printList(n1.code[0])
+		# print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+		# if (n1.left!=-1 and n1.middle!=-1):
+		# 	print("else goto <bb {0}>".format(n1.middle.num))
+		# else:
+		# 	print("else goto <bb {0}>".format(nextstatenum))
+		
+		if (n1.left!=-1 and n1.middle!=-1):
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printCFGhelper(n1.left,n1.middle.num)
+			printCFGhelper(n1.middle,nextstatenum)
+		elif n1.left!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printCFGhelper(n1.left,nextstatenum)
+		elif n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.middle.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printCFGhelper(n1.middle,nextstatenum)
+		else:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,nextstatenum))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+	elif n1.Type == "WHILE":
+		print("<bb {0}>".format(n1.num))			
+		printList(n1.code[0])
+		
+		# print("")
+		if (n1.left!=-1 and n1.middle!=-1):
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printCFGhelper(n1.left,n1.num)
+			printCFGhelper(n1.middle,nextstatenum)
+		elif n1.left!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printCFGhelper(n1.left,n1.num)
+		elif n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printCFGhelper(n1.middle,nextstatenum)
+		else:
+			print("if(t{0}) goto <bb {1}>".format(n1.num1,nextstatenum))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+	
 def printhelper(s,i):
 	print("\t"*i + s)
 
@@ -171,23 +697,32 @@ def p_function(p):
 		is_error = 1
 		print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	else:
-		output_f = "Parser_ast_" + str(sys.argv[1]) + ".txt1"
+		output_f1 = str(sys.argv[1]) + ".ast"
+		output_f2 = str(sys.argv[1]) + ".cfg"
 		oldstdout = sys.stdout
-		sys.stdout = open(output_f,'w')		
+		sys.stdout = open(output_f1,'w+')		
 		p[6].printit(0)
+		sys.stdout = open(output_f2,'w+')
+		printCFG(p[6])
 		sys.stdout.close()
 		sys.stdout = oldstdout
 
 def p_fbody(p):
 	"""
-	fbody : statement
-			| statement fbody
+	fbody : allstatement fbody
+			| 
 	"""
+	if(len(p)==1):
+		p[0] = AST("BLANKBODY","",[])
 	if(len(p)==2):
 		p[0] = [p[1]]
 		p[0] = AST("FUNC","",[p[1]])
 	elif(len(p)==3):
 		if(not p[2]):
+			p[0] = [p[1]]
+			p[0] = AST("FUNC","",[p[1]])
+		
+		elif(p[2].Type=="BLANKBODY"):
 			p[0] = [p[1]]
 			p[0] = AST("FUNC","",[p[1]])
 		else:
@@ -196,12 +731,146 @@ def p_fbody(p):
 			# p[0].append(p[1])
 			p[0].appendchild(p[1])
 
+def p_allstatement_expr(p):
+	"""
+	allstatement : statement
+				| unmatchedstatement
+	"""
+	p[0] = p[1]
+
 def p_statement_expr(p):
 	"""
 	statement : assignment
 			| declaration
+			| whileblock
+			| ifblock
 	"""
 	p[0] = p[1]
+
+def p_empty_statement(p):
+	"""
+	statement : SEMICOLON
+	"""
+	p[0] = AST("BLANKBODY","",[])
+
+def p_unmatchedstatement_expr1(p):
+	"""
+	unmatchedstatement : IF LPAREN conditional RPAREN allstatement
+				| IF LPAREN conditional RPAREN statement ELSE unmatchedstatement
+				| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE unmatchedstatement
+	"""
+	if len(p) == 6:
+		p[0] = AST("IF","",[p[3],p[5]])
+	elif len(p) == 10:
+		p[0] = AST("ITE","",[p[3],p[6],p[9]])
+	else:
+		p[0] = AST("ITE","",[p[3],p[5],p[7]])
+
+def p_unmatchedstatement_expr2(p):
+	"""
+	unmatchedstatement : IF LPAREN conditional RPAREN LBRACE fbody RBRACE
+	"""
+	p[0] = AST("IF","",[p[3],p[6]])
+
+def p_ifblock1(p):
+	"""
+	ifblock : IF LPAREN conditional RPAREN statement ELSE statement
+			| IF LPAREN conditional RPAREN statement ELSE LBRACE fbody RBRACE
+			| IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE LBRACE fbody RBRACE
+	"""
+	if len(p) == 8:
+		p[0] = AST("ITE","",[p[3],p[5],p[7]])
+	elif len(p) == 10:
+		p[0] = AST("ITE","",[p[3],p[5],p[8]])
+	else:
+		p[0] = AST("ITE","",[p[3],p[6],p[10]])
+
+def p_ifblock2(p):
+	"""
+	ifblock : IF LPAREN conditional RPAREN LBRACE fbody RBRACE ELSE statement
+	"""
+	p[0] = AST("ITE","",[p[3],p[6],p[9]])
+def p_while(p):
+	"""
+	whileblock : WHILE LPAREN conditional RPAREN LBRACE fbody RBRACE
+	"""
+	p[0] = AST("WHILE","",[p[3],p[6]])
+
+def p_conditional1(p):
+	"""
+	conditional : LPAREN conditional RPAREN
+	"""
+	p[0] = p[2]
+
+def p_conditional(p):
+	"""
+	conditional : conditionbase
+				| NOT LPAREN conditional RPAREN
+				| conditional LESSTHANEQ conditional
+				| conditional GREATERTHANEQ conditional
+				| conditional UNEQUAL conditional
+				| conditional EQUALCHECK conditional
+				| conditional LESSTHAN conditional
+				| conditional GREATERTHAN conditional
+				| conditional ANDOPERATOR conditional
+				| conditional OROPERATOR conditional
+	"""
+	if len(p)==2:
+		p[0] = p[1]
+	elif len(p)==5:
+		p[0] = AST("NOT","",[p[3]])	
+	else:
+		if p[2] == '<=':
+			p[0] = AST("LE","",[p[1],p[3]])
+		elif p[2] == '>=':
+			p[0] = AST("GE","",[p[1],p[3]])
+		elif p[2] == '!=':
+			p[0] = AST("NE","",[p[1],p[3]])
+		elif p[2] == '==':
+			p[0] = AST("EQ","",[p[1],p[3]])
+		elif p[2] == '<':
+			p[0] = AST("LT","",[p[1],p[3]])
+		elif p[2] == '>':
+			p[0] = AST("GT","",[p[1],p[3]])
+		elif p[2] == '&&':
+			p[0] = AST("AND","",[p[1],p[3]])
+		elif p[2] == '||':
+			p[0] = AST("OR","",[p[1],p[3]])
+
+def p_conditionbase(p):
+	"""
+	conditionbase : CS LESSTHANEQ CS
+				| CS GREATERTHANEQ CS
+				| CS UNEQUAL CS
+				| CS EQUALCHECK CS
+				| CS LESSTHAN CS
+				| CS GREATERTHAN CS
+	"""
+	if len(p)==2:
+		p[0] = p[1]
+	else:
+		if p[2] == '<=':
+			p[0] = AST("LE","",[p[1],p[3]])
+		elif p[2] == '>=':
+			p[0] = AST("GE","",[p[1],p[3]])
+		elif p[2] == '!=':
+			p[0] = AST("NE","",[p[1],p[3]])
+		elif p[2] == '==':
+			p[0] = AST("EQ","",[p[1],p[3]])
+		elif p[2] == '<':
+			p[0] = AST("LT","",[p[1],p[3]])
+		elif p[2] == '>':
+			p[0] = AST("GT","",[p[1],p[3]])
+
+def p_cs(p):
+	"""
+	CS : expression
+		| NOT LPAREN expression RPAREN
+	"""
+	if len(p)==2:
+		p[0] = p[1]
+	else:
+		p[0] = AST("NOT","",[p[3]])	
 def p_declaration1(p):
 	"""
 		declaration : TYPE dlist1 SEMICOLON
@@ -321,7 +990,7 @@ def p_pointervar1(p):
 	p[0] = AST("DEREF","",[p[2]])
 def p_pointervar2(p):
 	"""
-	pointervar : ADDROF pointervar
+	pointervar : ADDROF pointervar 
 	"""
 	p[0] = ["ADDR",p[2]]
 	p[0] = AST("ADDR","",[p[2]])
@@ -345,7 +1014,7 @@ def p_error(p):
 
 def process(data):
 	lex.lex()
-	yacc.yacc()
+	yacc.yacc(debug = 1)
 	yacc.parse(data)
 
 if __name__ == "__main__":
