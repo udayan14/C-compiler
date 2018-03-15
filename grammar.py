@@ -1,172 +1,8 @@
-#!/usr/bin/python3
-
 import sys
 import ply.lex as lex
 import ply.yacc as yacc
 import functools
-from CFGclass import *
-from ASTclass import *
-from HelperFunctions import *
-from GlobalVariables import *
 
-tokens = (
-	'NUMBER',
-	'TYPE',
-	'SEMICOLON', 'EQUALS', 'COMMA',
-	'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
-	'ANDOPERATOR','OROPERATOR','ADDROF',
-	'NAME',
-	'PLUS','MINUS','TIMES','DIVIDE',
-	'WHILE','IF','ELSE',
-	'EQUALCHECK','UNEQUAL','LESSTHAN','LESSTHANEQ','GREATERTHAN','GREATERTHANEQ','NOT',
-	)
-
-t_ignore = " \t"
-t_SEMICOLON = ";"
-t_COMMA = ","
-t_EQUALS = "="
-t_EQUALCHECK = "=="
-t_UNEQUAL = "!="
-t_LESSTHAN = "<"
-t_LESSTHANEQ = "<="
-t_GREATERTHAN = ">"
-t_GREATERTHANEQ = ">="
-t_NOT = "!"
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_LBRACE = r'\{'
-t_RBRACE = r'\}'
-t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
-t_ADDROF = r'&'
-t_ANDOPERATOR = "&&"
-t_OROPERATOR = r'\|\|'
-t_TIMES = r'\*'
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_DIVIDE = r'/'
-
-def t_TYPE(t):
-	r'\bvoid\b | \bint\b'
-	return t
-
-def t_WHILE(t):
-	r'\bwhile\b'
-	return t
-
-def t_IF(t):
-	r'\bif\b'
-	return t
-
-def t_ELSE(t):
-	r'\belse\b'
-	return t
-
-def t_newline(t):
-	r'\n'
-	t.lexer.lineno += len(t.value)
-
-def t_COMMENT(t):
-	r'//.*'
-	pass
-
-def t_NUMBER(t):
-	r'\d+'
-	try:
-		t.value = int(t.value)
-	except ValueError:
-		print("Integer value too large %d", t.value)
-		t.value = 0
-	return t
-
-def t_error(t): 
-	print("Illegal character '%s'" % t.value[0])
-	t.lexer.skip(1)
-
-precedence = (
-	('left','OROPERATOR'),
-	('left','ANDOPERATOR'),
-	('left','EQUALCHECK','UNEQUAL'),
-	('left','LESSTHANEQ','LESSTHAN','GREATERTHANEQ','GREATERTHAN'),
-	('left','PLUS','MINUS'),
-	('left','TIMES','DIVIDE'),
-	('right','VALOF','ADDROF'),
-	('right','NOT'),
-	('right','UMINUS'),
-	
-	)
-
-def printCFG(ast):
-	cfg = CFG()
-	cfg.insert(ast)
-	cleanup(cfg.head)
-	# print(cfg.head.Type)
-	giveNumbering(cfg.head,0)
-	print("ugcnsiorjgnosrn")
-	printCFGhelper(cfg.head,-1)
-
-
-def p_masterprogram(p):
-	"""
-	master : program
-	"""
-	p[0] = p[1]
-	output_f1 = str(sys.argv[1]) + ".ast"
-	output_f2 = str(sys.argv[1]) + ".cfg"
-	oldstdout = sys.stdout
-	sys.stdout = open(output_f1,'w+')		
-	p[0].printit(0)
-	sys.stdout = open(output_f2,'w+')
-	# printCFG(p[0])
-	sys.stdout.close()
-	sys.stdout = oldstdout
-
-def p_program(p):
-	""" 
-	program : function 
-				| function program
-				| declaration program
-	"""
-	global assignment_error, assignment_error_line, is_error
-
-	if(assignment_error):
-		is_error = 1
-		if p:
-			print("Syntax error at line no '{0}' , assignment error".format(assignment_error_line))
-		else:
-			print("Syntax error at EOF")
-		assignment_error = 0
-	else:
-		if len(p) == 2:
-			p[0] = AST("PROG","",[p[1]])
-		else:
-			if p[1].Type == "DECL":
-				if(not p[2]):
-					# p[0] = [p[1]]
-					p[0] = AST("PROG","",[])
-				else:
-					p[0] = p[2]
-			elif p[1].Type == "FUNC":
-				p[0] = p[2]
-				p[0].appendchild(p[1])
-
-def is_constant(a):
-	if a.Type == "CONST":
-		return True
-	elif(a.Type == "VAR"):
-		return False
-	elif(not a.l):
-		return True
-	else:
-		return functools.reduce((lambda x,y : x and y) ,list(map(lambda l : is_constant(l),a.l)))
-
-def is_valid_asgn(a1,a2):
-	if a1.Type == "VAR":
-		if(is_constant(a2)):
-			return False
-		else:
-			return True
-	else:
-		return True
 
 def p_function(p):
 	"""
@@ -195,16 +31,15 @@ def p_function(p):
 	# 	is_error = 1
 	# 	print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	# else:
-	output_f1 = str(sys.argv[1]) + ".ast"
-	output_f2 = str(sys.argv[1]) + ".cfg"
-	oldstdout = sys.stdout
-	sys.stdout = open(output_f1,'w+')		
-	p[7].printit(0)
-	sys.stdout = open(output_f2,'w+')
-	print("Printing CFG now!")
-	printCFG(p[7])
-	sys.stdout.close()
-	sys.stdout = oldstdout
+	# 	output_f1 = str(sys.argv[1]) + ".ast"
+	# 	output_f2 = str(sys.argv[1]) + ".cfg"
+	# 	oldstdout = sys.stdout
+	# 	sys.stdout = open(output_f1,'w+')		
+	# 	p[6].printit(0)
+	# 	sys.stdout = open(output_f2,'w+')
+	# 	printCFG(p[6])
+	# 	sys.stdout.close()
+	# 	sys.stdout = oldstdout
 	p[0] = AST("FUNC",p[2],[p[1],p[4],p[7]])
 def p_paramlist(p):
 	"""
@@ -537,20 +372,3 @@ def p_error(p):
 		print("Syntax error at '{0}' line no  '{1}' ".format(p.value,p.lexer.lineno))
 	else:
 		print("Syntax error at EOF")
-
-def process(data):
-	lex.lex()
-	yacc.yacc(debug = 1)
-	yacc.parse(data)
-
-if __name__ == "__main__":
-	filename = str(sys.argv[1])
-	with open(filename,'r') as f:
-		data = f.read()
-	process(data)
-	if(is_error==0):
-		# pass
-		print("Successfully parsed")
-		# print(no_of_static_declarations)
-		# print(no_of_pointer_declarations)
-		# print(no_of_assignments)
