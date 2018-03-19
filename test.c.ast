@@ -1,4 +1,4 @@
-int fibonacci(*asdq,*y)
+int fibonacci(int ******y,int asdq)
 (
 	IF
 	(
@@ -35,7 +35,7 @@ int fibonacci(*asdq,*y)
 
 )
 
-void main(*****a,*b,c,a)
+void main(void a,int c,int *b,int *****a)
 (
 	ASGN
 	(

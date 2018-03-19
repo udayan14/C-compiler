@@ -23,8 +23,10 @@ getSymbol = {
 def makestring(l):
 	l.reverse()
 	for i in range(0,len(l)):
-		if not isinstance(l[i],str):
-			l[i] = "*"*l[i][1]+l[i][0]
+		if not isinstance(l[i][1],str):
+			l[i] = l[i][0]+" "+"*"*l[i][1][1]+l[i][1][0]
+		else:
+			l[i] = l[i][0] +" " +l[i][1]
 
 	return ",".join(str(x) for x in l)
 

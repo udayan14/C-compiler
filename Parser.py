@@ -8,6 +8,9 @@ from CFGclass import *
 from ASTclass import *
 from HelperFunctions import *
 from GlobalVariables import *
+from SymbolTableClass import *
+
+globalSym = SymbolTable() 
 
 tokens = (
 	'NUMBER',
@@ -110,6 +113,10 @@ def p_masterprogram(p):
 	master : program
 	"""
 	p[0] = p[1]
+	for i in p[0].l:
+		print(i)
+		globalSym.addEntry(i)
+	print(globalSym)
 	output_f1 = str(sys.argv[1]) + ".ast"
 	output_f2 = str(sys.argv[1]) + ".cfg"
 	oldstdout = sys.stdout
@@ -119,6 +126,7 @@ def p_masterprogram(p):
 	# printCFG(p[0])
 	sys.stdout.close()
 	sys.stdout = oldstdout
+
 
 def p_program(p):
 	""" 
@@ -143,12 +151,41 @@ def p_program(p):
 				if(not p[2]):
 					# p[0] = [p[1]]
 					p[0] = AST("PROG","",[])
+					p[0].appendchild(p[1])
 				else:
 					p[0] = p[2]
+					p[0].appendchild(p[1])
 			elif p[1].Type == "FUNC":
 				p[0] = p[2]
 				p[0].appendchild(p[1])
 
+def p_program1(p):
+	"""
+	program : prototype program
+	"""
+	global assignment_error
+	if(assignment_error):
+		is_error = 1
+		if p:
+			print("Syntax error at line no '{0}' , assignment error".format(assignment_error_line))
+		else:
+			print("Syntax error at EOF")
+		assignment_error = 0
+	else:
+		if(not p[2]):
+			p[0] = AST("PROG","",[])
+			p[0].appendchild(p[1])
+		else:
+			p[0] = p[2]
+			p[0].appendchild(p[1])
+
+
+def p_prototype(p):
+	"""
+	prototype : TYPE NAME LPAREN paramlist RPAREN SEMICOLON
+	"""
+	p[0] = AST("PROTO",p[2],[p[1],p[4]])
+	# print(p[1],p[2],p[4])
 def is_constant(a):
 	if a.Type == "CONST":
 		return True
@@ -217,7 +254,8 @@ def p_paramlist(p):
 	else:
 		
 		p[0] = p[3]
-		p[0].append(p[2])
+		p[0].append([p[1],p[2]])
+		p[0].reverse()
 def p_paramlist2(p):
 	"""
 	paramlist2 : 
@@ -229,7 +267,7 @@ def p_paramlist2(p):
 	else:
 		
 		p[0] = p[4]
-		p[0].append(p[3])
+		p[0].append([p[2],p[3]])
 
 def p_fbody(p):
 	"""
@@ -399,8 +437,8 @@ def p_declaration1(p):
 	"""
 		declaration : TYPE dlist1 SEMICOLON
 	"""
-	p[0] = AST("DECL","",[])
-
+	p[0] = AST("DECL","",[p[1],p[2]])
+	# print(p[1],p[2])
 def p_dlistname(p):
 	"""
 	dlist1 : NAME  
@@ -408,6 +446,11 @@ def p_dlistname(p):
 	"""
 	global no_of_static_declarations
 	no_of_static_declarations = no_of_static_declarations + 1
+	if len(p) == 2:
+		p[0] = [p[1]]
+	else:
+		p[0] = p[3]
+		p[0].append(p[1])
 		
 def p_dlistpointer(p):
 	"""
@@ -416,6 +459,11 @@ def p_dlistpointer(p):
 	"""
 	global no_of_pointer_declarations
 	no_of_pointer_declarations = no_of_pointer_declarations + 1
+	if len(p) == 2:
+		p[0] = [p[1]]
+	else:
+		p[0] = p[3]
+		p[0].append(p[1])
 
 def p_specialvar1(p):
 	"""

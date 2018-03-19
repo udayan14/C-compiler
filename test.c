@@ -1,6 +1,7 @@
-int a;
-
-int fibonacci(void *asdq, void *y){
+int a,b,c,****D;
+int factorial(int n);
+void makecircle(int *x, int *y, int **r);
+int fibonacci(int asdq, int ******y){
 	if (*a==4)
 	{
 		
@@ -12,12 +13,13 @@ int fibonacci(void *asdq, void *y){
 	*a = 3;
 }
 
-int *a;
+int *temp2,**temp;
 // a=q;
-
+int factorial(int n);
 void main(int *****a , int *b , int c, void a){
-	int *a;
-	*a=*p;
+	int *a,******b,**A;
 
+	*a=*p;
+	int ******b,******C;
 }
 
