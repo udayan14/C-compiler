@@ -20,7 +20,7 @@ getSymbol = {
 	"OR"   : " || ",
 }
 
-def makestring(l):
+def makestring(l):      #Prints variable name
 	l.reverse()
 	for i in range(0,len(l)):
 		if not isinstance(l[i][1],str):
@@ -30,6 +30,14 @@ def makestring(l):
 
 	return ",".join(str(x) for x in l)
 
+def makestring1(l):    #Doesn't
+	for i in range(0,len(l)):
+		if not isinstance(l[i][1],str):
+			l[i] = l[i][0]+" "+"*"*l[i][1][1]
+		else:
+			l[i] = l[i][0] +" "
+
+	return ",".join(str(x) for x in l)
 
 def cleanup(n):
 	# print("soirjcgosij")

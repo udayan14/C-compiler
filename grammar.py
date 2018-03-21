@@ -8,38 +8,6 @@ def p_function(p):
 	"""
 	function : TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
 	"""
-	# global main_found,assignment_error,return_error
-	# void_return = 0
-	# global is_error
-	# # print(p[2])
-	# if str(p[2])=='main':
-	# 	main_found = 1
-	# if str(p[1])=='void':
-	# 	void_return = 1
-	# # print(p[6][::-1])
-	# if(assignment_error):
-	# 	is_error = 1
-	# 	if p:
-	# 		print("Syntax error at line no  '{0}' , assignment error ".format(p.lexer.lineno))
-	# 	else:
-	# 		print("Syntax error at EOF")
-	# 	# print("Main function not found || Return type of main is not void || Invalid Assignment")
-	# elif(not main_found):
-	# 	is_error = 1
-	# 	print("Syntax error at line no  '{0}' , main not found".format(p.lexer.lineno))
-	# elif(not void_return):
-	# 	is_error = 1
-	# 	print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
-	# else:
-	# 	output_f1 = str(sys.argv[1]) + ".ast"
-	# 	output_f2 = str(sys.argv[1]) + ".cfg"
-	# 	oldstdout = sys.stdout
-	# 	sys.stdout = open(output_f1,'w+')		
-	# 	p[6].printit(0)
-	# 	sys.stdout = open(output_f2,'w+')
-	# 	printCFG(p[6])
-	# 	sys.stdout.close()
-	# 	sys.stdout = oldstdout
 	p[0] = AST("FUNC",p[2],[p[1],p[4],p[7]])
 def p_paramlist(p):
 	"""

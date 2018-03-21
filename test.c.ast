@@ -1,41 +1,8 @@
-int fibonacci(int ******y,int asdq)
+int factorial(i n)
 (
-	IF
-	(
-		EQ
-		(
-			DEREF
-			(
-				VAR(a)
-			)
-			,
-			CONST(4)
-		)
-		,
-	)
-	WHILE
-	(
-		EQ
-		(
-			CONST(4)
-			,
-			CONST(6)
-		)
-		,
-	)
-	ASGN
-	(
-		DEREF
-		(
-			VAR(a)
-		)
-		,
-		CONST(3)
-	)
-
 )
 
-void main(void a,int c,int *b,int *****a)
+void main(v o,i n,i n,i n)
 (
 	ASGN
 	(
@@ -44,10 +11,7 @@ void main(void a,int c,int *b,int *****a)
 			VAR(a)
 		)
 		,
-		DEREF
-		(
-			VAR(p)
-		)
+		CONST(4)
 	)
 
 )

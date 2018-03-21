@@ -10,6 +10,124 @@ from HelperFunctions import *
 from GlobalVariables import *
 from SymbolTableClass import *
 
+
+class SymbolTable:
+
+	def __init__(self):
+		self.parent = None
+		self.varTable = dict()
+		self.funcTable = dict()
+		self.empty = 0
+	def addEntry(self,ast):
+		global declaration_error, declaration_error_string
+		if(ast.Type == "DECL"):
+			t = ast.l[0]
+			for i in range(0,len(ast.l[1])):
+				if isinstance(ast.l[1][i],str):
+					if ast.l[1][i] in self.varTable:
+						declaration_error = 1
+						declaration_error_string = ast.l[1][i]
+					else:
+						self.varTable[ast.l[1][i]] = (t,0)
+				else:
+					if ast.l[1][i][0] in self.varTable:
+						declaration_error = 1
+						declaration_error_string = ast.l[1][i]
+					else:
+						self.varTable[ast.l[1][i][0]] = (t,ast.l[1][i][1])
+		elif (ast.Type == "PROTO"):
+			temp = makestring1(ast.l[1])
+			t = (ast.Name,temp)
+			print(t)
+			if t in self.funcTable:
+				declaration_error = 1
+				declaration_error_string = ast.Name
+			else:
+				fTable = SymbolTable()
+				fTable.empty = 1
+				self.funcTable[t] = (ast.l[0],fTable)
+
+		elif (ast.Type == "FUNC"):
+			temp = makestring1(ast.l[1])
+			t = (ast.Name,temp)
+			if t in self.funcTable:
+				temp1 = self.funcTable[t]
+				if(temp1[1].empty):
+					temp1[1].addEntry(ast.l[2])
+					temp1[1].empty = 0
+				else:
+					declaration_error = 1
+					declaration_error_string = ast.Name
+			else:
+				fTable = SymbolTable()
+				fTable.addEntry(ast.l[2])
+				self.funcTable[t] = (ast.l[0],fTable)
+		elif (ast.Type == "BODY"):
+			for ast1 in ast.l:
+				self.addEntry(ast1)
+
+		elif (ast.Type == "ASGN"):
+			c1,t1,l1 = Checktype(self.varTable,ast)
+			if not c1:
+				declaration_error = 1
+				declaration_error_string = "Type error in assignment"
+
+	def printTable(self):
+		print("Global Variable defined in the code are :")
+		for key,value in self.varTable.items():
+			print(value[0] + '*'*value[1] + " " +key)
+		print("Functions defined in code are :")
+		for key,value in self.funcTable.items():
+			print(key[0],"("+key[1]+")")
+			for key1,value1 in value[1].varTable.items():
+				print(value1[0] + '*'*value1[1] + " " +key1)
+
+def Checktype(varTable, ast):
+	global globalSym
+	if(ast.Type == "PLUS" or ast.Type == "MINUS" or ast.Type == "MUL" or ast.Type == "DIV" or ast.Type == "ASGN" or ast.Type == "LE" or ast.Type == "GE" or ast.Type == "GT" or ast.Type == "LT" or ast.Type == "EQ" or ast.Type == "NE" or ast.Type == "AND" or ast.Type == "OR"):
+		llt, type1, level1 = Checktype(varTable, ast.l[0])
+		rrt, type2, level2 = Checktype(varTable, ast.l[1])
+		if(not llt or not rrt):
+			
+			return False,"",-1
+		if(type1 != type2):
+			# print("Type mismatch")
+			return False,"",-1
+			
+		if (level1 != level2):
+			print("level mismatch")
+			return False, "",-1
+
+		else:
+			return True, type1, level1
+
+	elif(ast.Type == "CONST"):
+		return True,"int", 0
+	elif(ast.Type == "VAR"):
+		print(ast.Name,"eshfgjnbfdsrhfdnxbvdscf")
+		print(varTable.keys())
+		if ast.Name not in varTable.keys():
+			if ast.Name not in globalSym.varTable:
+				print("Type mismatchfsrhgsfxbdf")
+				return False, "int",-1
+			else:
+				this_level = globalSym.varTable[ast.Name][1]
+				return True, globalSym.varTable[ast.Name][0], this_level
+		else:
+			this_level = varTable[ast.Name][1]
+			return True, varTable[ast.Name][0], this_level
+
+	elif(ast.Type == "DEREF"):
+		llt, type1, level1 = Checktype(varTable, ast.l[0])
+		return llt, type1, level1-1
+
+	elif(ast.Type == "ADDR"):
+		llt, type1, level1 = Checktype(varTable, ast.l[0])
+		return llt, type1, level1+1
+
+	elif(ast.Type == "UMINUS" or ast.Type == "NOT"):
+		return Checktype(varTable, ast.l[0]) 
+
 globalSym = SymbolTable() 
 
 tokens = (
@@ -112,14 +230,15 @@ def p_masterprogram(p):
 	"""
 	master : program
 	"""
-	global declaration_error
+	global declaration_error,is_error
 	p[0] = p[1]
 	for i in p[0].l:
-		print(i)
 		globalSym.addEntry(i)
-	print(globalSym)
+	globalSym.printTable()
 	if(declaration_error):
-		print("Variable declared more than once in same scope.")
+		print("Variable declared more than once in same scope.",declaration_error_string)
+
+		is_error = 1
 	else :
 		output_f1 = str(sys.argv[1]) + ".ast"
 		output_f2 = str(sys.argv[1]) + ".cfg"
