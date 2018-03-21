@@ -112,20 +112,24 @@ def p_masterprogram(p):
 	"""
 	master : program
 	"""
+	global declaration_error
 	p[0] = p[1]
 	for i in p[0].l:
 		print(i)
 		globalSym.addEntry(i)
 	print(globalSym)
-	output_f1 = str(sys.argv[1]) + ".ast"
-	output_f2 = str(sys.argv[1]) + ".cfg"
-	oldstdout = sys.stdout
-	sys.stdout = open(output_f1,'w+')		
-	p[0].printit(0)
-	sys.stdout = open(output_f2,'w+')
-	# printCFG(p[0])
-	sys.stdout.close()
-	sys.stdout = oldstdout
+	if(declaration_error):
+		print("Variable declared more than once in same scope.")
+	else :
+		output_f1 = str(sys.argv[1]) + ".ast"
+		output_f2 = str(sys.argv[1]) + ".cfg"
+		oldstdout = sys.stdout
+		sys.stdout = open(output_f1,'w+')		
+		p[0].printit(0)
+		sys.stdout = open(output_f2,'w+')
+		# printCFG(p[0])
+		sys.stdout.close()
+		sys.stdout = oldstdout
 
 
 def p_program(p):

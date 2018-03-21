@@ -5,6 +5,7 @@ is_error = 0
 main_found = 0
 assignment_error = 0
 assignment_error_line = -1
+declaration_error = 0
 return_error = 0
 temp = 0
 previous = 1
