@@ -8,3 +8,7 @@ ASGN
 	CONST(float)
 )
 
+RETURN
+(
+	VAR(qq)
+)

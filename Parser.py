@@ -11,6 +11,7 @@ from GlobalVariables import *
 from SymbolTableClass import *
 
 
+
 class SymbolTable:
 
 	def __init__(self):
@@ -44,7 +45,8 @@ class SymbolTable:
 				if(level1<0 or not retvalue):
 					declaration_error = 1
 					declaration_error_string = "too much indirection"
-					break
+					return
+
 				# typestring = type1 + str(int(level1)*"*")
 				typeslist.append([type1,('a',level1)])
 
@@ -52,15 +54,26 @@ class SymbolTable:
 			temp = makestring1(typeslist)
 			
 			t = (ast.Name, temp)
-			if t in globalSym.funcTable:
-				print(globalSym.funcTable[t])
+			print("Self.functable",globalSym.funcTable)
+
+			if t in self.funcTable:
+				# print(globalSym.funcTable[t])
+				if(self.funcTable[t][0]!="void"):
+
+					declaration_error=1
+					declaration_error_string = "function is not of void type"
+				pass
+			elif t in globalSym.funcTable:
+				if(globalSym.funcTable[t][0]!="void"):
+					declaration_error=1
+					declaration_error_string = "function is not of void type"
+				pass
 			else:
 				declaration_error = 1
 				declaration_error_string = "function " + ast.Name + " calling error"
 
 		elif (ast.Type == "PROTO"):
 			temp = makestring1(ast.l[1])
-
 			t = (ast.Name,temp)
 			print(t)
 			if t in self.funcTable:
@@ -69,7 +82,7 @@ class SymbolTable:
 			else:
 				fTable = SymbolTable()
 				fTable.empty = 1
-				self.funcTable[t] = (ast.l[0],fTable)
+				self.funcTable[t] = (ast.l[0],ast.l[2],fTable)
 
 		elif (ast.Type == "FUNC"):
 			# print("ASTL1",ast.l[1])
@@ -78,16 +91,24 @@ class SymbolTable:
 			t = (ast.Name,temp)
 			if t in self.funcTable:
 				temp1 = self.funcTable[t]
-				if(temp1[1].empty):
-					temp1[1].addEntry(ast.l[2])
-					temp1[1].empty = 0
+				if(temp1[2].empty):
+					temp1[2].addEntry(ast.l[2])
+					temp1[2].empty = 0
 				else:
 					declaration_error = 1
 					declaration_error_string = "function " + ast.Name + " already defined more than once"
 			else:
 				fTable = SymbolTable()
 				fTable.addEntry(ast.l[2])
-				self.funcTable[t] = (ast.l[0],fTable)
+				self.funcTable[t] = (ast.l[0],ast.l[3],fTable)
+
+			for ss in ast.l[2].l:
+				if(ss.Type == "RETURN"):
+					a,b,c = Checktype(self.funcTable[t][2].varTable, ss.l[0])
+					if(self.funcTable[t][0]!=b or self.funcTable[t][1]!=c or not a):
+						print("Values:::::",self.funcTable[t][0],b ,self.funcTable[t][1],c,a)
+						declaration_error = 1
+						declaration_error_string = "return statement not of correct type"
 		elif (ast.Type == "BODY"):
 			for ast1 in ast.l:
 				self.addEntry(ast1)
@@ -98,6 +119,11 @@ class SymbolTable:
 				declaration_error = 1
 				declaration_error_string = "Type error in assignment !"
 
+		elif (ast.Type == "RETURN"):
+			c1,l1,t1 = Checktype(self.varTable, ast.l[0])
+			if(not c1):
+				declaration_error = 1
+				declaration_error_string = "return expression type mismatch"
 
 	def printTable(self):
 		# print("Global Variable defined in the code are :")
@@ -110,13 +136,14 @@ class SymbolTable:
 		# 		print(value1[0] + '*'*value1[1] + " " +key1)
 		pass
 
+globalSym = SymbolTable() 
+
 def Checktype(varTable, ast):
 	global globalSym
 	if(ast.Type == "PLUS" or ast.Type == "MINUS" or ast.Type == "MUL" or ast.Type == "DIV" or ast.Type == "ASGN" or ast.Type == "LE" or ast.Type == "GE" or ast.Type == "GT" or ast.Type == "LT" or ast.Type == "EQ" or ast.Type == "NE" or ast.Type == "AND" or ast.Type == "OR"):
 		llt, type1, level1 = Checktype(varTable, ast.l[0])
 		rrt, type2, level2 = Checktype(varTable, ast.l[1])
 		if(not llt or not rrt):
-			
 			return False,"",-1
 		if(type1 != type2):
 
@@ -136,13 +163,16 @@ def Checktype(varTable, ast):
 		# print(varTable.keys())
 		if ast.Name not in varTable.keys():
 			if ast.Name not in globalSym.varTable:
+				# print("iauhfc iuaeohmi")
+				print(varTable)
 				return False, "int",-1
 			else:
+				# print(globalSym.varTable[ast.Name])
 				this_level = globalSym.varTable[ast.Name][1]
 				return True, globalSym.varTable[ast.Name][0], this_level
 		else:
-			this_level = varTable[ast.Name][1]
-			return True, varTable[ast.Name][0], this_level
+			# print("yoyoyoyoyoyoy",varTable[ast.Name])
+			return True, varTable[ast.Name][0],  varTable[ast.Name][1]
 
 	elif(ast.Type == "DEREF"):
 		llt, type1, level1 = Checktype(varTable, ast.l[0])
@@ -180,7 +210,7 @@ def Checktype(varTable, ast):
 
 
 
-globalSym = SymbolTable() 
+
 
 tokens = (
 	'NUMBER','FLOAT',
@@ -290,7 +320,6 @@ def printCFG(ast):
 	cleanup(cfg.head)
 	# print(cfg.head.Type)
 	giveNumbering(cfg.head,0)
-	print("ugcnsiorjgnosrn")
 	printCFGhelper(cfg.head,-1)
 
 
@@ -304,7 +333,7 @@ def p_masterprogram(p):
 		globalSym.addEntry(i)
 	globalSym.printTable()
 	if(declaration_error):
-		print("Variable "+ declaration_error_string)
+		print(declaration_error_string)
 
 		is_error = 1
 	else :
@@ -330,6 +359,7 @@ def p_program(p):
 	if(assignment_error):
 		is_error = 1
 		if p:
+
 			print("Syntax error at line no '{0}' , assignment error".format(assignment_error_line))
 		else:
 			print("Syntax error at EOF")
@@ -373,9 +403,13 @@ def p_program1(p):
 
 def p_prototype(p):
 	"""
-	prototype : TYPE NAME LPAREN paramlist RPAREN SEMICOLON
+	prototype : TYPE allthestars NAME LPAREN paramlist RPAREN SEMICOLON
+			| TYPE NAME LPAREN paramlist RPAREN SEMICOLON
 	"""
-	p[0] = AST("PROTO",p[2],[p[1],p[4]])
+	if(len(p)==7):
+		p[0] = AST("PROTO",p[2],[p[1],p[4],0])
+	else:
+		p[0] = AST("PROTO",p[3],[p[1],p[5],p[2]])
 	# print(p[1],p[2],p[4])
 def is_constant(a):
 	if a.Type == "CONST":
@@ -386,6 +420,17 @@ def is_constant(a):
 		return True
 	else:
 		return functools.reduce((lambda x,y : x and y) ,list(map(lambda l : is_constant(l),a.l)))
+
+def p_function_stars(p):
+	"""
+	allthestars : TIMES 
+				| TIMES allthestars
+	"""
+	if(len(p)==2):
+		p[0] = 1
+	else:
+		p[0] = p[2]
+		p[0]+= 1
 
 def is_valid_asgn(a1,a2):
 	if a1.Type == "VAR":
@@ -398,7 +443,8 @@ def is_valid_asgn(a1,a2):
 
 def p_function(p):
 	"""
-	function : TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+	function : TYPE allthestars NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+			| TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
 	"""
 	# global main_found,assignment_error,return_error
 	# void_return = 0
@@ -423,17 +469,30 @@ def p_function(p):
 	# 	is_error = 1
 	# 	print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	# else:
-	output_f1 = str(sys.argv[1]) + ".ast"
-	output_f2 = str(sys.argv[1]) + ".cfg"
-	oldstdout = sys.stdout
-	sys.stdout = open(output_f1,'w+')		
-	p[7].printit(0)
-	sys.stdout = open(output_f2,'w+')
-	print("Printing CFG now!")
-	printCFG(p[7])
-	sys.stdout.close()
-	sys.stdout = oldstdout
-	p[0] = AST("FUNC",p[2],[p[1],p[4],p[7]])
+	if(len(p)==9):
+		output_f1 = str(sys.argv[1]) + ".ast"
+		output_f2 = str(sys.argv[1]) + ".cfg"
+		oldstdout = sys.stdout
+		sys.stdout = open(output_f1,'w+')		
+		p[7].printit(0)
+		sys.stdout = open(output_f2,'w+')
+		print("Printing CFG now!")
+		printCFG(p[7])
+		sys.stdout.close()
+		sys.stdout = oldstdout
+		p[0] = AST("FUNC",p[2],[p[1],p[4],p[7],0])
+	else:
+		output_f1 = str(sys.argv[1]) + ".ast"
+		output_f2 = str(sys.argv[1]) + ".cfg"
+		oldstdout = sys.stdout
+		sys.stdout = open(output_f1,'w+')		
+		p[8].printit(0)
+		sys.stdout = open(output_f2,'w+')
+		print("Printing CFG now!")
+		printCFG(p[8])
+		sys.stdout.close()
+		sys.stdout = oldstdout
+		p[0] = AST("FUNC",p[3],[p[1],p[5],p[8],p[2]])
 def p_paramlist(p):
 	"""
 	paramlist : 
@@ -725,11 +784,19 @@ def p_assignment_base_pointer(p):
 			pass
 		else:
 			assignment_error = 1
+			print("rongmodnovdngo")
 			assignment_error_line = p.lexer.lineno
 		p[0] = AST("ASGN","",[a1,p[3]])
 
 
 		# p[0].printit(0)
+
+def p_expression_fcall(p):
+	"""
+	expression : functioncall
+	"""
+	p[0] = p[1]
+
 def p_expression1(p):
 	"""
 	expression : expression PLUS expression
@@ -770,11 +837,7 @@ def p_expression_paren(p):
 	"""
 	p[0] = p[2]
 
-def p_expression_fcall(p):
-	"""
-	expression : functioncall
-	"""
-	p[0] = p[1]
+
 
 def p_expression_base_number(p):
 	"""
@@ -828,6 +891,7 @@ def p_error(p):
 	global is_error
 	is_error = 1
 	if p:
+		print("iuenfoidnvoidnvoi")
 		print("Syntax error at '{0}' line no  '{1}' ".format(p.value,p.lexer.lineno))
 	else:
 		print("Syntax error at EOF")
