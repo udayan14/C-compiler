@@ -2,37 +2,9 @@ ASGN
 (
 	DEREF
 	(
-		VAR(b)
+		VAR(pr)
 	)
 	,
-	CONST(4)
+	CONST(float)
 )
 
-FCALL( factorial )
-(
-	VAR(a)
-	PLUS
-	(
-		PLUS
-		(
-			PLUS
-			(
-				PLUS
-				(
-					VAR(b)
-					,
-					ADDR
-					(
-						VAR(v)
-					)
-				)
-				,
-				VAR(b)
-			)
-			,
-			VAR(b)
-		)
-		,
-		VAR(b)
-	)
-)

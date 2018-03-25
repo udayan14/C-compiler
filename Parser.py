@@ -53,7 +53,7 @@ class SymbolTable:
 			
 			t = (ast.Name, temp)
 			if t in globalSym.funcTable:
-				print("Function call is valid!")
+				print(globalSym.funcTable[t])
 			else:
 				declaration_error = 1
 				declaration_error_string = "function " + ast.Name + " calling error"
@@ -119,7 +119,8 @@ def Checktype(varTable, ast):
 			
 			return False,"",-1
 		if(type1 != type2):
-			print("Type mismatch")
+
+			print("Type mismatch",type1,type2)
 			return False,"",-1
 			
 		if (level1 != level2):
@@ -130,7 +131,7 @@ def Checktype(varTable, ast):
 			return True, type1, level1
 
 	elif(ast.Type == "CONST"):
-		return True,"int", 0
+		return True,ast.Name, 0
 	elif(ast.Type == "VAR"):
 		# print(varTable.keys())
 		if ast.Name not in varTable.keys():
@@ -153,6 +154,29 @@ def Checktype(varTable, ast):
 
 	elif(ast.Type == "UMINUS" or ast.Type == "NOT"):
 		return Checktype(varTable, ast.l[0]) 
+
+	elif(ast.Type == "FCALL"):
+		global globalSym
+		typeslist = []
+		for ch in ast.l[0].l:
+			retvalue, type1, level1 = Checktype(self.varTable, ch)
+			if(level1<0 or not retvalue):
+				declaration_error = 1
+				declaration_error_string = "too much indirection"
+				return False, "int", -1
+			# typestring = type1 + str(int(level1)*"*")
+			typeslist.append([type1,('a',level1)])
+			# print("Types : ",typeslist)
+		temp = makestring1(typeslist)
+		
+		t = (ast.Name, temp)
+		if t in globalSym.funcTable:
+			return True, ast.l[0], 1
+			# print(globalSym.funcTable[t])
+		else:
+			declaration_error = 1
+			declaration_error_string = "function " + ast.Name + " calling error"
+			return False, "int", -1
 
 
 
@@ -195,7 +219,7 @@ t_MINUS = r'-'
 t_DIVIDE = r'/'
 
 def t_TYPE(t):
-	r'\bvoid\b | \bint\b'
+	r'\bvoid\b | \bint\b | \bfloat\b'
 	return t
 
 def t_RETURN(t):
@@ -224,12 +248,13 @@ def t_COMMENT(t):
 
 def t_FLOAT(t):
 	r'\d+\.\d+'
-	print("DGBdgfs")
 	try:
 		t.value = float(t.value)
-		print(t.value)
+		# print(t.value)
 	except ValueError:
 		print("Float value too large %f", t.value)
+		t.value = 0
+	return t
 
 def t_NUMBER(t):
 	r'\d+'
@@ -279,7 +304,7 @@ def p_masterprogram(p):
 		globalSym.addEntry(i)
 	globalSym.printTable()
 	if(declaration_error):
-		print("Variable ",declaration_error_string)
+		print("Variable "+ declaration_error_string)
 
 		is_error = 1
 	else :
@@ -745,22 +770,34 @@ def p_expression_paren(p):
 	"""
 	p[0] = p[2]
 
+def p_expression_fcall(p):
+	"""
+	expression : functioncall
+	"""
+	p[0] = p[1]
+
 def p_expression_base_number(p):
 	"""
-	expression : FLOAT
-				| NUMBER
+	expression : allnumbers
 	"""
-	p[0] = ["CONST",p[1]]
-	p[0] = AST("CONST",p[1],[])
+	# p[0] = ["CONST",p[1]]
+	print(p[1])
+	p[0] = AST("CONST",p[1].Name,[p[1].l])
 
-# def p_allnumbers(p):
-# 	"""
-# 	allnumbers : FLOAT
-# 				| NUMBER
-# 	"""
-# 	print("taking float")
-# 	p[0] = p[1]
-	
+def p_allnumbers_float(p):
+	"""
+	allnumbers : FLOAT
+	"""
+	# print("taking float")
+	p[0] = AST("CONST","float",p[1])
+
+def p_allnumbers_int(p):
+	"""
+	allnumbers : NUMBER
+	"""
+	# print("taking int")
+	p[0] = AST("CONST","int",p[1])	
+
 def p_expression_base_pointer(p):
 	"""
 	expression : pointervar

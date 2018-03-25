@@ -1,16 +1,18 @@
 
 void factorial(int n,int* q);
 
-void factorial(int n, int *q)
+int factorial(float n, int *q)
 {
 	int pp, *qq;
-	*qq= 3;
+	float *pr;
+	*pr= 3.0;
 }
 
 void main(int *****a , int *b , int c, void a){
 	
 	int a, *b, **v;
-	*b = 4;
-	factorial(a, b+*v+b+b+b);
+	float x;
+	*b = factorial(x,b);
+	// factorial(x, b+*v+b+b+b);
 	}
 
