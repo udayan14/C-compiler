@@ -27,6 +27,9 @@ class CFG:
 	def insert(self,ast):
 		if(ast.Type == "BLANKBODY"):
 			return
+		if(ast.Type == "RETURN" or ast.Type == "FCALL" or ast.Type == "ARGUMENTS"):
+			# print("return statement",ast.l[0])
+			return
 		elif(ast.Type == "BODY"):
 			if(not ast.l):
 				pass

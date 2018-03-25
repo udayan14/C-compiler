@@ -1,18 +1,38 @@
-int factorial(i n)
+ASGN
 (
+	DEREF
+	(
+		VAR(b)
+	)
+	,
+	CONST(4)
 )
 
-void main(v o,i n,i n,i n)
+FCALL( factorial )
 (
-	ASGN
+	VAR(a)
+	PLUS
 	(
-		DEREF
+		PLUS
 		(
-			VAR(a)
+			PLUS
+			(
+				PLUS
+				(
+					VAR(b)
+					,
+					ADDR
+					(
+						VAR(v)
+					)
+				)
+				,
+				VAR(b)
+			)
+			,
+			VAR(b)
 		)
 		,
-		CONST(4)
+		VAR(b)
 	)
-
 )
-

@@ -22,11 +22,22 @@ class AST:
 		elif(self.Type == "VAR"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
 
-		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR" or self.Type == "NOT"):
+		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR" or self.Type == "NOT" or self.Type == "RETURN"):
 			printhelper(self.Type,i)
 			printhelper("(",i)
 			self.l[0].printit(i+1)
 			printhelper(")",i)
+
+		elif (self.Type == "ARGUMENTS"):
+			for k in range(len(self.l)):
+				self.l[k].printit(i)
+		elif(self.Type == "FCALL"):
+			printhelper(self.Type + "( "+self.Name + " )", i)
+			printhelper("(",i)
+			# for obj in self.l:
+			# printhelper(str(obj),i+1)
+			self.l[0].printit(i+1)
+			printhelper(")",i)	
 
 		elif(self.Type == "WHILE"):
 			printhelper(self.Type,i)
@@ -80,7 +91,7 @@ class AST:
 			if(not self.l):
 				pass
 			else:
-				for j in range(len(self.l)-1,-1,-1):
+				for j in range(0,len(self.l)):
 					self.l[j].printit(i)
 					if(j!=0):
 						# print("")
@@ -88,7 +99,9 @@ class AST:
 
 
 	def appendchild(self,ast):
+		self.l.reverse()
 		self.l.append(ast)
+		self.l.reverse()
 
 	def isSimple(self):
 		if self.Type in ["CONST","VAR","DEREF","ADDR"]:

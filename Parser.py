@@ -26,29 +26,55 @@ class SymbolTable:
 				if isinstance(ast.l[1][i],str):
 					if ast.l[1][i] in self.varTable:
 						declaration_error = 1
-						declaration_error_string = ast.l[1][i]
+						declaration_error_string = str(ast.l[1][i])+" declared more than once in same scope."
 					else:
 						self.varTable[ast.l[1][i]] = (t,0)
 				else:
 					if ast.l[1][i][0] in self.varTable:
 						declaration_error = 1
-						declaration_error_string = ast.l[1][i]
+						declaration_error_string = str(ast.l[1][i])+" declared more than once in same scope."
 					else:
 						self.varTable[ast.l[1][i][0]] = (t,ast.l[1][i][1])
+
+		elif(ast.Type == "FCALL"):
+			global globalSym
+			typeslist = []
+			for ch in ast.l[0].l:
+				retvalue, type1, level1 = Checktype(self.varTable, ch)
+				if(level1<0 or not retvalue):
+					declaration_error = 1
+					declaration_error_string = "too much indirection"
+					break
+				# typestring = type1 + str(int(level1)*"*")
+				typeslist.append([type1,('a',level1)])
+
+			# print("Types : ",typeslist)
+			temp = makestring1(typeslist)
+			
+			t = (ast.Name, temp)
+			if t in globalSym.funcTable:
+				print("Function call is valid!")
+			else:
+				declaration_error = 1
+				declaration_error_string = "function " + ast.Name + " calling error"
+
 		elif (ast.Type == "PROTO"):
 			temp = makestring1(ast.l[1])
+
 			t = (ast.Name,temp)
 			print(t)
 			if t in self.funcTable:
 				declaration_error = 1
-				declaration_error_string = ast.Name
+				declaration_error_string = "function " + ast.Name + " declared more than once"
 			else:
 				fTable = SymbolTable()
 				fTable.empty = 1
 				self.funcTable[t] = (ast.l[0],fTable)
 
 		elif (ast.Type == "FUNC"):
+			# print("ASTL1",ast.l[1])
 			temp = makestring1(ast.l[1])
+			# print("TEMP", temp)
 			t = (ast.Name,temp)
 			if t in self.funcTable:
 				temp1 = self.funcTable[t]
@@ -57,7 +83,7 @@ class SymbolTable:
 					temp1[1].empty = 0
 				else:
 					declaration_error = 1
-					declaration_error_string = ast.Name
+					declaration_error_string = "function " + ast.Name + " already defined more than once"
 			else:
 				fTable = SymbolTable()
 				fTable.addEntry(ast.l[2])
@@ -70,17 +96,19 @@ class SymbolTable:
 			c1,t1,l1 = Checktype(self.varTable,ast)
 			if not c1:
 				declaration_error = 1
-				declaration_error_string = "Type error in assignment"
+				declaration_error_string = "Type error in assignment !"
+
 
 	def printTable(self):
-		print("Global Variable defined in the code are :")
-		for key,value in self.varTable.items():
-			print(value[0] + '*'*value[1] + " " +key)
-		print("Functions defined in code are :")
-		for key,value in self.funcTable.items():
-			print(key[0],"("+key[1]+")")
-			for key1,value1 in value[1].varTable.items():
-				print(value1[0] + '*'*value1[1] + " " +key1)
+		# print("Global Variable defined in the code are :")
+		# for key,value in self.varTable.items():
+		# 	print(value[0] + '*'*value[1] + " " +key)
+		# print("Functions defined in code are :")
+		# for key,value in self.funcTable.items():
+		# 	print(key[0],"("+key[1]+")")
+		# 	for key1,value1 in value[1].varTable.items():
+		# 		print(value1[0] + '*'*value1[1] + " " +key1)
+		pass
 
 def Checktype(varTable, ast):
 	global globalSym
@@ -91,11 +119,11 @@ def Checktype(varTable, ast):
 			
 			return False,"",-1
 		if(type1 != type2):
-			# print("Type mismatch")
+			print("Type mismatch")
 			return False,"",-1
 			
 		if (level1 != level2):
-			print("level mismatch")
+			print("Level mismatch", level1, level2)
 			return False, "",-1
 
 		else:
@@ -104,11 +132,9 @@ def Checktype(varTable, ast):
 	elif(ast.Type == "CONST"):
 		return True,"int", 0
 	elif(ast.Type == "VAR"):
-		print(ast.Name,"eshfgjnbfdsrhfdnxbvdscf")
-		print(varTable.keys())
+		# print(varTable.keys())
 		if ast.Name not in varTable.keys():
 			if ast.Name not in globalSym.varTable:
-				print("Type mismatchfsrhgsfxbdf")
 				return False, "int",-1
 			else:
 				this_level = globalSym.varTable[ast.Name][1]
@@ -128,17 +154,19 @@ def Checktype(varTable, ast):
 	elif(ast.Type == "UMINUS" or ast.Type == "NOT"):
 		return Checktype(varTable, ast.l[0]) 
 
+
+
 globalSym = SymbolTable() 
 
 tokens = (
-	'NUMBER',
+	'NUMBER','FLOAT',
 	'TYPE',
 	'SEMICOLON', 'EQUALS', 'COMMA',
 	'LPAREN', 'RPAREN','LBRACE', 'RBRACE',
 	'ANDOPERATOR','OROPERATOR','ADDROF',
 	'NAME',
 	'PLUS','MINUS','TIMES','DIVIDE',
-	'WHILE','IF','ELSE',
+	'WHILE','IF','ELSE','RETURN',
 	'EQUALCHECK','UNEQUAL','LESSTHAN','LESSTHANEQ','GREATERTHAN','GREATERTHANEQ','NOT',
 	)
 
@@ -170,6 +198,10 @@ def t_TYPE(t):
 	r'\bvoid\b | \bint\b'
 	return t
 
+def t_RETURN(t):
+	r'\breturn\b'
+	return t
+
 def t_WHILE(t):
 	r'\bwhile\b'
 	return t
@@ -190,6 +222,15 @@ def t_COMMENT(t):
 	r'//.*'
 	pass
 
+def t_FLOAT(t):
+	r'\d+\.\d+'
+	print("DGBdgfs")
+	try:
+		t.value = float(t.value)
+		print(t.value)
+	except ValueError:
+		print("Float value too large %f", t.value)
+
 def t_NUMBER(t):
 	r'\d+'
 	try:
@@ -198,6 +239,8 @@ def t_NUMBER(t):
 		print("Integer value too large %d", t.value)
 		t.value = 0
 	return t
+
+
 
 def t_error(t): 
 	print("Illegal character '%s'" % t.value[0])
@@ -236,7 +279,7 @@ def p_masterprogram(p):
 		globalSym.addEntry(i)
 	globalSym.printTable()
 	if(declaration_error):
-		print("Variable declared more than once in same scope.",declaration_error_string)
+		print("Variable ",declaration_error_string)
 
 		is_error = 1
 	else :
@@ -429,8 +472,34 @@ def p_statement_expr(p):
 			| declaration
 			| whileblock
 			| ifblock
+			| returnstatement
+			| functioncall
 	"""
 	p[0] = p[1]
+
+def p_return_statement(p):
+	"""
+	returnstatement : RETURN expression SEMICOLON
+	"""
+	p[0] = AST("RETURN", "", [p[2]])
+
+def p_function_call(p):
+	"""
+	functioncall : NAME LPAREN arguments RPAREN SEMICOLON
+	"""
+	# newast = AST("DECL", "", [p[3]])
+	p[0] = AST("FCALL", p[1], [p[3]])
+
+def p_function_arguments(p):
+	"""
+	arguments : expression 
+				| expression COMMA arguments
+	"""
+	if(len(p)==2):
+		p[0] = AST("ARGUMENTS","",[p[1]])
+	else:
+		p[0] = p[3]
+		p[0].appendchild(p[1])
 
 def p_empty_statement(p):
 	"""
@@ -561,6 +630,7 @@ def p_declaration1(p):
 		declaration : TYPE dlist1 SEMICOLON
 	"""
 	p[0] = AST("DECL","",[p[1],p[2]])
+	# print("t_NAME returns ",p[2])
 	# print(p[1],p[2])
 def p_dlistname(p):
 	"""
@@ -569,11 +639,15 @@ def p_dlistname(p):
 	"""
 	global no_of_static_declarations
 	no_of_static_declarations = no_of_static_declarations + 1
+
 	if len(p) == 2:
+
 		p[0] = [p[1]]
 	else:
 		p[0] = p[3]
+		p[0].reverse()
 		p[0].append(p[1])
+		p[0].reverse()
 		
 def p_dlistpointer(p):
 	"""
@@ -586,7 +660,9 @@ def p_dlistpointer(p):
 		p[0] = [p[1]]
 	else:
 		p[0] = p[3]
+		p[0].reverse()
 		p[0].append(p[1])
+		p[0].reverse()
 
 def p_specialvar1(p):
 	"""
@@ -671,10 +747,20 @@ def p_expression_paren(p):
 
 def p_expression_base_number(p):
 	"""
-	expression : NUMBER
+	expression : FLOAT
+				| NUMBER
 	"""
 	p[0] = ["CONST",p[1]]
 	p[0] = AST("CONST",p[1],[])
+
+# def p_allnumbers(p):
+# 	"""
+# 	allnumbers : FLOAT
+# 				| NUMBER
+# 	"""
+# 	print("taking float")
+# 	p[0] = p[1]
+	
 def p_expression_base_pointer(p):
 	"""
 	expression : pointervar

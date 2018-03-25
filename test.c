@@ -1,15 +1,16 @@
-int a,b,c,****D;
 
-int factorial(int n){
-	int a,b,c,****D;
+void factorial(int n,int* q);
 
-	int test;
+void factorial(int n, int *q)
+{
+	int pp, *qq;
+	*qq= 3;
 }
-// a=q;
+
 void main(int *****a , int *b , int c, void a){
-	int ******b,**A;
-	*a=4;
-	int *a;
-	int ******C;
-}
+	
+	int a, *b, **v;
+	*b = 4;
+	factorial(a, b+*v+b+b+b);
+	}
 
