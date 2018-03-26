@@ -2,13 +2,13 @@ ASGN
 (
 	DEREF
 	(
-		VAR(pr)
+		VAR(C)
 	)
 	,
-	CONST(float)
+	FCALL( factorial )
+	(
+		VAR(B)
+		VAR(C)
+	)
 )
 
-RETURN
-(
-	VAR(qq)
-)

@@ -43,6 +43,7 @@ class SymbolTable:
 			for ch in ast.l[0].l:
 				retvalue, type1, level1 = Checktype(self.varTable, ch)
 				if(level1<0 or not retvalue):
+					print(level1,retvalue)
 					declaration_error = 1
 					declaration_error_string = "too much indirection"
 					return
@@ -54,7 +55,7 @@ class SymbolTable:
 			temp = makestring1(typeslist)
 			
 			t = (ast.Name, temp)
-			print("Self.functable",globalSym.funcTable)
+			# print("Self.functable",globalSym.funcTable)
 
 			if t in self.funcTable:
 				# print(globalSym.funcTable[t])
@@ -75,7 +76,6 @@ class SymbolTable:
 		elif (ast.Type == "PROTO"):
 			temp = makestring1(ast.l[1])
 			t = (ast.Name,temp)
-			print(t)
 			if t in self.funcTable:
 				declaration_error = 1
 				declaration_error_string = "function " + ast.Name + " declared more than once"
@@ -164,7 +164,7 @@ def Checktype(varTable, ast):
 		if ast.Name not in varTable.keys():
 			if ast.Name not in globalSym.varTable:
 				# print("iauhfc iuaeohmi")
-				print(varTable)
+				print("",varTable)
 				return False, "int",-1
 			else:
 				# print(globalSym.varTable[ast.Name])
@@ -403,8 +403,7 @@ def p_program1(p):
 
 def p_prototype(p):
 	"""
-	prototype : TYPE allthestars NAME LPAREN paramlist RPAREN SEMICOLON
-			| TYPE NAME LPAREN paramlist RPAREN SEMICOLON
+	prototype : TYPE NAME LPAREN paramlist RPAREN SEMICOLON
 	"""
 	if(len(p)==7):
 		p[0] = AST("PROTO",p[2],[p[1],p[4],0])
@@ -443,8 +442,7 @@ def is_valid_asgn(a1,a2):
 
 def p_function(p):
 	"""
-	function : TYPE allthestars NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
-			| TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
+	function : TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
 	"""
 	# global main_found,assignment_error,return_error
 	# void_return = 0
@@ -557,7 +555,7 @@ def p_statement_expr(p):
 			| whileblock
 			| ifblock
 			| returnstatement
-			| functioncall
+			| functioncall SEMICOLON
 	"""
 	p[0] = p[1]
 
@@ -569,7 +567,7 @@ def p_return_statement(p):
 
 def p_function_call(p):
 	"""
-	functioncall : NAME LPAREN arguments RPAREN SEMICOLON
+	functioncall : NAME LPAREN arguments RPAREN
 	"""
 	# newast = AST("DECL", "", [p[3]])
 	p[0] = AST("FCALL", p[1], [p[3]])
