@@ -149,6 +149,11 @@ class AST:
 				s = "{0}{1}t{2}".format(self.l[0].getcode(),getSymbol[self.Type],t_val1)				
 				l1.append(s)
 				return (l1,temp)
+		elif self.Type == "FCALL":
+			pass
+
+		elif self.Type == "ARGUMENTS":
+			pass
 		elif self.Type == "CONST":
 			return str(self.Name)
 		elif self.Type == "VAR":

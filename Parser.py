@@ -126,9 +126,9 @@ class SymbolTable:
 				declaration_error_string = "return expression type mismatch"
 
 	def printTable(self):
-		# print("Global Variable defined in the code are :")
-		# for key,value in self.varTable.items():
-		# 	print(value[0] + '*'*value[1] + " " +key)
+		print("Global Variable defined in the code are :")
+		for key,value in self.varTable.items():
+			print(value[0] + '*'*value[1] + " " +key)
 		# print("Functions defined in code are :")
 		# for key,value in self.funcTable.items():
 		# 	print(key[0],"("+key[1]+")")
@@ -140,7 +140,7 @@ globalSym = SymbolTable()
 
 def Checktype(varTable, ast):
 	global globalSym
-	if(ast.Type == "PLUS" or ast.Type == "MINUS" or ast.Type == "MUL" or ast.Type == "DIV" or ast.Type == "ASGN" or ast.Type == "LE" or ast.Type == "GE" or ast.Type == "GT" or ast.Type == "LT" or ast.Type == "EQ" or ast.Type == "NE" or ast.Type == "AND" or ast.Type == "OR"):
+	if(ast.Type in ["PLUS","MINUS","MUL","DIV","ASGN","LE","GE","GT","LT","EQ","NE","AND","OR"]):
 		llt, type1, level1 = Checktype(varTable, ast.l[0])
 		rrt, type2, level2 = Checktype(varTable, ast.l[1])
 		if(not llt or not rrt):
@@ -186,13 +186,12 @@ def Checktype(varTable, ast):
 		return Checktype(varTable, ast.l[0]) 
 
 	elif(ast.Type == "FCALL"):
-		global globalSym
 		typeslist = []
 		for ch in ast.l[0].l:
-			retvalue, type1, level1 = Checktype(self.varTable, ch)
+			retvalue, type1, level1 = Checktype(varTable, ch)
 			if(level1<0 or not retvalue):
 				declaration_error = 1
-				declaration_error_string = "too much indirection"
+				declaration_error_string = "Too much indirection"
 				return False, "int", -1
 			# typestring = type1 + str(int(level1)*"*")
 			typeslist.append([type1,('a',level1)])
@@ -201,16 +200,14 @@ def Checktype(varTable, ast):
 		
 		t = (ast.Name, temp)
 		if t in globalSym.funcTable:
-			return True, ast.l[0], 1
+			temp = globalSym.funcTable[t]
+			# print("TEMP",temp)
+			return True, temp[0], temp[1]
 			# print(globalSym.funcTable[t])
 		else:
 			declaration_error = 1
 			declaration_error_string = "function " + ast.Name + " calling error"
 			return False, "int", -1
-
-
-
-
 
 tokens = (
 	'NUMBER','FLOAT',
@@ -327,7 +324,7 @@ def p_masterprogram(p):
 	"""
 	master : program
 	"""
-	global declaration_error,is_error
+	global declaration_error,is_error,globalSym
 	p[0] = p[1]
 	for i in p[0].l:
 		globalSym.addEntry(i)
@@ -467,30 +464,30 @@ def p_function(p):
 	# 	is_error = 1
 	# 	print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
 	# else:
-	if(len(p)==9):
-		output_f1 = str(sys.argv[1]) + ".ast"
-		output_f2 = str(sys.argv[1]) + ".cfg"
-		oldstdout = sys.stdout
-		sys.stdout = open(output_f1,'w+')		
-		p[7].printit(0)
-		sys.stdout = open(output_f2,'w+')
-		print("Printing CFG now!")
-		printCFG(p[7])
-		sys.stdout.close()
-		sys.stdout = oldstdout
-		p[0] = AST("FUNC",p[2],[p[1],p[4],p[7],0])
-	else:
-		output_f1 = str(sys.argv[1]) + ".ast"
-		output_f2 = str(sys.argv[1]) + ".cfg"
-		oldstdout = sys.stdout
-		sys.stdout = open(output_f1,'w+')		
-		p[8].printit(0)
-		sys.stdout = open(output_f2,'w+')
-		print("Printing CFG now!")
-		printCFG(p[8])
-		sys.stdout.close()
-		sys.stdout = oldstdout
-		p[0] = AST("FUNC",p[3],[p[1],p[5],p[8],p[2]])
+	# if(len(p)==9):
+	# 	output_f1 = str(sys.argv[1]) + ".ast"
+	# 	output_f2 = str(sys.argv[1]) + ".cfg"
+	# 	oldstdout = sys.stdout
+	# 	sys.stdout = open(output_f1,'w+')		
+	# 	p[7].printit(0)
+	# 	sys.stdout = open(output_f2,'w+')
+	# 	# print("Printing CFG now!")
+	# 	printCFG(p[7])
+	# 	sys.stdout.close()
+	# 	sys.stdout = oldstdout
+	p[0] = AST("FUNC",p[2],[p[1],p[4],p[7],0])
+	# else:
+	# 	output_f1 = str(sys.argv[1]) + ".ast"
+	# 	output_f2 = str(sys.argv[1]) + ".cfg"
+	# 	oldstdout = sys.stdout
+	# 	sys.stdout = open(output_f1,'w+')		
+	# 	p[8].printit(0)
+	# 	sys.stdout = open(output_f2,'w+')
+	# 	print("Printing CFG now!")
+	# 	printCFG(p[8])
+	# 	sys.stdout.close()
+	# 	sys.stdout = oldstdout
+	# 	p[0] = AST("FUNC",p[3],[p[1],p[5],p[8],p[2]])
 def p_paramlist(p):
 	"""
 	paramlist : 
@@ -766,7 +763,6 @@ def p_assignment(p):
 	no_of_assignments = no_of_assignments + 1
 
 def p_assignment_base_pointer(p):
-
 	""" 
 	assignment_base : TIMES pointervar EQUALS expression
 			| NAME EQUALS expression 
