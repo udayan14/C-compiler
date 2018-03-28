@@ -3,6 +3,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 import functools
 from GlobalVariables import *
+import copy
 
 getSymbol = {
 	"PLUS" : " + " ,
@@ -21,24 +22,35 @@ getSymbol = {
 }
 
 def makestring(l):      #Prints variable name
-	print(l,"lololololol")
-	l.reverse()
-	for i in range(0,len(l)):
-		if not isinstance(l[i][1],str):
-			l[i] = l[i][0]+" "+"*"*l[i][1][1]+l[i][1][0]
+	lnew = copy.deepcopy(l)
+	lnew.reverse()
+	for i in range(0,len(lnew)):
+		if not isinstance(lnew[i][1],str):
+			lnew[i] = lnew[i][0]+" "+"*"*lnew[i][1][1]+" "+lnew[i][1][0]
 		else:
-			l[i] = l[i][0] +" " +l[i][1]
+			lnew[i] = lnew[i][0] +" " +lnew[i][1]
 
-	return ",".join(str(x) for x in l)
+	return ", ".join(str(x) for x in lnew)
 
 def makestring1(l):    #Doesn't
-	for i in range(0,len(l)):
-		if not isinstance(l[i][1],str):
-			l[i] = l[i][0]+" "+"*"*l[i][1][1]
+	lnew = copy.deepcopy(l)
+	for i in range(0,len(lnew)):
+		if not isinstance(lnew[i][1],str):
+			lnew[i] = lnew[i][0]+" "+"*"*lnew[i][1][1]
 		else:
-			l[i] = l[i][0] +" "
+			lnew[i] = lnew[i][0] +" "
 
-	return ",".join(str(x) for x in l)
+	return ",".join(str(x) for x in lnew)
+
+def makestring2(l):
+	lnew = copy.deepcopy(l)
+	for i in range(0,len(lnew)):
+		if not isinstance(lnew[i][1],str):
+			lnew[i] = "'"+l[i][1][0]+"'" + " : " "'"+"*"*l[i][1][1]+l[i][0] + "'"  
+		else:
+			lnew[i] = "'" + lnew[i][1] + "'" +" : "+ "'"+ lnew[i][0]+ "'"
+
+	return ",".join(str(x) for x in lnew)
 
 def cleanup(n):
 	# print("soirjcgosij")

@@ -92,6 +92,7 @@ class SymbolTable:
 			if t in self.funcTable:
 				temp1 = self.funcTable[t]
 				if(temp1[2].empty):
+
 					temp1[2].addEntry(AST("PARAMLIST","",[ast.l[1]]))
 					temp1[2].addEntry(ast.l[2])
 					temp1[2].empty = 0
@@ -99,6 +100,7 @@ class SymbolTable:
 					declaration_error = 1
 					declaration_error_string = "function " + ast.Name + " already defined more than once"
 			else:
+				
 				fTable = SymbolTable()
 				fTable.addEntry(AST("PARAMLIST","",[ast.l[1]]))
 				fTable.addEntry(ast.l[2])			
@@ -514,6 +516,7 @@ def p_function(p):
 	# 	sys.stdout.close()
 	# 	sys.stdout = oldstdout
 	p[0] = AST("FUNC",p[2],[p[1],p[4],p[7],0])
+
 	# else:
 	# 	output_f1 = str(sys.argv[1]) + ".ast"
 	# 	output_f2 = str(sys.argv[1]) + ".cfg"
@@ -533,6 +536,7 @@ def p_function_2(p):
 	"""
 	p[0] = AST("FUNC",p[2][0],[p[1],p[4],p[7],p[2][1]])
 
+
 def p_paramlist(p):
 	"""
 	paramlist : 
@@ -546,6 +550,8 @@ def p_paramlist(p):
 		p[0] = p[3]
 		p[0].append([p[1],p[2]])
 		p[0].reverse()
+
+
 def p_paramlist2(p):
 	"""
 	paramlist2 : 
@@ -558,6 +564,7 @@ def p_paramlist2(p):
 		
 		p[0] = p[4]
 		p[0].append([p[2],p[3]])
+		# print("p[3]2[32]4[2]4[",p[0])
 
 def p_fbody(p):
 	"""

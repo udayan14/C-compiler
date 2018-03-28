@@ -8,7 +8,7 @@ int *ff(int n)
 
 }
 
-int factorial(int n, int *q)
+int factorial(int qqq, int *q)
 {
 	return ***A;
 	int pp, *qq;
@@ -19,7 +19,7 @@ int factorial(int n, int *q)
 }
 
 
-void main(int *****a , int *b , int c, void a){
+void main(int *****a , int *b , int c){
 	int *C, B;
 	*&*C = B;
 	// *C = factorial(factorial(*C,*&C), C);
