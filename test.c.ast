@@ -1,5 +1,32 @@
+int ff(i n)
+(
+	RETURN
+	(
+		DEREF
+		(
+			DEREF
+			(
+				VAR(A)
+			)
+		)
+	)
+)
+
 int factorial(i n,i n)
 (
+	RETURN
+	(
+		DEREF
+		(
+			DEREF
+			(
+				DEREF
+				(
+					VAR(A)
+				)
+			)
+		)
+	)
 	ASGN
 	(
 		DEREF
@@ -18,13 +45,38 @@ void main(v o,i n,i n,i n)
 	(
 		DEREF
 		(
-			VAR(C)
+			ADDR
+			(
+				DEREF
+				(
+					VAR(C)
+				)
+			)
 		)
 		,
-		FCALL( factorial )
+		VAR(B)
+	)
+
+	ASGN
+	(
+		VAR(C)
+		,
+		FCALL( ff )
 		(
-			VAR(B)
-			VAR(C)
+			FCALL( factorial )
+			(
+				DEREF
+				(
+					VAR(C)
+				)
+				DEREF
+				(
+					ADDR
+					(
+						VAR(C)
+					)
+				)
+			)
 		)
 	)
 

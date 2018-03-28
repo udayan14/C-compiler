@@ -202,7 +202,8 @@ def Checktype(varTable, ast):
 		if t in globalSym.funcTable:
 			temp = globalSym.funcTable[t]
 			# print("TEMP",temp)
-			return True, temp[0], temp[1]
+			print("Returning type ",ast.l[1])
+			return True, temp[0], temp[1]+ast.l[1]
 			# print(globalSym.funcTable[t])
 		else:
 			declaration_error = 1
@@ -406,8 +407,20 @@ def p_prototype(p):
 		p[0] = AST("PROTO",p[2],[p[1],p[4],0])
 	else:
 		p[0] = AST("PROTO",p[3],[p[1],p[5],p[2]])
+
+def p_prototype_2(p):
+	"""
+	prototype : TYPE specialvar LPAREN paramlist RPAREN SEMICOLON
+	"""
+	if(len(p)==7):
+		p[0] = AST("PROTO",p[2][0],[p[1],p[4],p[2][1]])
+	else:
+		p[0] = AST("PROTO",p[3],[p[1],p[5],p[2]])
 	# print(p[1],p[2],p[4])
 def is_constant(a):
+	print(a)
+	if a.Type == "FCALL":
+		return False
 	if a.Type == "CONST":
 		return True
 	elif(a.Type == "VAR"):
@@ -429,6 +442,8 @@ def p_function_stars(p):
 		p[0]+= 1
 
 def is_valid_asgn(a1,a2):
+	# print("This is ",a2.Type)
+	
 	if a1.Type == "VAR":
 		if(is_constant(a2)):
 			return False
@@ -488,6 +503,13 @@ def p_function(p):
 	# 	sys.stdout.close()
 	# 	sys.stdout = oldstdout
 	# 	p[0] = AST("FUNC",p[3],[p[1],p[5],p[8],p[2]])
+
+def p_function_2(p):
+	"""
+	function : TYPE specialvar LPAREN paramlist RPAREN LBRACE fbody RBRACE
+	"""
+	p[0] = AST("FUNC",p[2][0],[p[1],p[4],p[7],p[2][1]])
+
 def p_paramlist(p):
 	"""
 	paramlist : 
@@ -567,7 +589,9 @@ def p_function_call(p):
 	functioncall : NAME LPAREN arguments RPAREN
 	"""
 	# newast = AST("DECL", "", [p[3]])
-	p[0] = AST("FCALL", p[1], [p[3]])
+	p[0] = AST("FCALL", p[1], [p[3],0])
+
+
 
 def p_function_arguments(p):
 	"""
@@ -774,11 +798,14 @@ def p_assignment_base_pointer(p):
 	else:
 		p[0] = ["ASGN",p[1],p[3]]
 		a1 = AST("VAR",p[1],[])
+		if(p[3].Type=="FCALL"):
+			print("Ignoring")
+			pass
 		if(is_valid_asgn(a1,p[3])):
 			pass
 		else:
 			assignment_error = 1
-			print("rongmodnovdngo")
+			# print("rongmodnovdngo")
 			assignment_error_line = p.lexer.lineno
 		p[0] = AST("ASGN","",[a1,p[3]])
 
@@ -885,7 +912,7 @@ def p_error(p):
 	global is_error
 	is_error = 1
 	if p:
-		print("iuenfoidnvoidnvoi")
+		# print("iuenfoidnvoidnvoi")
 		print("Syntax error at '{0}' line no  '{1}' ".format(p.value,p.lexer.lineno))
 	else:
 		print("Syntax error at EOF")
