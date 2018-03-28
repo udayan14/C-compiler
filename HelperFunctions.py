@@ -21,6 +21,7 @@ getSymbol = {
 }
 
 def makestring(l):      #Prints variable name
+	print(l,"lololololol")
 	l.reverse()
 	for i in range(0,len(l)):
 		if not isinstance(l[i][1],str):

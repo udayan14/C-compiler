@@ -92,6 +92,7 @@ class SymbolTable:
 			if t in self.funcTable:
 				temp1 = self.funcTable[t]
 				if(temp1[2].empty):
+					temp1[2].addEntry(AST("PARAMLIST","",[ast.l[1]]))
 					temp1[2].addEntry(ast.l[2])
 					temp1[2].empty = 0
 				else:
@@ -99,7 +100,8 @@ class SymbolTable:
 					declaration_error_string = "function " + ast.Name + " already defined more than once"
 			else:
 				fTable = SymbolTable()
-				fTable.addEntry(ast.l[2])
+				fTable.addEntry(AST("PARAMLIST","",[ast.l[1]]))
+				fTable.addEntry(ast.l[2])			
 				self.funcTable[t] = (ast.l[0],ast.l[3],fTable)
 
 			for ss in ast.l[2].l:
@@ -109,6 +111,27 @@ class SymbolTable:
 						print("Values:::::",self.funcTable[t][0],b ,self.funcTable[t][1],c,a)
 						declaration_error = 1
 						declaration_error_string = "return statement not of correct type"
+
+		elif(ast.Type == "PARAMLIST"):
+			l = ast.l[0]
+			for t in l:
+				type1 = t[0]
+				name = t[1]
+				if isinstance(name,str):
+					if name in self.varTable:
+						declaration_error = 1
+						declaration_error_string = name + " declared more than once in same scope."
+					else:
+						self.varTable[name] = (type1,0)
+				else:
+					name1 = name[0]
+					level = name[1]
+					if name1 in self.varTable:
+						declaration_error = 1
+						declaration_error_string = name1 + " declared more than once in same scope."
+					else:
+						self.varTable[name1] = (type1,level)
+
 		elif (ast.Type == "BODY"):
 			for ast1 in ast.l:
 				self.addEntry(ast1)
@@ -129,11 +152,11 @@ class SymbolTable:
 		print("Global Variable defined in the code are :")
 		for key,value in self.varTable.items():
 			print(value[0] + '*'*value[1] + " " +key)
-		# print("Functions defined in code are :")
-		# for key,value in self.funcTable.items():
-		# 	print(key[0],"("+key[1]+")")
-		# 	for key1,value1 in value[1].varTable.items():
-		# 		print(value1[0] + '*'*value1[1] + " " +key1)
+		print("Functions defined in code are :")
+		for key,value in self.funcTable.items():
+			print(key[0],"("+key[1]+")")
+			for key1,value1 in value[2].varTable.items():
+				print(value1[0] + '*'*value1[1] + " " +key1)
 		pass
 
 globalSym = SymbolTable() 
@@ -838,7 +861,7 @@ def p_expression_base_number(p):
 	expression : allnumbers
 	"""
 	# p[0] = ["CONST",p[1]]
-	print(p[1])
+	# print(p[1])
 	p[0] = AST("CONST",p[1].Name,[p[1].l])
 
 def p_allnumbers_float(p):

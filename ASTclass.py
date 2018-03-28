@@ -31,6 +31,7 @@ class AST:
 		elif (self.Type == "ARGUMENTS"):
 			for k in range(len(self.l)):
 				self.l[k].printit(i)
+
 		elif(self.Type == "FCALL"):
 			printhelper(self.Type + "( "+self.Name + " )", i)
 			printhelper("(",i)
@@ -81,6 +82,7 @@ class AST:
 			if(self.Type == "ASGN"):
 				print("")
 		elif(self.Type == "FUNC"):
+			print("Mogambo khush hua",i)
 			printhelper(self.l[0] + " " + self.Name + "(" + makestring(self.l[1]) + ")",i)
 			printhelper("(",i)
 			self.l[2].printit(i+1)

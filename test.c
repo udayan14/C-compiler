@@ -3,7 +3,7 @@ int*** A;
 
 float B;
 
-int factorial(int n, int *q)
+int factorial(int n1, int *q)
 {
 	int pp, *qq;
 	float *pr;
@@ -13,7 +13,7 @@ int factorial(int n, int *q)
 }
 
 
-void main(int *****a , int *b , int c, void a){
+void main(int *****a , int *b , int c){
 	int *C, B;
 	*C = factorial(B, C);
 	}
