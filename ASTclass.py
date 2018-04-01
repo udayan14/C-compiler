@@ -17,27 +17,37 @@ class AST:
 		if(self.Type == "BLANKBODY"):
 			return
 		elif(self.Type == "CONST"):
-			printhelper(self.Type+"("+str(self.Name)+")",i)
+			printhelper(self.Type+"("+str(self.l[0])+")",i)
 
 		elif(self.Type == "VAR"):
 			printhelper(self.Type+"("+str(self.Name)+")",i)
 
-		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR" or self.Type == "NOT" or self.Type == "RETURN"):
+		elif(self.Type == "DEREF" or self.Type == "UMINUS" or self.Type == "ADDR" or self.Type == "NOT"):
 			printhelper(self.Type,i)
 			printhelper("(",i)
 			self.l[0].printit(i+1)
 			printhelper(")",i)
 
+		elif(self.Type == "RETURN"):
+			printhelper(self.Type,i-1)
+			printhelper("(",i-1)
+			self.l[0].printit(i)
+			printhelper(")",i-1)
+
 		elif (self.Type == "ARGUMENTS"):
 			for k in range(len(self.l)):
 				self.l[k].printit(i)
+				if k<len(self.l)-1:
+					printhelper(",",i)
+
 		elif(self.Type == "FCALL"):
-			printhelper(self.Type + "( "+self.Name + " )", i)
-			printhelper("(",i)
-			# for obj in self.l:
-			# printhelper(str(obj),i+1)
+
+
+			printhelper("call" + " "+self.Name+"(" , i)
 			self.l[0].printit(i+1)
-			printhelper(")",i)	
+			printhelper(")",i)
+			
+				
 
 		elif(self.Type == "WHILE"):
 			printhelper(self.Type,i)
@@ -81,10 +91,11 @@ class AST:
 			if(self.Type == "ASGN"):
 				print("")
 		elif(self.Type == "FUNC"):
-			printhelper(self.l[0] + " " + self.Name + "(" + makestring(self.l[1]) + ")",i)
-			printhelper("(",i)
+
+			printhelper("FUNCTION "+ self.Name,i)
+			printhelper("PARAMS "+"("+ makestring(self.l[1]) +")",i)
+			printhelper("RETURNS " + "*"*self.l[3] + self.l[0],i)	
 			self.l[2].printit(i+1)
-			printhelper(")",i)
 			print("")
 
 		elif(self.Type in ["PROG","BODY"]):
@@ -149,6 +160,11 @@ class AST:
 				s = "{0}{1}t{2}".format(self.l[0].getcode(),getSymbol[self.Type],t_val1)				
 				l1.append(s)
 				return (l1,temp)
+		elif self.Type == "FCALL":
+			pass
+
+		elif self.Type == "ARGUMENTS":
+			pass
 		elif self.Type == "CONST":
 			return str(self.Name)
 		elif self.Type == "VAR":

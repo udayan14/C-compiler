@@ -1,14 +1,80 @@
-ASGN
-(
-	DEREF
+FUNCTION ff
+PARAMS {'n' : 'int'}
+RETURNS int
+	RETURN
 	(
-		VAR(C)
+		DEREF
+		(
+			DEREF
+			(
+				VAR(A)
+			)
+		)
 	)
-	,
-	FCALL( factorial )
+
+FUNCTION factorial
+PARAMS {'qqq' : 'int','q' : '*int'}
+RETURNS int
+	RETURN
 	(
+		DEREF
+		(
+			DEREF
+			(
+				DEREF
+				(
+					VAR(A)
+				)
+			)
+		)
+	)
+	ASGN
+	(
+		DEREF
+		(
+			VAR(pr)
+		)
+		,
+		CONST(3.0)
+	)
+
+
+main
+	ASGN
+	(
+		DEREF
+		(
+			ADDR
+			(
+				DEREF
+				(
+					VAR(C)
+				)
+			)
+		)
+		,
 		VAR(B)
-		VAR(C)
 	)
-)
+
+	ASGN
+	(
+		VAR(C)
+		,
+		call ff(
+			call factorial(
+				DEREF
+				(
+					VAR(C)
+				)
+				DEREF
+				(
+					ADDR
+					(
+						VAR(C)
+					)
+				)
+			)
+		)
+	)
+
 
