@@ -1,41 +1,17 @@
 
 FUNCTION func1
-PARAMS {'b': 'int', 'a': 'int'}
-RETURNS int
-	ASGN
-	(
-		DEREF
-		(
-			VAR(g3)
-		)
-		,
-		CONST(4)
-	)
-
-
-FUNCTION func2
-PARAMS {'b2': 'float', 'b1': 'int'}
-RETURNS int
+PARAMS (int a, int aint b)
+RETURNS void
 	IF
 	(
 		EQ
 		(
 			DEREF
 			(
-				VAR(b1)
+				VAR(g3)
 			)
 			,
-			CONST(32)
-		)
-		,
-		ASGN
-		(
-			DEREF
-			(
-				VAR(var1)
-			)
-			,
-			CONST(3.0)
+			CONST(52)
 		)
 		,
 		WHILE
@@ -43,71 +19,11 @@ RETURNS int
 			NE
 			(
 				DEREF
-				(
-					VAR(b2)
-				)
-				,
-				DEREF
-				(
-					VAR(var1)
-				)
-			)
-			,
-			ASGN
-			(
-				DEREF
-				(
-					VAR(b2)
-				)
-				,
-				MINUS
 				(
 					DEREF
 					(
-						VAR(b2)
+						VAR(h)
 					)
-					,
-					CONST(1.0)
-				)
-			)
-
-		)
-
-	)
-
-
-
-
-
-Main
-	ASGN
-	(
-		DEREF
-		(
-			VAR(g)
-		)
-		,
-		CONST(4)
-	)
-	IF
-	(
-		EQ
-		(
-			DEREF
-			(
-				VAR(g)
-			)
-			,
-			CONST(4)
-		)
-		,
-		WHILE
-		(
-			NE
-			(
-				DEREF
-				(
-					VAR(g)
 				)
 				,
 				CONST(0)
@@ -117,14 +33,17 @@ Main
 			(
 				DEREF
 				(
-					VAR(g)
+					DEREF
+					(
+						VAR(h)
+					)
 				)
 				,
-				MINUS
+				PLUS
 				(
 					DEREF
 					(
-						VAR(g)
+						VAR(g3)
 					)
 					,
 					CONST(1)
@@ -132,39 +51,124 @@ Main
 			)
 
 		)
-		ASGN
+
+	)
+RETURN 
+(
+)
+
+
+Function Main
+PARAMS() 
+RETURNS void
+	ASGN
+	(
+		VAR(g3)
+		,
+		CALL func2( 
+			CONST(3)
+			,
+			DEREF
+			(
+				VAR(a)
+			)
+		 )
+	)
+	IF
+	(
+		EQ
 		(
 			DEREF
 			(
-				DEREF
-				(
-					VAR(f)
-				)
+				VAR(g3)
 			)
 			,
-			CONST(3.0)
+			CONST(52)
 		)
 		,
-		ASGN
+		WHILE
 		(
-			DEREF
+			NE
 			(
 				DEREF
 				(
-					VAR(f)
+					VAR(h)
 				)
+				,
+				CONST(0)
 			)
 			,
-			CONST(2.0)
+			ASGN
+			(
+				DEREF
+				(
+					VAR(g3)
+				)
+				,
+				PLUS
+				(
+					DEREF
+					(
+						VAR(g3)
+					)
+					,
+					CONST(1)
+				)
+			)
+
 		)
 
 	)
-	ASGN
+
+FUNCTION func2
+PARAMS (int a, int aint b)
+RETURNS *int
+	IF
 	(
-		DEREF
+		EQ
 		(
-			VAR(g)
+			DEREF
+			(
+				VAR(g3)
+			)
+			,
+			CONST(52)
 		)
 		,
-		call func1( int y, int x )
+		WHILE
+		(
+			NE
+			(
+				DEREF
+				(
+					VAR(h)
+				)
+				,
+				CONST(0)
+			)
+			,
+			ASGN
+			(
+				DEREF
+				(
+					VAR(g3)
+				)
+				,
+				PLUS
+				(
+					DEREF
+					(
+						VAR(g3)
+					)
+					,
+					CONST(1)
+				)
+			)
+
+		)
+
 	)
+RETURN 
+(
+	VAR(h)
+)
