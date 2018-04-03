@@ -15,12 +15,12 @@ void func1(int a, int b)
             
         }
     }
-    return ;
+    return h;
 }
 
 void main()
 {
-    int *a,*b, *h,*g;
+    int *a,*b, *h;
     g3 = func2(3, *a);
     if( *g3 == 52)
     {

@@ -1,0 +1,26 @@
+function ff(int n)
+<bb 0>
+return **A
+
+function simple()
+<bb 1>
+return B
+
+function factorial(int qqq, int * q)
+<bb 2>
+return ***A
+*pr = 3.0
+t0 = *pr + 4.3
+*pr = t0
+
+function main(int ***** a, int * b, int c)
+<bb 3>
+*&*C = B
+t1 = factorial(*C, *&C)
+t2 = ff(t1)
+C = t2
+goto <bb 4>
+
+<bb 4>
+return
+

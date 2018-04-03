@@ -170,7 +170,7 @@ def Checktype(varTable, ast):
 	global globalSym
 	if(ast=="EMPTYRETURN"):
 		return True,"void",0
-	if(ast.Type in ["PLUS","MINUS","MUL","DIV","ASGN","LE","GE","GT","LT","EQ","NE","AND","OR"]):
+	if(ast.Type in ["ASGN","LE","GE","GT","LT","EQ","NE","AND","OR"]):
 		llt, type1, level1 = Checktype(varTable, ast.l[0])
 		rrt, type2, level2 = Checktype(varTable, ast.l[1])
 		if(not llt or not rrt):
@@ -181,7 +181,24 @@ def Checktype(varTable, ast):
 			return False,"",-1
 			
 		if (level1 != level2):
-			print("Level mismatch", level1, level2)
+			print("Indirection level mismatch", level1, level2)
+			return False, "",-1
+
+		else:
+			return True, type1, level1
+
+	elif(ast.Type in ["PLUS","MINUS","MUL","DIV"]):
+		llt, type1, level1 = Checktype(varTable, ast.l[0])
+		rrt, type2, level2 = Checktype(varTable, ast.l[1])
+		if(not llt or not rrt):
+			return False,"",-1
+		if(type1 != type2):
+
+			print("Type mismatch",type1,type2)
+			return False,"",-1
+			
+		if (level1 > 0 and level2 > 0):
+			print("Arithmetic operations on pointers not allowed", level1, level2)
 			return False, "",-1
 
 		else:

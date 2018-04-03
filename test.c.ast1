@@ -1,0 +1,109 @@
+FUNCTION ff
+PARAMS (int n)
+RETURNS *int
+RETURN
+(
+	DEREF
+	(
+		DEREF
+		(
+			VAR(A)
+		)
+	)
+)
+
+FUNCTION simple
+PARAMS ()
+RETURNS float
+RETURN
+(
+	VAR(B)
+)
+
+FUNCTION factorial
+PARAMS (int qqq, int * q)
+RETURNS int
+RETURN
+(
+	DEREF
+	(
+		DEREF
+		(
+			DEREF
+			(
+				VAR(A)
+			)
+		)
+	)
+)
+	ASGN
+	(
+		DEREF
+		(
+			VAR(pr)
+		)
+		,
+		CONST(3.0)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(pr)
+		)
+		,
+		PLUS
+		(
+			DEREF
+			(
+				VAR(pr)
+			)
+			,
+			CONST(4.3)
+		)
+	)
+
+
+Function Main
+PARAMS(int ***** a, int * b, int c)
+RETURNS void
+	ASGN
+	(
+		DEREF
+		(
+			ADDR
+			(
+				DEREF
+				(
+					VAR(C)
+				)
+			)
+		)
+		,
+		VAR(B)
+	)
+
+	ASGN
+	(
+		VAR(C)
+		,
+		CALL ff(
+			CALL factorial(
+				DEREF
+				(
+					VAR(C)
+				)
+				,
+				DEREF
+				(
+					ADDR
+					(
+						VAR(C)
+					)
+				)
+			)
+		)
+	)
+
+

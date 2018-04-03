@@ -179,10 +179,17 @@ class AST:
 				if arg_ast.l[i].isSimple():
 					arg.append(arg_ast.l[i].getcode())
 				else:
-					l1,t_val1 = self.l[i].getcode()
+					l1,t_val1 = arg_ast.l[i].getcode()
 					t = t + l1
-					arg = arg.append("t{0}".format(t_val1))
-			temp_str = "t{0} = ".format(temp)+ self.Name +"("+ ", ".join(str(x) for x in arg)+")"
+					arg.append("t{0}".format(t_val1))
+			if(arg is None):
+				s1 = ""
+			elif(len(arg) == 1):
+				s1 = str(arg[0])
+			else:
+				s1 = ", ".join(str(x) for x in arg)
+
+			temp_str = "t{0} = ".format(temp)+ self.Name +"("+ s1+")"
 			temp+=1
 			t.append(temp_str)
 			return(t,temp-1)

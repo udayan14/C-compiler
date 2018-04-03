@@ -1,0 +1,11 @@
+FUNCTION func1
+PARAMS (int a, int b)
+RETURNS *int
+RETURN
+(
+	DEREF
+	(
+		VAR(h)
+	)
+)
+

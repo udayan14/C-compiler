@@ -8,12 +8,18 @@ int *ff(int n)
 
 }
 
+float simple()
+{
+	return B;
+}
+
 int factorial(int qqq, int *q)
 {
 	return ***A;
 	int pp, *qq;
 	float *pr;
 	*pr= 3.0;
+	*pr = *pr + 4.3;
 	// return qq;
 	// *A = *A + 1;
 }
