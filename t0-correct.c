@@ -15,7 +15,7 @@ void func1(int a, int b)
             
         }
     }
-    return h;
+    return ;
 }
 
 void main()

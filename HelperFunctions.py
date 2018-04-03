@@ -26,7 +26,7 @@ def makestring(l):      #Prints variable name
 	# lnew.reverse()
 	for i in range(0,len(lnew)):
 		if not isinstance(lnew[i][1],str):
-			lnew[i] = lnew[i][0]+" "+"*"*lnew[i][1][1]+" "+lnew[i][1][0]
+			lnew[i] = lnew[i][0]+" "+"*"*lnew[i][1][1]+""+lnew[i][1][0]
 		else:
 			lnew[i] = lnew[i][0] +" " +lnew[i][1]
 
@@ -110,12 +110,13 @@ def cleanup(n):
 			cleanup(n.left)
 	elif (n.left==-1 and n.right==-1 and n.middle==-1):
 		return
-	# elif n.Type == "Start":
-	# 	c = n.left
-	# 	if not c.code:
-	# 		if c.left.Type in ["End","IF","ITE","WHILE"]:
-	# 			n.left = c.left
-	# 			cleanup(n.left)
+	elif n.Type == "Start":
+		c = n.left
+		if not c.code:
+			n.left = c.left
+			cleanup(c.left)
+		else:
+			cleanup(n.left)	
 	else:
 		cleanup(n.left)
 

@@ -23,6 +23,5 @@ h		|	procedure func1		|	int		|	**
 a		|	procedure main		|	int		|	*
 b		|	procedure main		|	int		|	*
 h		|	procedure main		|	int		|	*
-g		|	procedure main		|	int		|	*
 -----------------------------------------------------------------
 -----------------------------------------------------------------
