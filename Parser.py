@@ -343,13 +343,51 @@ precedence = (
 	)
 
 def printCFG(ast):
-	cfg = CFG()
-	cfg.insert(ast)
-	cleanup(cfg.head)
-	# print(cfg.head.Type)
-	giveNumbering(cfg.head,0)
-	printCFGhelper(cfg.head,-1)
+	l1 = ast.l
+	CFG_list = []
+	num = 0
+	for i in range(0,len(l1)):
+		if ast.l[i].Type == "FUNC":
+			cfg = CFG()
+			cfg.insert(l1[i])
+			cleanup(cfg.head)
+			num1 = giveNumbering(cfg.head,num-1)
+			s = "function " + ast.l[i].Name + "(" + makestring(ast.l[i].l[1]) + ")"
+			print(s)
+			printCFGhelper(cfg.head,num-1)
+			CFG_list.append(cfg)
+			num = num1-1
+			if ast.l[i].Name == "main":
+				num += 1
 
+# def printCFG1(ast):
+# 	cfg = CFG()
+# 	cfg.insert(ast)
+# 	cleanup(cfg.head)
+# 	# print(cfg.head.Type)
+# 	giveNumbering(cfg.head,0)
+# 	printCFGhelper(cfg.head,-1)
+
+def printSymbolTable():
+
+	print("Procedure table :-")
+	s = "-----------------------------------------------------------------"
+	print(s)
+	print("Name		|	Return Type  |  Parameter List")
+	for key,values in globalSym.funcTable.items():
+		print(key[0]+"\t\t"+"|"+"\t"+values[0]+values[1]*"*"+"\t\t"+"|"+"\t"+key[1])
+	print(s)
+	print("Variable table :- ")
+	print(s)
+	print("Name\t\t|\tScope\t\t|\tBase Type\t\t|\tDerived Type")
+	print(s)
+	for key,values in globalSym.varTable.items():
+		print(key+"\t\t"+"|"+"\t"+"procedure global"+"\t\t"+"|"+"\t"+values[0]+"\t\t"+"|\t"+values[1]*"*")
+	for key,values in globalSym.funcTable.items():
+		for key1, values1 in values[2].varTable.items():
+			print(key1+"\t\t"+"|"+"\t"+"procedure "+key[0]+"\t\t"+"|"+"\t"+values1[0]+"\t\t"+"|\t"+values1[1]*"*")
+	print(s)
+	print(s)
 
 def p_masterprogram(p):
 	"""
@@ -366,12 +404,15 @@ def p_masterprogram(p):
 		is_error = 1
 	else :
 		output_f1 = str(sys.argv[1]) + ".ast1"
-		output_f2 = str(sys.argv[1]) + ".cfg"
+		output_f2 = str(sys.argv[1]) + ".cfg1"
+		output_f3 = str(sys.argv[1]) + ".sym1"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f1,'w+')		
 		p[0].printit(0)
 		sys.stdout = open(output_f2,'w+')
-		# printCFG(p[0])
+		printCFG(p[0])
+		sys.stdout = open(output_f3,'w+')
+		printSymbolTable()
 		sys.stdout.close()
 		sys.stdout = oldstdout
 

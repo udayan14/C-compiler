@@ -189,24 +189,28 @@ def giveNumbering(n,i):
 			return i1
 		else:
 			return i
+	else:
+		return i
 
 def printCFGhelper(n1,nextstatenum):
 	if n1==-1:
 		return
-	if n1.Type == "End":
-		print("<bb {0}>".format(n1.num))
-		print("End")
-		pass
 	elif n1.Type == "Start":
 		printCFGhelper(n1.left,nextstatenum)
 
-
+	elif n1.Type == "End":
+		if(not n1.hasreturn):
+			print("<bb {0}>".format(n1.num))
+			print("return")
+			print("")
 	elif n1.Type == "Normal":
 		print("<bb {0}>".format(n1.num))
 		# print("{0} has child {1}".format(n1.num,n1.l))	
 		for c in n1.code:
 			printList(c)
-		if (not (n1.left==-1 and n1.right==-1 and n1.middle==-1)):			
+		if n1.hasreturn == 1:
+			print("")
+		elif (not (n1.left==-1 and n1.right==-1 and n1.middle==-1)):			
 			print("goto <bb {0}>".format(n1.num+1))
 			print("")
 			printCFGhelper(n1.left,nextstatenum)

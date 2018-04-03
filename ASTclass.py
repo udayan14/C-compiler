@@ -159,6 +159,7 @@ class AST:
 					l = l1 + l2
 					l.append(s)
 					return(l,temp-1)
+
 		elif self.Type == "ASGN":
 			if self.l[1].isSimple():
 				l = ["{0}{1}{2}".format(self.l[0].getcode(),getSymbol[self.Type],self.l[1].getcode())]				
@@ -168,19 +169,36 @@ class AST:
 				s = "{0}{1}t{2}".format(self.l[0].getcode(),getSymbol[self.Type],t_val1)				
 				l1.append(s)
 				return (l1,temp)
-		elif self.Type == "FCALL":
-			pass
 
-		elif self.Type == "ARGUMENTS":
-			pass
+		elif self.Type == "FCALL":
+			arg_ast = self.l[0]
+			len1 = len(arg_ast.l)
+			t = []
+			arg = []
+			for i in range(0,len1):
+				if arg_ast.l[i].isSimple():
+					arg.append(arg_ast.l[i].getcode())
+				else:
+					l1,t_val1 = self.l[i].getcode()
+					t = t + l1
+					arg = arg.append("t{0}".format(t_val1))
+			temp_str = "t{0} = ".format(temp)+ self.Name +"("+ ", ".join(str(x) for x in arg)+")"
+			temp+=1
+			t.append(temp_str)
+			return(t,temp-1)
+
 		elif self.Type == "CONST":
-			return str(self.Name)
+			return str(self.l[0])
+
 		elif self.Type == "VAR":
 			return str(self.Name)
+
 		elif self.Type == "DEREF":
 			return "*" + self.l[0].getcode()
+
 		elif self.Type == "ADDR":
 			return "&" + self.l[0].getcode()
+
 		elif self.Type == "UMINUS":
 			if self.l[0].isSimple():
 				return "-" + self.l[0].getcode()
@@ -190,6 +208,7 @@ class AST:
 				temp+=1
 				l1.append(s)
 				return (l1,temp-1)
+
 		elif self.Type == "NOT":
 			if self.l[0].isSimple():
 				return "!" + self.l[0].getcode()
@@ -200,6 +219,17 @@ class AST:
 				l1.append(s)
 				return (l1,temp-1)
 
+		elif self.Type == "RETURN":
+			if self.l[0] == "EMPTYRETURN":
+				return "return"
+			elif self.l[0].isSimple():
+				return "return " + self.l[0].getcode()
+			else:
+				l1,t_val1 = self.l[0].getcode()
+				s = "return t{0}".format(t_val1) 
+				# temp+=1
+				l1.append(s)
+				return (l1,t_val1)
 
 	def isjump(self):
 		if self.Type in ["IF","ITE","WHILE"]:

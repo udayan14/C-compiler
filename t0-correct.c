@@ -20,7 +20,7 @@ void func1(int a, int b)
 
 void main()
 {
-    int *a,*b, *h;
+    int *a,*b, *h,*g;
     g3 = func2(3, *a);
     if( *g3 == 52)
     {

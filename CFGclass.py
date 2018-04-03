@@ -15,6 +15,7 @@ class node:
 			self.num = -1
 			self.num1 = -1
 			self.blank = 0
+			self.hasreturn = 0
 		def addCode(self,c):
 			self.code.append(c)
 
@@ -23,21 +24,39 @@ class CFG:
 		self.end = node("End",-1,-1,-1)		
 		self.insertnode = node("Normal",self.end,-1,-1)
 		self.head = node("Start",self.insertnode,-1,-1)
-
+		self.isnotmain = -1
 	def insert(self,ast):
 		if(ast.Type == "BLANKBODY"):
 			return
-		if(ast.Type == "RETURN" or ast.Type == "FCALL" or ast.Type == "ARGUMENTS"):
+
+		elif(ast.Type == "FUNC"):
+			self.insert(ast.l[2])
+
+		elif ast.Type == "FCALL":
 			# print("return statement",ast.l[0])
-			return
+			a = ast.getcode()	
+			if isinstance(a,str):
+				self.insertnode.addCode([a])
+			else:
+				self.insertnode.addCode(a[0])
+
+		elif ast.Type == "RETURN":
+			# print("return statement",ast.l[0])
+			a = ast.getcode()	
+			if isinstance(a,str):
+				self.insertnode.addCode([a])
+			else:
+				self.insertnode.addCode(a[0])
+			self.insertnode.hasreturn = 1
+			self.end.hasreturn = 1
 		elif(ast.Type == "BODY"):
 			if(not ast.l):
 				pass
 			else:
-				for j in range(len(ast.l)-1,-1,-1):
+				for j in range(0,len(ast.l)):
 					self.insert(ast.l[j])
 
-		elif (not ast.isjump() and ast.Type!="DECL" and ast.Type!="BLANKBODY"):	
+		elif (not ast.isjump() and ast.Type!="DECL" and ast.Type!="BLANKBODY" and ast.Type!="PROTO"):	
 			a = ast.getcode()	
 			if isinstance(a,str):
 				self.insertnode.addCode([a])
