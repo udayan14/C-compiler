@@ -109,6 +109,9 @@ class SymbolTable:
 			for ss in ast.l[2].l:
 				if(ss.Type == "RETURN"):
 					a,b,c = Checktype(self.funcTable[t][2].varTable, ss.l[0])
+					if(b == "void" and ss.l[0]=="EMPTYRETURN"):
+						print("Empty return statement found")
+						pass
 					if(self.funcTable[t][0]!=b or self.funcTable[t][1]!=c or not a):
 						print("Values:::::",self.funcTable[t][0],b ,self.funcTable[t][1],c,a)
 						declaration_error = 1
@@ -165,6 +168,8 @@ globalSym = SymbolTable()
 
 def Checktype(varTable, ast):
 	global globalSym
+	if(ast=="EMPTYRETURN"):
+		return True,"void",0
 	if(ast.Type in ["PLUS","MINUS","MUL","DIV","ASGN","LE","GE","GT","LT","EQ","NE","AND","OR"]):
 		llt, type1, level1 = Checktype(varTable, ast.l[0])
 		rrt, type2, level2 = Checktype(varTable, ast.l[1])
@@ -360,7 +365,7 @@ def p_masterprogram(p):
 
 		is_error = 1
 	else :
-		output_f1 = str(sys.argv[1]) + ".ast"
+		output_f1 = str(sys.argv[1]) + ".ast1"
 		output_f2 = str(sys.argv[1]) + ".cfg"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f1,'w+')		
@@ -613,6 +618,12 @@ def p_return_statement(p):
 	returnstatement : RETURN expression SEMICOLON
 	"""
 	p[0] = AST("RETURN", "", [p[2]])
+
+def p_return_statement_2(p):
+	"""
+	returnstatement : RETURN SEMICOLON
+	"""
+	p[0] = AST("RETURN", "", ["EMPTYRETURN"])
 
 def p_function_call(p):
 	"""

@@ -51,6 +51,9 @@ RETURNS void
 
 		)
 	)
+RETURN
+(
+)
 
 FUNCTION main
 PARAMS ()

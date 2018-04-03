@@ -31,7 +31,10 @@ class AST:
 		elif(self.Type == "RETURN"):
 			printhelper(self.Type,i-1)
 			printhelper("(",i-1)
-			self.l[0].printit(i)
+			if(self.l[0]=="EMPTYRETURN"):
+				pass
+			else:
+				self.l[0].printit(i)
 			printhelper(")",i-1)
 
 		elif (self.Type == "ARGUMENTS"):
@@ -43,7 +46,7 @@ class AST:
 		elif(self.Type == "FCALL"):
 
 
-			printhelper("call" + " "+self.Name+"(" , i)
+			printhelper("CALL" + " "+self.Name+"(" , i)
 			self.l[0].printit(i+1)
 			printhelper(")",i)
 			
@@ -92,8 +95,13 @@ class AST:
 				print("")
 		elif(self.Type == "FUNC"):
 
-			printhelper("FUNCTION "+ self.Name,i)
-			printhelper("PARAMS "+"("+ makestring(self.l[1]) +")",i)
+			if(self.Name=="main"):
+				printhelper("Function "+ "Main",i)
+				printhelper("PARAMS"+"("+ makestring(self.l[1]) +")",i)
+			else:	
+				printhelper("FUNCTION "+ self.Name,i)
+				printhelper("PARAMS "+"("+ makestring(self.l[1]) +")",i)
+			
 			printhelper("RETURNS " + "*"*self.l[3] + self.l[0],i)	
 			self.l[2].printit(i+1)
 			print("")

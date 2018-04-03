@@ -23,7 +23,7 @@ getSymbol = {
 
 def makestring(l):      #Prints variable name
 	lnew = copy.deepcopy(l)
-	lnew.reverse()
+	# lnew.reverse()
 	for i in range(0,len(lnew)):
 		if not isinstance(lnew[i][1],str):
 			lnew[i] = lnew[i][0]+" "+"*"*lnew[i][1][1]+" "+lnew[i][1][0]
