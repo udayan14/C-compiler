@@ -274,11 +274,6 @@ def printCFGhelper(n1,nextstatenum):
 	elif n1.Type == "IF":
 		print("<bb {0}>".format(n1.num))
 		printList(n1.code[0])
-		# print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
-		# if (n1.left!=-1 and n1.middle!=-1):
-		# 	print("else goto <bb {0}>".format(n1.middle.num))
-		# else:
-		# 	print("else goto <bb {0}>".format(nextstatenum))
 		
 		if (n1.left!=-1 and n1.middle!=-1):
 			print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))

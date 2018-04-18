@@ -1,0 +1,53 @@
+label0:
+if(tNone) goto <bb 1>
+else goto <bb 3>
+
+label1:
+if(tNone) goto <bb 2>
+else goto <bb 3>
+
+label2:
+Const moves to register s1
+add s0, s0, s1
+use sw to store value of s0 to stack
+goto label1
+
+label3:
+
+label4:
+use sw to store value of s0 to stack
+goto label5
+
+label5:
+if(tNone) goto <bb 6>
+else goto <bb 8>
+
+label6:
+if(tNone) goto <bb 7>
+else goto <bb 8>
+
+label7:
+Const moves to register s1
+add s0, s0, s1
+use sw to store value of s0 to stack
+goto label6
+
+label8:
+return
+
+label9:
+if(tNone) goto <bb 10>
+else goto <bb 12>
+
+label10:
+if(tNone) goto <bb 11>
+else goto <bb 12>
+
+label11:
+Const moves to register s1
+add s0, s0, s1
+use sw to store value of s0 to stack
+goto label10
+
+label12:
+

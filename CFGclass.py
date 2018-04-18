@@ -12,6 +12,7 @@ class node:
 			self.right = right
 			self.middle = middle
 			self.code = []
+			self.astList = []
 			self.num = -1
 			self.num1 = -1
 			self.blank = 0
@@ -25,6 +26,7 @@ class CFG:
 		self.insertnode = node("Normal",self.end,-1,-1)
 		self.head = node("Start",self.insertnode,-1,-1)
 		self.isnotmain = -1
+
 	def insert(self,ast):
 		if(ast.Type == "BLANKBODY"):
 			return
@@ -35,6 +37,7 @@ class CFG:
 		elif ast.Type == "FCALL":
 			# print("return statement",ast.l[0])
 			a = ast.getcode()	
+			self.insertnode.astList.append(ast)
 			if isinstance(a,str):
 				self.insertnode.addCode([a])
 			else:
@@ -43,12 +46,14 @@ class CFG:
 		elif ast.Type == "RETURN":
 			# print("return statement",ast.l[0])
 			a = ast.getcode()	
+			self.insertnode.astList.append(ast)
 			if isinstance(a,str):
 				self.insertnode.addCode([a])
 			else:
 				self.insertnode.addCode(a[0])
 			self.insertnode.hasreturn = 1
 			self.end.hasreturn = 1
+			
 		elif(ast.Type == "BODY"):
 			if(not ast.l):
 				pass
@@ -57,7 +62,8 @@ class CFG:
 					self.insert(ast.l[j])
 
 		elif (not ast.isjump() and ast.Type!="DECL" and ast.Type!="BLANKBODY" and ast.Type!="PROTO"):	
-			a = ast.getcode()	
+			a = ast.getcode()
+			self.insertnode.astList.append(ast)	
 			if isinstance(a,str):
 				self.insertnode.addCode([a])
 			else:
@@ -69,6 +75,7 @@ class CFG:
 			c_false = node("Normal",-1,-1,-1)
 			c_if = node("ITE",c_true,c_common,c_false)
 			a = ast.l[0].getcode()	
+			c_if.astList.append(ast.l[0])
 			if isinstance(a,str):
 				c_if.addCode([a])
 				c_if.num1 = temp
@@ -87,7 +94,7 @@ class CFG:
 			c_true = node("Normal",-1,-1,-1)
 			c_if = node("IF",c_true,c_common,-1)
 			a = ast.l[0].getcode()
-
+			c_if.astList.append(ast.l[0])
 			if isinstance(a,str):
 				c_if.addCode([a])
 				c_if.num1 = temp
@@ -104,6 +111,7 @@ class CFG:
 			c_true = node("Normal",-1,-1,-1)
 			c_while = node("WHILE",c_true,c_common,-1)
 			a = ast.l[0].getcode()	
+			c_while.astList.append(ast.l[0])
 			if isinstance(a,str):
 				c_while.addCode([a])
 				c_while.num1 = temp
