@@ -47,4 +47,28 @@ label2:
 	li $s0, 3
 	lw $s1, 8($sp)
 	sw $s0, 0($s1)
+2
+['*px', '*py']
 	# setting up activation record for called function
+	lw $s0, 4($sp)
+	lw $s1, 0($s0)
+	sw $s1, -4($sp)
+	lw $s0, 8($sp)
+	lw $s1, 0($s0)
+	sw $s1, 0($sp)
+	sub $sp, $sp, 8
+	jal f # function call
+	add $sp, $sp, 8 # destroying activation record of called function
+	move $s0, $v1 # using the return value of called function
+	sw $s0, global_d
+	j label3
+label3:
+	j epilogue_main
+
+# Epilogue begins
+epilogue_main:
+	add $sp, $sp, 24
+	lw $fp, -4($sp)
+	lw $ra, 0($sp)
+	jr $ra	# Jump back to the called procedure
+# Epilogue ends
