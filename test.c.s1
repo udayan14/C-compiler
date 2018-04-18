@@ -1,0 +1,12 @@
+label0:
+[1] moves to register s0
+Variable moves to register s1
+add s0, s0, s1
+[3] moves to register s1
+add s0, s0, s1
+use sw to store value of s0 to stack
+goto label1
+
+label1:
+return
+

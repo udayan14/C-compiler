@@ -1,0 +1,27 @@
+Function Main
+PARAMS()
+RETURNS void
+	ASGN
+	(
+		DEREF
+		(
+			VAR(a)
+		)
+		,
+		PLUS
+		(
+			PLUS
+			(
+				CONST(1)
+				,
+				DEREF
+				(
+					VAR(b)
+				)
+			)
+			,
+			CONST(3)
+		)
+	)
+
+

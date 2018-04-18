@@ -1,0 +1,10 @@
+function main()
+<bb 0>
+t0 = 1 + *b
+t1 = t0 + 3
+*a = t1
+goto <bb 1>
+
+<bb 1>
+return
+

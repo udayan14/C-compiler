@@ -8,9 +8,6 @@ from CFGclass import *
 from ASTclass import *
 from HelperFunctions import *
 from GlobalVariables import *
-from SymbolTableClass import *
-
-
 
 class SymbolTable:
 
@@ -376,17 +373,9 @@ def printCFG(ast):
 			num = num1-1
 			if ast.l[i].Name == "main":
 				num += 1
-
-# def printCFG1(ast):
-# 	cfg = CFG()
-# 	cfg.insert(ast)
-# 	cleanup(cfg.head)
-# 	# print(cfg.head.Type)
-# 	giveNumbering(cfg.head,0)
-# 	printCFGhelper(cfg.head,-1)
+	return CFG_list
 
 def printSymbolTable():
-
 	print("Procedure table :-")
 	s = "-----------------------------------------------------------------"
 	print(s)
@@ -406,6 +395,159 @@ def printSymbolTable():
 	print(s)
 	print(s)
 
+def printAssembly(cfg_list):
+
+	#TODO :: Print global variables
+
+	for cfg in cfg_list:
+		printAssemblyHelper(cfg.head,0)
+
+def printAssemblyHelper(n1,nextstatenum):
+	if n1==-1:
+		return
+	elif n1.Type == "Start":
+		printAssemblyHelper(n1.left,nextstatenum)
+
+	elif n1.Type == "End":
+		if(not n1.hasreturn):
+			print("label{0}:".format(n1.num))
+			print("return")
+			print("")
+	elif n1.Type == "Normal":
+		print("label{0}:".format(n1.num))
+		# print("{0} has child {1}".format(n1.num,n1.l))	
+		for ast in n1.astList:
+			ASTtoAssembly(ast,0)
+		if n1.hasreturn == 1:
+			print("")
+		elif (not (n1.left==-1 and n1.right==-1 and n1.middle==-1)):			
+			print("goto label{0}".format(n1.num+1))
+			print("")
+			printAssemblyHelper(n1.left,nextstatenum)
+		else:
+			print("goto label{0}".format(nextstatenum))
+			print("")
+
+	elif n1.Type == "ITE":
+		print("label{0}:".format(n1.num))
+		reg = ASTtoAssembly(n1.astList[0],0)
+		# if(n1.left==-1):
+		# 	print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.middle.num))
+		# else:
+		# 	print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.left.num))
+		# if(n1.right==-1):
+		# 	print("else goto <bb {0}>".format(n1.middle.num))
+		# else:
+		# 	print("else goto <bb {0}>".format(n1.right.num))
+		# print("")
+		if n1.left!=-1 and n1.right!=-1 and n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printAssemblyHelper(n1.left,n1.middle.num)
+			printAssemblyHelper(n1.right,n1.middle.num)
+			printAssemblyHelper(n1.middle,nextstatenum)
+		elif n1.left!=-1 and n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printAssemblyHelper(n1.left,n1.middle.num)
+			printAssemblyHelper(n1.middle,nextstatenum)
+		elif n1.right!=-1 and n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.middle.num))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printAssemblyHelper(n1.right,n1.middle.num)
+			printAssemblyHelper(n1.middle,nextstatenum)
+		elif n1.left!=-1 and n1.right!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printAssemblyHelper(n1.left,nextstatenum)
+			printAssemblyHelper(n1.right,nextstatenum)
+		elif n1.left!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printAssemblyHelper(n1.left,nextstatenum)
+		elif n1.right!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
+			print("else goto <bb {0}>".format(n1.right.num))
+			print("")
+			printAssemblyHelper(n1.right,nextstatenum)
+		elif n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printAssemblyHelper(n1.middle,nextstatenum)
+
+	elif n1.Type == "IF":
+		print("label{0}:".format(n1.num))
+		reg = ASTtoAssembly(n1.astList[0],0)
+		
+		if (n1.left!=-1 and n1.middle!=-1):
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printAssemblyHelper(n1.left,n1.middle.num)
+			printAssemblyHelper(n1.middle,nextstatenum)
+		elif n1.left!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printAssemblyHelper(n1.left,nextstatenum)
+		elif n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.middle.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printAssemblyHelper(n1.middle,nextstatenum)
+		else:
+			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+	elif n1.Type == "WHILE":
+		print("label{0}:".format(n1.num))			
+		reg = ASTtoAssembly(n1.astList[0],0)
+		
+		# print("")
+		if (n1.left!=-1 and n1.middle!=-1):
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printAssemblyHelper(n1.left,n1.num)
+			printAssemblyHelper(n1.middle,nextstatenum)
+		elif n1.left!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+			printAssemblyHelper(n1.left,n1.num)
+		elif n1.middle!=-1:
+			print("if(t{0}) goto <bb {1}>".format(reg,n1.num))
+			print("else goto <bb {0}>".format(n1.middle.num))
+			print("")
+			printAssemblyHelper(n1.middle,nextstatenum)
+		else:
+			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
+			print("else goto <bb {0}>".format(nextstatenum))
+			print("")
+
+def ASTtoAssembly(ast,val):
+	if(ast.Type == "ASGN"):
+		ASTtoAssembly(ast.l[1],val)
+		print("use sw to store value of s0 to stack")
+		return val
+	elif(ast.Type == "PLUS"):
+		ASTtoAssembly(ast.l[0],val)
+		ASTtoAssembly(ast.l[1],val+1)
+		print("add s{0}, s{1}, s{2}".format(val,val,val+1))
+	elif(ast.Type == "MINUS"):
+		return val
+	elif(ast.Type == "DEREF"):
+		print("Variable moves to register s{0}".format(val))
+		return val
+	elif(ast.Type == "CONST"):
+		print("{0} moves to register s{1}".format(ast.l,val))
+		return val
 def p_masterprogram(p):
 	"""
 	master : program
@@ -423,15 +565,19 @@ def p_masterprogram(p):
 		output_f1 = str(sys.argv[1]) + ".ast1"
 		output_f2 = str(sys.argv[1]) + ".cfg1"
 		output_f3 = str(sys.argv[1]) + ".sym1"
+		output_f4 = str(sys.argv[1]) + ".s1"
 		oldstdout = sys.stdout
 		sys.stdout = open(output_f1,'w+')		
 		p[0].printit(0)
 		sys.stdout = open(output_f2,'w+')
-		printCFG(p[0])
+		cfg_list = printCFG(p[0])
 		sys.stdout = open(output_f3,'w+')
 		printSymbolTable()
+		sys.stdout = open(output_f4,'w+')
+		printAssembly(cfg_list)
 		sys.stdout.close()
 		sys.stdout = oldstdout
+
 
 
 def p_program(p):
@@ -544,54 +690,7 @@ def p_function(p):
 	"""
 	function : TYPE NAME LPAREN paramlist RPAREN LBRACE fbody RBRACE
 	"""
-	# global main_found,assignment_error,return_error
-	# void_return = 0
-	# global is_error
-	# # print(p[2])
-	# if str(p[2])=='main':
-	# 	main_found = 1
-	# if str(p[1])=='void':
-	# 	void_return = 1
-	# # print(p[6][::-1])
-	# if(assignment_error):
-	# 	is_error = 1
-	# 	if p:
-	# 		print("Syntax error at line no  '{0}' , assignment error ".format(p.lexer.lineno))
-	# 	else:
-	# 		print("Syntax error at EOF")
-	# 	# print("Main function not found || Return type of main is not void || Invalid Assignment")
-	# elif(not main_found):
-	# 	is_error = 1
-	# 	print("Syntax error at line no  '{0}' , main not found".format(p.lexer.lineno))
-	# elif(not void_return):
-	# 	is_error = 1
-	# 	print("Syntax error at line no  '{0}' , return type of main function not void".format(p.lexer.lineno))
-	# else:
-	# if(len(p)==9):
-	# 	output_f1 = str(sys.argv[1]) + ".ast"
-	# 	output_f2 = str(sys.argv[1]) + ".cfg"
-	# 	oldstdout = sys.stdout
-	# 	sys.stdout = open(output_f1,'w+')		
-	# 	p[7].printit(0)
-	# 	sys.stdout = open(output_f2,'w+')
-	# 	# print("Printing CFG now!")
-	# 	printCFG(p[7])
-	# 	sys.stdout.close()
-	# 	sys.stdout = oldstdout
 	p[0] = AST("FUNC",p[2],[p[1],p[4],p[7],0])
-
-	# else:
-	# 	output_f1 = str(sys.argv[1]) + ".ast"
-	# 	output_f2 = str(sys.argv[1]) + ".cfg"
-	# 	oldstdout = sys.stdout
-	# 	sys.stdout = open(output_f1,'w+')		
-	# 	p[8].printit(0)
-	# 	sys.stdout = open(output_f2,'w+')
-	# 	print("Printing CFG now!")
-	# 	printCFG(p[8])
-	# 	sys.stdout.close()
-	# 	sys.stdout = oldstdout
-	# 	p[0] = AST("FUNC",p[3],[p[1],p[5],p[8],p[2]])
 
 def p_function_2(p):
 	"""
@@ -1029,6 +1128,3 @@ if __name__ == "__main__":
 	if(is_error==0):
 		# pass
 		print("Successfully parsed")
-		# print(no_of_static_declarations)
-		# print(no_of_pointer_declarations)
-		# print(no_of_assignments)
