@@ -26,12 +26,14 @@ class CFG:
 		self.insertnode = node("Normal",self.end,-1,-1)
 		self.head = node("Start",self.insertnode,-1,-1)
 		self.isnotmain = -1
+		self.funcinfo = ""
 
 	def insert(self,ast):
 		if(ast.Type == "BLANKBODY"):
 			return
 
 		elif(ast.Type == "FUNC"):
+			self.funcinfo = (ast.Name,makestring1(ast.l[1]))
 			self.insert(ast.l[2])
 
 		elif ast.Type == "FCALL":

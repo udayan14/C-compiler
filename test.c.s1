@@ -1,12 +1,35 @@
+
+	.data
+global_a:	.word	0
+global_a1:	.word	0
+global_b:	.space	8
+global_a2:	.word	0
+global_a3:	.word	0
+global_b2:	.word	0
+
+	.text
+f:
+# Prologue begins
+	sw $ra, 0($sp)  # Save the return address
+	sw $fp, -4($sp) # Save the frame pointer
+	sub $fp, $sp, 8 # Update the frame pointer
+	sub $sp, $sp, 32   # Make space for the locals
+# Prologue ends
 label0:
-[1] moves to register s0
-Variable moves to register s1
-add s0, s0, s1
-[3] moves to register s1
-add s0, s0, s1
-use sw to store value of s0 to stack
+	lw $s0, 8($sp)
+	use sw to store value of $s0 to stack
+	lw $s0, 36($sp)
+	use sw to store value of $s0 to stack
 goto label1
 
 label1:
 return
+
+# Epilogue begins
+epilogue_f:
+	add $sp, $sp, 32
+	lw $fp, -4($sp)
+	lw $ra, 0($sp)
+	jr $ra  #  Jump back to the called procedure
+# Epilogue ends
 

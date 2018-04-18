@@ -11,6 +11,7 @@ class AST:
 		self.Type = Type
 		self.Name = Name
 		self.l = l
+		self.funcname = ""
 
 	def printit(self,i):
 

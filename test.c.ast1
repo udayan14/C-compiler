@@ -1,27 +1,18 @@
-Function Main
-PARAMS()
+FUNCTION f
+PARAMS (int *p1, float p2, float p3, int q1)
 RETURNS void
 	ASGN
 	(
-		DEREF
-		(
-			VAR(a)
-		)
+		VAR(a)
 		,
-		PLUS
-		(
-			PLUS
-			(
-				CONST(1)
-				,
-				DEREF
-				(
-					VAR(b)
-				)
-			)
-			,
-			CONST(3)
-		)
+		VAR(b)
+	)
+
+	ASGN
+	(
+		VAR(a)
+		,
+		VAR(p1)
 	)
 
 
