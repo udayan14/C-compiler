@@ -321,6 +321,32 @@ def printCFGhelper(n1,nextstatenum):
 			print("else goto <bb {0}>".format(nextstatenum))
 			print("")
 
+def getNormReg():
+	global norm_reg
+	if 0 in norm_reg:
+		ind = norm_reg.index(0)
+		norm_reg[ind] = 1
+		return ind
+	else:
+		return "All normal registers full"
+
+def freeNormReg(i):
+	global norm_reg
+	norm_reg[i] = 0
+
+def getFloatReg():
+	global float_reg
+	if 0 in float_reg:
+		ind = float_reg.index(0)
+		float_reg[ind] = 1
+		return 10 + ind*2
+	else:
+		return "All float registers full"
+
+def freeFloatReg(i):
+	global float_reg
+	ind = (i - 10) / 2
+	float_reg[int(ind)] = 0
 
 def printhelper(s,i):
 	print("\t"*i + s)

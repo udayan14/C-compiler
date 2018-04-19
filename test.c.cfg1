@@ -1,7 +1,9 @@
 function f(int *p1, float p2, float p3, int q1)
 <bb 0>
-a = b
-a = p1
+t0 = **f2 + 1.0
+t1 = 2.3 + 3.4
+t2 = t0 + t1
+**f2 = t2
 goto <bb 1>
 
 <bb 1>

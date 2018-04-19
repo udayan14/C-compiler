@@ -9,3 +9,5 @@ declaration_error = 0
 return_error = 0
 temp = 0
 previous = 1
+norm_reg = [0]*9
+float_reg = [0]*11

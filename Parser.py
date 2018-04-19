@@ -419,9 +419,10 @@ def printAssembly(cfg_list):
 		else:
 			print("global_{0}:\t.word\t0".format(key))
 	print("")
-	printhelper(".text",1)
+	printhelper(".text\t# The .text assembler directive indicates",1)
 	for cfg in cfg_list:
 		#Printing Prologue
+		printhelper(".globl {0}\t# The following is the code".format(cfg.funcinfo[0]),1)
 		print("{0}:".format(cfg.funcinfo[0]))
 		print("# Prologue begins")
 		printhelper("sw $ra, 0($sp)  # Save the return address",1)
@@ -453,26 +454,26 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 	elif n1.Type == "End":
 		if(not n1.hasreturn):
 			print("label{0}:".format(n1.num))
-			print("return")
+			printhelper("j epilogue_{0}".format(funcinfo[0]),1)
 			print("")
 	elif n1.Type == "Normal":
 		print("label{0}:".format(n1.num))
 		# print("{0} has child {1}".format(n1.num,n1.l))	
 		for ast in n1.astList:
-			ASTtoAssembly(ast,0,funcinfo)
+			ASTtoAssembly(ast,funcinfo)
 		if n1.hasreturn == 1:
 			print("")
 		elif (not (n1.left==-1 and n1.right==-1 and n1.middle==-1)):			
-			print("goto label{0}".format(n1.num+1))
+			printhelper("j label{0}".format(n1.num+1),1)
 			print("")
 			printAssemblyHelper(n1.left,nextstatenum,funcinfo)
 		else:
-			print("goto label{0}".format(nextstatenum))
+			printhelper("j label{0}".format(nextstatenum),1)
 			print("")
 
 	elif n1.Type == "ITE":
 		print("label{0}:".format(n1.num))
-		reg = ASTtoAssembly(n1.astList[0],0,funcinfo)
+		reg = ASTtoAssembly(n1.astList[0],funcinfo)
 		# if(n1.left==-1):
 		# 	print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.middle.num))
 		# else:
@@ -525,7 +526,7 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 
 	elif n1.Type == "IF":
 		print("label{0}:".format(n1.num))
-		reg = ASTtoAssembly(n1.astList[0],0,funcinfo)
+		reg = ASTtoAssembly(n1.astList[0],funcinfo)
 		
 		if (n1.left!=-1 and n1.middle!=-1):
 			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
@@ -549,7 +550,7 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 			print("")
 	elif n1.Type == "WHILE":
 		print("label{0}:".format(n1.num))			
-		reg = ASTtoAssembly(n1.astList[0],0,funcinfo)
+		reg = ASTtoAssembly(n1.astList[0],funcinfo)
 		
 		# print("")
 		if (n1.left!=-1 and n1.middle!=-1):
@@ -573,176 +574,129 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 			print("else goto <bb {0}>".format(nextstatenum))
 			print("")
 
-def ASTtoAssembly(ast,val,funcinfo):
+def ASTtoAssembly(ast,funcinfo):
+	if ast.Type == "PLUS":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("add $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			return(val1,0)
+		else:
+			val = getFloatReg()
+			printhelper("add.s $f{0}, $f{1}, $f{2}".format(val,r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			val1 = getFloatReg()
+			printhelper("mov.s $f{0}, $f{1}".format(val1,val),1)
+			freeFloatReg(val)
+			return(val1,1)
+
 	if(ast.Type == "ASGN"):
-		ASTtoAssembly(ast.l[1],val,funcinfo)
-		printhelper("use sw to store value of $s{0} to stack".format(val),1)
-		return val
-
-	elif(ast.Type == "PLUS"):
-		dtype = ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("add $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
+		r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		curr = ast.l[0]
+		count = 0
+		while(curr.Type!="VAR"):
+			curr = curr.l[0]
+			count+=1
+		r0 = ASTtoAssembly(curr,funcinfo)
+		temp_reg = r0[0]
+		for i in range(count - 1):
+			val = getNormReg()
+			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			temp_reg = val
+		if r0[1] == 0:
+			val = getNormReg()
+			printhelper("sw $s{0}, 0($s{1})".format(r1[0],temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,0)
 		else:
-			printhelper("add.s $f{0}, $f{1}, $f{2}".format(val+2,val,val+1),1)
-			printhelper("move $f{0}, $f{1}".format(val,val+2),1)
-			return 1
-
-	elif(ast.Type == "MINUS"):
-		dtype = ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("sub $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("sub.s $f{0}, $f{1}, $f{2}".format(val+2,val,val+1),1)
-			printhelper("move $f{0}, $f{1}".format(val,val+2),1)
-			return 1
-
-	elif(ast.Type == "MUL"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("mul $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("mul.s $f{0}, $f{1}, $f{2}".format(val+2,val,val+1),1)
-			printhelper("move $f{0}, $f{1}".format(val,val+2),1)
-			return 1
-
-	elif(ast.Type == "DIV"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("div $s{0}, $s{1}".format(val,val+1),1)
-			printhelper("mflo $s{0}".format(val+2),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("div.s $f{0}, $f{1}, $f{2}".format(val+2,val,val+1),1)
-			printhelper("move $f{0}, $f{1}".format(val,val+2),1)
-			return 1
-
-	elif(ast.Type == "LT"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("slt $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("c.lt.s $f{0}, $f{1}".format(val,val+1),1)
-			return 1  
-
-	elif(ast.Type == "GT"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("slt $s{0}, $s{2}, $s{1}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("c.lt.s $f{1}, $f{0}".format(val,val+1),1)
-			return 1
-
-	elif(ast.Type == "LE"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("sle $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("c.le.s $f{0}, $f{1}".format(val,val+1),1)
-			return 1
-
-	elif(ast.Type == "LE"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("sle $s{0}, $s{2}, $s{1}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("c.le.s $f{1}, $f{0}".format(val,val+1),1)
-			return 1
-
-	elif(ast.Type == "EQ"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("seq $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("c.eq.s $f{0}, $f{1}".format(val,val+1),1)
-			return 1
-
-	elif(ast.Type == "NE"):
-		ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1,funcinfo)
-		if dtype == 0:
-			printhelper("sne $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-			printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-			return 0
-		else:
-			printhelper("c.eq.s $f{0}, $f{1}".format(val,val+1),1) #Change this
-			return 1
-
-	elif(ast.Type == "AND"):
-		dtype = ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1)
-		printhelper("and $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-		printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-		return dtype
-
-	elif(ast.Type == "OR"):
-		dtype = ASTtoAssembly(ast.l[0],val,funcinfo)
-		ASTtoAssembly(ast.l[1],val+1)
-		printhelper("or $s{0}, $s{1}, $s{2}".format(val+2,val,val+1),1)
-		printhelper("move $s{0}, $s{1}".format(val,val+2),1)
-		return dtype
-
-	elif(ast.Type == "NOT"):
-		dtype = ASTtoAssembly(ast.l[0],val,funcinfo)
-		printhelper("move $s{0}, $s{1}".format(val+1,val),1)
-		printhelper("not $s{0}, $s{1}".format(val,val+1),1)
-		return dtype
-
-	elif(ast.Type == "UMINUS"):
-		dtype = ASTtoAssembly(ast.l[0],val,funcinfo)
-		printhelper("negu $s{0}, $s{1}".format(val+1,val),1)
-		printhelper("move $s{0}, $s{1}".format(val,val+1),1)
-		return dtype
+			val = getFloatReg()
+			printhelper("s.s $f{0}, 0($s{1})".format(r1[0],temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,1)
 
 	elif(ast.Type == "DEREF"):
-		printhelper("Variable moves to register s{0}".format(val),1)
-		return val
+		curr = ast
+		count = 0
+		while(curr.Type!="VAR"):
+			curr = curr.l[0]
+			count+=1
+		r0 = ASTtoAssembly(curr,funcinfo)
+		temp_reg = r0[0]
+		for i in range(count - 1):
+			val = getNormReg()
+			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			temp_reg = val
+		if r0[1] == 0:
+			val = getNormReg()
+			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,0)
+		else:
+			val = getFloatReg()
+			printhelper("l.s $f{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,1)
 
 	elif(ast.Type == "CONST"):
 		if ast.Name == "int":
-			printhelper("li $s{0}, {1}".format(val,ast.l),1)
-			return 0
+			val = getNormReg()
+			printhelper("li $s{0}, {1}".format(val,ast.l[0]),1)
+			return (val,0)
 		elif ast.Name == "float":
-			printhelper("li.s $f{0}, {1}".format(val,ast.l),1)
-			return 1
+			val = getFloatReg()
+			printhelper("li.s $f{0}, {1}".format(val,ast.l[0]),1)
+			return (val,1)
+
 	elif(ast.Type == "VAR"):
 		table = globalSym.funcTable[funcinfo]
 		if ast.Name in table[2].varTable:
 			entry = table[2].varTable[ast.Name]
 			offset = entry[2]
 			if entry[3]==0:
-				printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+				if entry[0]=="int":
+					val = getNormReg()
+					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+					return (val,0)
+				else:
+					val = getNormReg()
+					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+					return (val,1)
 			else:
-				printhelper("lw $s{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
+				if entry[0]=="int":
+					val = getNormReg()
+					printhelper("lw $s{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
+					return (val,0)
+				else:
+					val = getNormReg()
+					printhelper("lw $s{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
+					return (val,1)
 		elif ast.Name in globalSym.varTable:
-			printhelper("lw $s{0}, global_{1}".format(val,ast.Name))
-
+			entry = globalSym.varTable[ast.Name]
+			if entry[0] == "int":
+				val = getNormReg()
+				printhelper("lw $s{0}, global_{1}".format(val,ast.Name))
+				return (val,0)
+			else:
+				val = getNormReg()
+				printhelper("lw $s{0}, global_{1}".format(val,ast.Name))
+				return (val,1)
 def p_masterprogram(p):
 	"""
 	master : program

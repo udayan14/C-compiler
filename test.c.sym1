@@ -19,8 +19,11 @@ p3		|	procedure f		|	float		|
 q1		|	procedure f		|	int		|	
 a		|	procedure f		|	int		|	*
 b		|	procedure f		|	int		|	*
-h		|	procedure f		|	int		|	*
 c		|	procedure f		|	int		|	*
+f1		|	procedure f		|	float		|	
+f2		|	procedure f		|	float		|	**
+f3		|	procedure f		|	float		|	****
+f4		|	procedure f		|	float		|	***
 h1		|	procedure f		|	float		|	
 -----------------------------------------------------------------
 -----------------------------------------------------------------

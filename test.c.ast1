@@ -3,16 +3,36 @@ PARAMS (int *p1, float p2, float p3, int q1)
 RETURNS void
 	ASGN
 	(
-		VAR(a)
+		DEREF
+		(
+			DEREF
+			(
+				VAR(f2)
+			)
+		)
 		,
-		VAR(b)
-	)
-
-	ASGN
-	(
-		VAR(a)
-		,
-		VAR(p1)
+		PLUS
+		(
+			PLUS
+			(
+				DEREF
+				(
+					DEREF
+					(
+						VAR(f2)
+					)
+				)
+				,
+				CONST(1.0)
+			)
+			,
+			PLUS
+			(
+				CONST(2.3)
+				,
+				CONST(3.4)
+			)
+		)
 	)
 
 
