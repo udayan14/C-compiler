@@ -1,7 +1,40 @@
-FUNCTION func1
-PARAMS (int a,int b)
-RETURNS *int
+
+FUNCTION f1
+PARAMS (int *p1,float p2,float p3,int q1)
+RETURNS void
+	ASGN
+	(
+		DEREF
+		(
+			DEREF
+			(
+				VAR(f2)
+			)
+		)
+		,
+		PLUS
+		(
+			PLUS
+			(
+				DEREF
+				(
+					DEREF
+					(
+						VAR(f2)
+					)
+				)
+				,
+				CONST(1.0)
+			)
+			,
+			PLUS
+			(
+				CONST(2.3)
+				,
+				CONST(3.4)
+			)
+		)
+	)
 RETURN 
 (
-	VAR(c)
 )

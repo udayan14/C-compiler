@@ -19,8 +19,6 @@ label0:
 	li.s $f10, 9.8
 	lw $s0, 4($sp)
 	s.s $f10, 0($s0)
-2
-['3', 'g']
 	# setting up activation record for called function
 	li $s0, 3
 	sw $s0, -4($sp)
@@ -54,8 +52,7 @@ f:
 label2:
 	lw $s0, 4($sp)
 	lw $s1, 0($s0)
-	move $s0, $s1
-	move $v1, $s0 # move return value to $v1
+	move $v1, $s1 # move return value to $v1
 	j epilogue_f
 
 # Epilogue begins

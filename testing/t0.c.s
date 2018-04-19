@@ -29,9 +29,41 @@ label0:
 	mov.s $f12, $f16
 	add.s $f14, $f10, $f12
 	mov.s $f10, $f14
+	li.s $f12, 4.5
+	add.s $f14, $f10, $f12
+	mov.s $f10, $f14
 	lw $s0, 24($sp)
 	lw $s1, 0($s0)
 	s.s $f10, 0($s1)
+	lw $s0, 8($sp)
+	lw $s1, 0($s0)
+	lw $s0, 0($s1)
+	lw $s1, 0($s0)
+	lw $s0, 0($s1)
+	lw $s1, 12($sp)
+	lw $s2, 0($s1)
+	lw $s1, 0($s2)
+	lw $s2, 0($s1)
+	add $s1, $s0, $s2
+	move $s0, $s1
+	li $s1, 4
+	add $s2, $s0, $s1
+	move $s0, $s2
+	li $s1, 5
+	li $s2, 3
+	add $s3, $s1, $s2
+	move $s1, $s3
+	add $s2, $s0, $s1
+	move $s0, $s2
+	lw $s1, 4($sp)
+	sw $s0, 0($s1)
+	lw $s0, 4($sp)
+	lw $s1, 0($s0)
+	li $s0, 1
+	add $s2, $s1, $s0
+	move $s0, $s2
+	lw $s1, 4($sp)
+	sw $s0, 0($s1)
 	j label1
 label1:
 	j epilogue_f1

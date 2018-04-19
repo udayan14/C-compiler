@@ -52,8 +52,6 @@ label3:
 	bne $s0, $0, label4
 	j label5
 label4:
-2
-['3', '*ptr']
 	# setting up activation record for called function
 	li $s0, 3
 	sw $s0, -4($sp)

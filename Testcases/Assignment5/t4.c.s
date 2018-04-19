@@ -47,8 +47,6 @@ label2:
 	li $s0, 3
 	lw $s1, 8($sp)
 	sw $s0, 0($s1)
-2
-['*px', '*py']
 	# setting up activation record for called function
 	lw $s0, 4($sp)
 	lw $s1, 0($s0)

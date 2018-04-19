@@ -11,8 +11,6 @@ main:
 	sub $sp, $sp, 20	# Make space for the locals
 # Prologue ends
 label0:
-2
-['*x', '*y']
 	# setting up activation record for called function
 	lw $s0, 8($sp)
 	l.s $f10, 0($s0)

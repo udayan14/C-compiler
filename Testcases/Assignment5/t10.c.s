@@ -62,8 +62,6 @@ main:
 	sub $sp, $sp, 20	# Make space for the locals
 # Prologue ends
 label4:
-2
-['3', '*a']
 	# setting up activation record for called function
 	li $s0, 3
 	sw $s0, -4($sp)
