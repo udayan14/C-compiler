@@ -65,11 +65,10 @@ label2:
 label3:
 	lw $s0, 16($sp)
 	lw $s1, 0($s0)
-	li $s0, 1
-	add $s2, $s1, $s0
-	move $s0, $s2
-	lw $s1, 16($sp)
-	sw $s0, 0($s1)
+	negu $s0, $s1
+	move $s1, $s0
+	lw $s0, 16($sp)
+	sw $s1, 0($s0)
 	j label4
 label4:
 	j epilogue_main

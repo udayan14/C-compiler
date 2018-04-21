@@ -1,23 +1,22 @@
-
 function f(int a, int b)
 <bb 0>
-
 return c
+
 function f2(float a, float b)
 <bb 1>
-
 return d
+
 function main()
 <bb 2>
 t0 = 6 > 7
 t1 = !t0
 if(t1) goto <bb 3>
 else goto <bb 4>
-<bb 3>
-t2 = *p + 1
-*p = t2
-goto <bb 4>
 
+<bb 3>
+*p = -*p
+goto <bb 4>
 
 <bb 4>
 return
+

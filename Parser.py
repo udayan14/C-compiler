@@ -1011,7 +1011,25 @@ def ASTtoAssembly(ast,funcinfo):
 			printhelper("la $s{0}, global_{1}".format(newt,curr.Name),1)
 			return (newt,0)
 
+	if(ast.Type == "NOT"):
+		child = ASTtoAssembly(ast.l[0],funcinfo)
+		newt = getNormReg()
+		printhelper("xori $s{0}, $s{1}, 1".format(newt,child[0]),1)
+		freeNormReg(child[0])
+		new2 = getNormReg()
+		printhelper("move $s{0}, $s{1}".format(new2,newt),1)
+		freeNormReg(newt)
+		return (new2,0)
 
+	if(ast.Type == "UMINUS"):
+		child = ASTtoAssembly(ast.l[0],funcinfo)
+		newt = getNormReg()
+		printhelper("negu $s{0}, $s{1}".format(newt,child[0]),1)
+		freeNormReg(child[0])
+		new2 = getNormReg()
+		printhelper("move $s{0}, $s{1}".format(new2,newt),1)
+		freeNormReg(newt)
+		return (new2,0)
 
 
 	if(ast.Type == "ASGN"):

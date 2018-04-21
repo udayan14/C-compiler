@@ -20,7 +20,7 @@ void main(){
 	float *u,*v,*x;
 	int **z,***c;
 	float ***b,**m;
-	if((6>7)&&((5>4)&&(7>8)))
+	if(!(6>7))
 	{
 		*p=*p+1;
 	}

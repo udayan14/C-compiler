@@ -1,20 +1,21 @@
 FUNCTION f
-PARAMS (int a,int b)
+PARAMS (int a, int b)
 RETURNS *int
-RETURN 
+RETURN
 (
 	VAR(c)
 )
+
 FUNCTION f2
-PARAMS (float a,float b)
+PARAMS (float a, float b)
 RETURNS *int
-RETURN 
+RETURN
 (
 	VAR(d)
 )
 
 Function Main
-PARAMS() 
+PARAMS()
 RETURNS void
 	IF
 	(
@@ -26,7 +27,6 @@ RETURNS void
 				,
 				CONST(7)
 			)
-			,
 		)
 		,
 		ASGN
@@ -36,15 +36,14 @@ RETURNS void
 				VAR(p)
 			)
 			,
-			PLUS
+			UMINUS
 			(
 				DEREF
 				(
 					VAR(p)
 				)
-				,
-				CONST(1)
 			)
 		)
 
 	)
+

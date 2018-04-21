@@ -36,14 +36,12 @@ RETURNS void
 				VAR(p)
 			)
 			,
-			PLUS
+			UMINUS
 			(
 				DEREF
 				(
 					VAR(p)
 				)
-				,
-				CONST(1)
 			)
 		)
 
