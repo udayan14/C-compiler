@@ -1,31 +1,128 @@
-
 FUNCTION f
 PARAMS (int a,int b)
 RETURNS *int
-	ASGN
-	(
-		VAR(c)
-		,
-		ADDR
-		(
-			VAR(m)
-		)
-	)
 RETURN 
 (
 	VAR(c)
 )
+FUNCTION f2
+PARAMS (float a,float b)
+RETURNS *int
+RETURN 
+(
+	VAR(d)
+)
+
+
+
+
+
+
+
+
 
 Function Main
 PARAMS() 
 RETURNS void
 	ASGN
 	(
+		VAR(p)
+		,
+		VAR(q)
+	)
+	ASGN
+	(
+		VAR(p)
+		,
+		VAR(w)
+	)
+	ASGN
+	(
+		VAR(u)
+		,
+		VAR(v)
+	)
+	ASGN
+	(
+		VAR(u)
+		,
+		VAR(x)
+	)
+	ASGN
+	(
 		VAR(d)
 		,
-		CALL f( 
-			CONST(3)
+		VAR(w)
+	)
+	ASGN
+	(
+		DEREF
+		(
+			VAR(z)
+		)
+		,
+		VAR(q)
+	)
+	ASGN
+	(
+		DEREF
+		(
+			VAR(q)
+		)
+		,
+		DEREF
+		(
+			DEREF
+			(
+				DEREF
+				(
+					VAR(c)
+				)
+			)
+		)
+	)
+	ASGN
+	(
+		DEREF
+		(
+			DEREF
+			(
+				DEREF
+				(
+					VAR(b)
+				)
+			)
+		)
+		,
+		DEREF
+		(
+			VAR(v)
+		)
+	)
+	ASGN
+	(
+		VAR(p)
+		,
+		CALL f2( 
+			DEREF
+			(
+				DEREF
+				(
+					VAR(m)
+				)
+			)
 			,
-			CONST(4)
+			PLUS
+			(
+				DEREF
+				(
+					VAR(u)
+				)
+				,
+				DEREF
+				(
+					VAR(x)
+				)
+			)
 		 )
 	)

@@ -1,7 +1,7 @@
 
 FUNCTION f1
 PARAMS (int *p1,float p2,float p3,int q1)
-RETURNS void
+RETURNS *float
 	ASGN
 	(
 		DEREF
@@ -37,4 +37,8 @@ RETURNS void
 	)
 RETURN 
 (
+	DEREF
+	(
+		VAR(f2)
+	)
 )

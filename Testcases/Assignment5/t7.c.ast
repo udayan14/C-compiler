@@ -4,12 +4,12 @@ PARAMS()
 RETURNS void
 	ASGN
 	(
-		VAR(ans)
+		VAR(x)
 		,
 		CALL f( 
 			DEREF
 			(
-				VAR(x)
+				VAR(y)
 			)
 			,
 			DEREF
@@ -19,9 +19,9 @@ RETURNS void
 		 )
 	)
 FUNCTION f
-PARAMS (float x,int y)
-RETURNS *int
+PARAMS (int x,int y)
+RETURNS *float
 RETURN 
 (
-	VAR(t)
+	VAR(f1)
 )

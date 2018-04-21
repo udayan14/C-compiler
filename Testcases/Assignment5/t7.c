@@ -1,14 +1,16 @@
-int *f(float a, int b);
+float *f1;
+
+float * f(int a, int b);
 
 void main(){
 	int *y;
 	float *x;
 	int *ans;
-	ans = f(*x,*y);
+	x = f(*y,*y);
 }
 
-int *f(float x, int y){
+float * f(int x, int y){
 	int z;
 	int *t;
-	return t;
+	return f1;
 }

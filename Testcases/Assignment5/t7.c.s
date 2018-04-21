@@ -1,5 +1,6 @@
 
 	.data
+global_f1:	.word	0
 
 	.text	# The .text assembler directive indicates
 	.globl main	# The following is the code
@@ -12,17 +13,17 @@ main:
 # Prologue ends
 label0:
 	# setting up activation record for called function
-	lw $s0, 8($sp)
-	l.s $f10, 0($s0)
-	s.s $f10, -4($sp)
+	lw $s0, 12($sp)
+	lw $s1, 0($s0)
+	sw $s1, -4($sp)
 	lw $s0, 12($sp)
 	lw $s1, 0($s0)
 	sw $s1, 0($sp)
-	sub $sp, $sp, 12
+	sub $sp, $sp, 8
 	jal f # function call
-	add $sp, $sp, 12 # destroying activation record of called function
+	add $sp, $sp, 8 # destroying activation record of called function
 	move $s0, $v1 # using the return value of called function
-	sw $s0, 4($sp)
+	sw $s0, 8($sp)
 	j label1
 label1:
 	j epilogue_main
@@ -44,7 +45,7 @@ f:
 	sub $sp, $sp, 16	# Make space for the locals
 # Prologue ends
 label2:
-	lw $s0, 4($sp)
+	lw $s0, global_f1
 	move $v1, $s0 # move return value to $v1
 	j epilogue_f
 

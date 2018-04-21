@@ -1,7 +1,7 @@
 
 FUNCTION f
-PARAMS (int a,int b)
-RETURNS *int
+PARAMS (int a,float b)
+RETURNS float
 	ASGN
 	(
 		VAR(c)
@@ -13,43 +13,39 @@ RETURNS *int
 	)
 RETURN 
 (
-	VAR(c)
+	DEREF
+	(
+		VAR(eq)
+	)
 )
 
-
-
-
-
-Function Main
-PARAMS() 
+FUNCTION f2
+PARAMS (int a)
 RETURNS void
-	ASGN
-	(
-		VAR(px)
-		,
-		ADDR
-		(
-			VAR(x)
-		)
-	)
-	ASGN
-	(
-		VAR(py)
-		,
-		ADDR
-		(
-			VAR(y)
-		)
-	)
 	ASGN
 	(
 		DEREF
 		(
-			VAR(px)
+			VAR(hf)
 		)
 		,
-		CONST(2)
+		PLUS
+		(
+			DEREF
+			(
+				VAR(hf)
+			)
+			,
+			CONST(1)
+		)
 	)
+RETURN 
+(
+)
+
+Function Main
+PARAMS() 
+RETURNS void
 	ASGN
 	(
 		DEREF
@@ -57,21 +53,20 @@ RETURNS void
 			VAR(py)
 		)
 		,
-		CONST(3)
-	)
-	ASGN
-	(
-		VAR(d)
-		,
 		CALL f( 
 			DEREF
 			(
 				VAR(px)
 			)
 			,
-			DEREF
+			PLUS
 			(
-				VAR(py)
+				DEREF
+				(
+					VAR(py)
+				)
+				,
+				CONST(4.5)
 			)
 		 )
 	)
