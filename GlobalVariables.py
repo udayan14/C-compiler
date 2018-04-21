@@ -11,3 +11,5 @@ temp = 0
 previous = 1
 norm_reg = [0]*9
 float_reg = [0]*11
+condfalsenum = 0
+condendnum = 0

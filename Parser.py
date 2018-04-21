@@ -607,6 +607,149 @@ def ASTtoAssembly(ast,funcinfo):
 			freeFloatReg(val)
 			return(val1,1)
 
+	if ast.Type == "MINUS":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("sub $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			val = getFloatReg()
+			printhelper("sub.s $f{0}, $f{1}, $f{2}".format(val,r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			val1 = getFloatReg()
+			printhelper("mov.s $f{0}, $f{1}".format(val1,val),1)
+			freeFloatReg(val)
+			return(val1,1)
+
+	if ast.Type == "MUL":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("mul $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			val = getFloatReg()
+			printhelper("mul.s $f{0}, $f{1}, $f{2}".format(val,r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			val1 = getFloatReg()
+			printhelper("mov.s $f{0}, $f{1}".format(val1,val),1)
+			freeFloatReg(val)
+			return(val1,1)
+
+	if ast.Type == "DIV":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("div $s{0}, $s{1}".format(r0[0],r1[0]),1)
+			printhelper("mflo $s{0}".format(val),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			val = getFloatReg()
+			printhelper("div.s $f{0}, $f{1}, $f{2}".format(val,r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			val1 = getFloatReg()
+			printhelper("mov.s $f{0}, $f{1}".format(val1,val),1)
+			freeFloatReg(val)
+			return(val1,1)
+
+	if ast.Type == "LE":
+		global condfalsenum, condendnum
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("slt $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.lt.s $f{1}, $f{2}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
 	if(ast.Type == "ASGN"):
 		r1 = ASTtoAssembly(ast.l[1],funcinfo)
 		curr = ast.l[0]
