@@ -29,18 +29,18 @@ class SymbolTable:
 						declaration_error_string = str(ast.l[1][i])+" declared more than once in same scope."
 					else:
 						if ast.l[0] == "int":
-							self.varTable[ast.l[1][i]] = (t,0,self.size,0)
+							self.varTable[ast.l[1][i]] = [t,0,self.size,0]
 							self.size+=4
 
 						else:
-							self.varTable[ast.l[1][i]] = (t,0,self.size,0)
+							self.varTable[ast.l[1][i]] = [t,0,self.size,0]
 							self.size+=8              ##This is gonna get bad
 				else:
 					if ast.l[1][i][0] in self.varTable:
 						declaration_error = 1
 						declaration_error_string = str(ast.l[1][i])+" declared more than once in same scope."
 					else:
-						self.varTable[ast.l[1][i][0]] = (t,ast.l[1][i][1],self.size,0)
+						self.varTable[ast.l[1][i][0]] = [t,ast.l[1][i][1],self.size,0]
 						self.size+=4
 
 		elif(ast.Type == "FCALL"):
@@ -88,7 +88,7 @@ class SymbolTable:
 			else:
 				fTable = SymbolTable()
 				fTable.empty = 1
-				self.funcTable[t] = (ast.l[0],ast.l[2],fTable)
+				self.funcTable[t] = (ast.l[0],ast.l[2],fTable,getoffset(ast.l[1]))
 
 		elif (ast.Type == "FUNC"):
 			# print("ASTL1",ast.l[1])
@@ -110,7 +110,7 @@ class SymbolTable:
 				fTable = SymbolTable()
 				fTable.addEntry(AST("PARAMLIST","",[ast.l[1]]))
 				fTable.addEntry(ast.l[2])			
-				self.funcTable[t] = (ast.l[0],ast.l[3],fTable)
+				self.funcTable[t] = (ast.l[0],ast.l[3],fTable,getoffset(ast.l[1]))
 
 			for ss in ast.l[2].l:
 				if(ss.Type == "RETURN"):
@@ -171,7 +171,7 @@ class SymbolTable:
 			print(value[0] + '*'*value[1] + " " +key +" Offset: ",value[2])
 		print("Functions defined in code are :")
 		for key,value in self.funcTable.items():
-			print(key[0],"("+key[1]+")")
+			print(key[0],"("+key[1]+")"+" Offset list is: "+str(value[3]))
 			for key1,value1 in value[2].varTable.items():
 				print(value1[0] + '*'*value1[1] + " " + key1 +" Offset: ",value1[2])
 		pass
@@ -256,7 +256,7 @@ def Checktype(varTable, ast):
 			typeslist.append([type1,('a',level1)])
 			# print("Types : ",typeslist)
 		temp = makestring1(typeslist)
-		
+		ast.funcstr = temp
 		t = (ast.Name, temp)
 		if t in globalSym.funcTable:
 			temp = globalSym.funcTable[t]
@@ -452,10 +452,9 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 		printAssemblyHelper(n1.left,nextstatenum,funcinfo)
 
 	elif n1.Type == "End":
-		if(not n1.hasreturn):
-			print("label{0}:".format(n1.num))
-			printhelper("j epilogue_{0}".format(funcinfo[0]),1)
-			print("")
+		print("label{0}:".format(n1.num))
+		printhelper("j epilogue_{0}".format(funcinfo[0]),1)
+		print("")
 	elif n1.Type == "Normal":
 		print("label{0}:".format(n1.num))
 		# print("{0} has child {1}".format(n1.num,n1.l))	
@@ -615,23 +614,46 @@ def ASTtoAssembly(ast,funcinfo):
 		while(curr.Type!="VAR"):
 			curr = curr.l[0]
 			count+=1
-		r0 = ASTtoAssembly(curr,funcinfo)
-		temp_reg = r0[0]
-		for i in range(count - 1):
-			val = getNormReg()
-			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
-			freeNormReg(temp_reg)
-			temp_reg = val
-		if r0[1] == 0:
-			printhelper("sw $s{0}, 0($s{1})".format(r1[0],temp_reg),1)
-			freeNormReg(temp_reg)
-			freeNormReg(r1[0])
-			return (0,0)
+		if count==0:
+			table = globalSym.funcTable[funcinfo]
+			if curr.Name in table[2].varTable:
+				entry = table[2].varTable[curr.Name]
+				offset = entry[2]
+				printhelper("sw $s{0} {1}($sp)".format(r1[0],offset+4),1)
+				freeNormReg(r1[0])
+			else:
+				printhelper("sw $s{0} global_{1}".format(r1[0],curr.Name),1)
+				freeNormReg(r1[0])
+
+
 		else:
-			printhelper("s.s $f{0}, 0($s{1})".format(r1[0],temp_reg),1)
-			freeNormReg(temp_reg)
-			freeFloatReg(r1[0])
-			return (0,1)
+			table = globalSym.funcTable[funcinfo]
+			if curr.Name in table[2].varTable:
+				entry = table[2].varTable[curr.Name]
+				offset = entry[2]
+				val = getNormReg()
+				printhelper("lw $s{0}, {1}($sp)".format(val,offset+4),1)
+				temp_reg = val
+			elif curr.Name in globalSym.varTable:
+				entry = globalSym.varTable[curr.Name]
+				val = getNormReg()
+				printhelper("lw $s{0}, global_{1}".format(val,curr.Name),1)
+				temp_reg = val
+			for i in range(count - 1):
+				val = getNormReg()
+				printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+				freeNormReg(temp_reg)
+				temp_reg = val
+			if r1[1] == 0:
+				printhelper("sw $s{0}, 0($s{1})".format(r1[0],temp_reg),1)
+				freeNormReg(temp_reg)
+				freeNormReg(r1[0])
+				return (0,0)
+			else:
+				printhelper("s.s $f{0}, 0($s{1})".format(r1[0],temp_reg),1)
+				freeNormReg(temp_reg)
+				freeFloatReg(r1[0])
+				return (0,1)
 
 	elif(ast.Type == "DEREF"):
 		curr = ast
@@ -677,29 +699,108 @@ def ASTtoAssembly(ast,funcinfo):
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
 					return (val,0)
-				else:
+				elif entry[1]>0:
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+					return (val,1)
+				else:
+					val = getFloatReg()
+					printhelper("l.s $f{0}, {1}($sp)".format(val,4+offset),1)
 					return (val,1)
 			else:
 				if entry[0]=="int":
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
 					return (val,0)
-				else:
+				elif entry[1]>0:
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
 					return (val,1)
+				else:
+					val = getFloatReg()
+					printhelper("lw $f{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
+					return (val,1)
 		elif ast.Name in globalSym.varTable:
 			entry = globalSym.varTable[ast.Name]
-			if entry[0] == "int":
+			if entry[0] == "int" or entry[1]>0:
 				val = getNormReg()
-				printhelper("lw $s{0}, global_{1}".format(val,ast.Name))
+				printhelper("lw $s{0}, global_{1}".format(val,ast.Name),1)
 				return (val,0)
 			else:
-				val = getNormReg()
-				printhelper("lw $s{0}, global_{1}".format(val,ast.Name))
+				val = getFloatReg()
+				printhelper("lw $f{0}, global_{1}".format(val,ast.Name),1)
 				return (val,1)
+
+	elif(ast.Type == "FCALL"):
+		arg_ast = ast.l[0]
+		len1 = len(arg_ast.l)
+		t = (ast.Name,ast.funcstr)
+		entry = globalSym.funcTable[t]
+		table = entry[2]
+		total_size = table.paramsize
+		offset = entry[3]
+		flag = [0]*len1
+
+		for i in range(0,len1):
+			if(arg_ast.l[i].Type in ["VAR","DEREF","CONST"]):
+				pass
+			else:
+				r = ASTtoAssembly(arg_ast.l[i],funcinfo)
+				flag[i] = r
+
+		printhelper("# setting up activation record for called function",1)
+
+		for i in range(0,len1):
+			if flag[i] == 0:
+				r = ASTtoAssembly(arg_ast.l[i],funcinfo)
+			else:
+				r = flag[i]
+
+			if r[1]==0:
+				if i==len1-1:
+					printhelper("sw $s{0}, {1}($sp)".format(r[0],0),1)
+				else:
+					printhelper("sw $s{0}, {1}($sp)".format(r[0],-total_size+offset[i+1]-offset[i]),1)
+				freeNormReg(r[0])
+			else:
+				if i==len1-1:
+					printhelper("s.s $f{0}, {1}($sp)".format(r[0],0),1)
+				else:
+					printhelper("s.s $f{0}, {1}($sp)".format(r[0],-total_size+offset[i+1]-offset[i]),1)
+				freeFloatReg(r[0])
+		printhelper("sub $sp, $sp, {0}".format(total_size),1)
+		printhelper("jal {0} # function call".format(ast.Name),1)
+		printhelper("add $sp, $sp, {0} # destroying activation record of called function".format(total_size),1)
+		if entry[0] == "void":
+			pass
+		elif entry[0] == "float":
+			if entry[1] == 0:
+				val = getFloatReg()
+				printhelper("mov.s $f{0}, $f0 # using the return value of called function".format(val),1)
+				return (val,1)
+			else:
+				val = getNormReg()
+				printhelper("move $s{0}, $v1 # using the return value of called function".format(val),1)
+				return (val,0)
+		else:
+			val = getNormReg()
+			printhelper("move $s{0}, $v1 # using the return value of called function".format(val),1)
+			return (val,0)
+
+	elif(ast.Type == "RETURN"):
+		entry = globalSym.funcTable[funcinfo]
+		r = ASTtoAssembly(ast.l[0],funcinfo)
+		if entry[0] == "float":
+			if entry[1] == 0:
+				printhelper("mov.s $f0, $f{0}".format(r[0]),1)
+				freeFloatReg(r[0])
+			else:
+				printhelper("move $v1, $s{0}".format(r[0]),1)
+				freeNormReg(r[0])
+		else:
+			printhelper("move $v1, $s{0}".format(r[0]),1)
+			freeNormReg(r[0])
+
 def p_masterprogram(p):
 	"""
 	master : program
@@ -708,6 +809,21 @@ def p_masterprogram(p):
 	p[0] = p[1]
 	for i in p[0].l:
 		globalSym.addEntry(i)
+	for key, values in globalSym.funcTable.items():
+		offset = 0
+		for key1 in sorted(values[2].varTable):
+			entry = values[2].varTable[key1]
+			if entry[3]==0:
+				if entry[0]=="float":
+					if entry[1]==0:
+						entry[2]=offset
+						offset+=8
+					else:
+						entry[2]=offset
+						offset+=4
+				else:
+					entry[2]=offset
+					offset+=4
 	globalSym.printTable()
 	if(declaration_error):
 		print(declaration_error_string)

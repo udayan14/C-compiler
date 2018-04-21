@@ -1,13 +1,33 @@
-int *a;
-int a1,b;
-float a2;
-float *a3,*b2;
+int *d;
 
-void f(int* p1, float p2, float p3, int q1)
+int* f(int a, int b)
 {
-    int *a,*b,*c;
-    float f1, **f2, ****f3, ***f4;
-    float h1;
-    **f2 = (**f2 + 1.0) + (2.3 + 3.4);
-		    
+	int *c,m;
+
+	return c;
+}
+
+int *f2(float a, float b)
+{
+	float *lfj;
+	return d;
+}
+
+
+void main(){
+	
+	int *q ,*p,*w;
+	float *u,*v,*x;
+	int **z,***c;
+	float ***b,**m;
+	p=q;
+	p=w;
+	u=v;
+	u=x;
+	d = w;
+	*z = q;
+	*q = ***c;
+	***b = *v;
+	p = f2(**m,*u+*x);
+
 }
