@@ -1,36 +1,129 @@
 FUNCTION f
-PARAMS (int *p1, float p2, float p3, int q1)
+PARAMS (int a, int b)
+RETURNS *int
+RETURN
+(
+	VAR(c)
+)
+
+FUNCTION f2
+PARAMS (float a, float b)
+RETURNS *int
+RETURN
+(
+	VAR(d)
+)
+
+Function Main
+PARAMS()
 RETURNS void
+	ASGN
+	(
+		VAR(p)
+		,
+		VAR(q)
+	)
+
+	ASGN
+	(
+		VAR(p)
+		,
+		VAR(w)
+	)
+
+	ASGN
+	(
+		VAR(u)
+		,
+		VAR(v)
+	)
+
+	ASGN
+	(
+		VAR(u)
+		,
+		VAR(x)
+	)
+
+	ASGN
+	(
+		VAR(d)
+		,
+		VAR(w)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(z)
+		)
+		,
+		VAR(q)
+	)
+
+	ASGN
+	(
+		DEREF
+		(
+			VAR(q)
+		)
+		,
+		DEREF
+		(
+			DEREF
+			(
+				DEREF
+				(
+					VAR(c)
+				)
+			)
+		)
+	)
+
 	ASGN
 	(
 		DEREF
 		(
 			DEREF
 			(
-				VAR(f2)
+				DEREF
+				(
+					VAR(b)
+				)
 			)
 		)
 		,
-		PLUS
+		DEREF
 		(
-			PLUS
+			VAR(v)
+		)
+	)
+
+	ASGN
+	(
+		VAR(p)
+		,
+		CALL f2(
+			DEREF
 			(
 				DEREF
 				(
-					DEREF
-					(
-						VAR(f2)
-					)
+					VAR(m)
 				)
-				,
-				CONST(1.0)
 			)
 			,
 			PLUS
 			(
-				CONST(2.3)
+				DEREF
+				(
+					VAR(u)
+				)
 				,
-				CONST(3.4)
+				DEREF
+				(
+					VAR(x)
+				)
 			)
 		)
 	)

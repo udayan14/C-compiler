@@ -52,6 +52,19 @@ def makestring2(l):
 
 	return ",".join(str(x) for x in lnew)
 
+def getoffset(l):
+	offset = 0;
+	lnew = [0]*len(l)
+	for i in range(len(l)):
+		lnew[i] = offset
+		if not isinstance(l[i][1],str):
+			offset+=4
+		else:
+			if l[i][0] == "int":
+				offset+=4
+			else:
+				offset+=8
+	return lnew
 def cleanup(n):
 	# print("soirjcgosij")
 	if n.Type == "ITE":

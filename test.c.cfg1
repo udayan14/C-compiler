@@ -1,11 +1,26 @@
-function f(int *p1, float p2, float p3, int q1)
+function f(int a, int b)
 <bb 0>
-t0 = **f2 + 1.0
-t1 = 2.3 + 3.4
-t2 = t0 + t1
-**f2 = t2
-goto <bb 1>
+return c
 
+function f2(float a, float b)
 <bb 1>
+return d
+
+function main()
+<bb 2>
+p = q
+p = w
+u = v
+u = x
+d = w
+*z = q
+*q = ***c
+***b = *v
+t0 = *u + *x
+t1 = f2(**m, t0)
+p = t1
+goto <bb 3>
+
+<bb 3>
 return
 

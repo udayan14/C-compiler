@@ -12,7 +12,7 @@ class AST:
 		self.Name = Name
 		self.l = l
 		self.funcname = ""
-
+		self.funcstr = ""
 	def printit(self,i):
 
 		if(self.Type == "BLANKBODY"):
