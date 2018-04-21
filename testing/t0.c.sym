@@ -1,4 +1,0 @@
-Procedure table :-
------------------------------------------------------------------
-Name		|	Return Type  |  Parameter List
-f1		|	float*		|	int *p1, float p2, float p3, int q1

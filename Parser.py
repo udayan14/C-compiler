@@ -1044,10 +1044,10 @@ def ASTtoAssembly(ast,funcinfo):
 			if curr.Name in table[2].varTable:
 				entry = table[2].varTable[curr.Name]
 				offset = entry[2]
-				printhelper("sw $s{0} {1}($sp)".format(r1[0],offset+4),1)
+				printhelper("sw $s{0}, {1}($sp)".format(r1[0],offset+4),1)
 				freeNormReg(r1[0])
 			else:
-				printhelper("sw $s{0} global_{1}".format(r1[0],curr.Name),1)
+				printhelper("sw $s{0}, global_{1}".format(r1[0],curr.Name),1)
 				freeNormReg(r1[0])
 
 
