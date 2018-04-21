@@ -1086,23 +1086,32 @@ def ASTtoAssembly(ast,funcinfo):
 		while(curr.Type!="VAR"):
 			curr = curr.l[0]
 			count+=1
-		r0 = ASTtoAssembly(curr,funcinfo)
+		r0 = ASTtoAssembly(curr,funcinfo)		
 		temp_reg = r0[0]
 		for i in range(count - 1):
 			val = getNormReg()
 			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
 			freeNormReg(temp_reg)
 			temp_reg = val
-		if r0[1] == 0:
-			val = getNormReg()
-			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
-			freeNormReg(temp_reg)
-			return (val,0)
-		else:
-			val = getFloatReg()
-			printhelper("l.s $f{0}, 0($s{1})".format(val,temp_reg),1)
-			freeNormReg(temp_reg)
-			return (val,1)
+
+		table = globalSym.funcTable[funcinfo]
+		if curr.Name in table[2].varTable:
+			entry = table[2].varTable[curr.Name]
+			if entry[1] == "int":
+				val = getNormReg()
+				printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+				freeNormReg(temp_reg)
+				return (val,0)
+			elif entry[2]!=count:
+				val = getNormReg()
+				printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+				freeNormReg(temp_reg)
+				return (val,1)
+			else:
+				val = getFloatReg()
+				printhelper("l.s $f{0}, 0($s{1})".format(val,temp_reg),1)
+				freeNormReg(temp_reg)
+				return (val,1)
 
 	elif(ast.Type == "CONST"):
 		if ast.Name == "int":
@@ -1121,17 +1130,23 @@ def ASTtoAssembly(ast,funcinfo):
 			offset = entry[2]
 			if entry[3]==0:
 				if entry[0]=="int":
+					if entry[1]==0:
+						val = getNormReg()
+						printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,0)
+					else:
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
 					return (val,0)
-				elif entry[1]>0:
-					val = getNormReg()
-					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
-					return (val,1)
 				else:
-					val = getFloatReg()
-					printhelper("l.s $f{0}, {1}($sp)".format(val,4+offset),1)
-					return (val,1)
+					if entry[1]==0:
+						val = getFloatReg()
+						printhelper("l.s $f{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,1)
+					else:
+						val = getNormReg()
+						printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,0,1)
 			else:
 				if entry[0]=="int":
 					val = getNormReg()
