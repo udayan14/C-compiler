@@ -13,45 +13,36 @@ RETURN
 	VAR(d)
 )
 
-
 Function Main
 PARAMS() 
 RETURNS void
 	IF
 	(
-		LT
+		AND
 		(
-			CONST(6.4)
-			,
-			CONST(7.3)
-		)
-		,
-		ASGN
-		(
-			DEREF
+			GT
 			(
-				VAR(p)
+				CONST(6)
+				,
+				CONST(7)
 			)
 			,
-			PLUS
+			AND
 			(
-				DEREF
+				GT
 				(
-					VAR(p)
+					CONST(5)
+					,
+					CONST(4)
 				)
 				,
-				CONST(1)
+				GT
+				(
+					CONST(7)
+					,
+					CONST(8)
+				)
 			)
-		)
-
-	)
-	IF
-	(
-		LT
-		(
-			CONST(6.4)
-			,
-			CONST(7.3)
 		)
 		,
 		ASGN

@@ -54,17 +54,23 @@ main:
 	sub $sp, $sp, 48	# Make space for the locals
 # Prologue ends
 label2:
-	li.s $f10, 6.4
-	li.s $f12, 7.3
-	c.lt.s $f10, $f12
-	bc1f L_CondFalse_0
-	li $s0, 1
-	j L_CondEnd_0
-L_CondFalse_0:
-	li $s0, 0
-L_CondEnd_0:
-	move $s1, $s0
-	bne $s1, $0, label3
+	li $s0, 6
+	li $s1, 7
+	slt $s2, $s1, $s0
+	move $s0, $s2
+	li $s1, 5
+	li $s2, 4
+	slt $s3, $s2, $s1
+	move $s1, $s3
+	li $s2, 7
+	li $s3, 8
+	slt $s4, $s3, $s2
+	move $s2, $s4
+	and $s3, $s1, $s2
+	move $s1, $s3
+	and $s2, $s0, $s1
+	move $s0, $s2
+	bne $s0, $0, label3
 	j label4
 label3:
 	lw $s0, 16($sp)
@@ -76,28 +82,6 @@ label3:
 	sw $s0, 0($s1)
 	j label4
 label4:
-	li.s $f10, 6.4
-	li.s $f12, 7.3
-	c.lt.s $f10, $f12
-	bc1f L_CondFalse_1
-	li $s0, 1
-	j L_CondEnd_1
-L_CondFalse_1:
-	li $s0, 0
-L_CondEnd_1:
-	move $s1, $s0
-	bne $s1, $0, label5
-	j label6
-label5:
-	lw $s0, 16($sp)
-	lw $s1, 0($s0)
-	li $s0, 1
-	add $s2, $s1, $s0
-	move $s0, $s2
-	lw $s1, 16($sp)
-	sw $s0, 0($s1)
-	j label6
-label6:
 	j epilogue_main
 
 # Epilogue begins

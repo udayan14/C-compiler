@@ -721,6 +721,49 @@ def ASTtoAssembly(ast,funcinfo):
 			r1 = ASTtoAssembly(ast.l[1],funcinfo)
 		if(r0[1]==0):
 			val = getNormReg()
+			printhelper("sle $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.le.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "LT":
+		global condfalsenum, condendnum
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
 			printhelper("slt $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
 			freeNormReg(r0[0])
 			freeNormReg(r1[0])
@@ -733,7 +776,7 @@ def ASTtoAssembly(ast,funcinfo):
 			return(val1,0)
 		else:
 			# val = getFloatReg()
-			printhelper("c.lt.s $f{1}, $f{2}".format(r0[0],r1[0]),1)
+			printhelper("c.lt.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
 			freeFloatReg(r0[0])
 			freeFloatReg(r1[0])
 			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
@@ -742,7 +785,210 @@ def ASTtoAssembly(ast,funcinfo):
 			printhelper("j L_CondEnd_{0}".format(condendnum),1)
 			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
 			printhelper("li $s{0}, 0".format(cond1),1)
-			printhelper("j L_CondEnd_{0}".format(condendnum),0)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "EQ":
+		global condfalsenum, condendnum
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("seq $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.eq.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "AND":
+		global condfalsenum, condendnum
+		r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		val = getNormReg()
+		printhelper("and $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+		freeNormReg(r0[0])
+		freeNormReg(r1[0])
+		# printNormReg()
+		val1 = getNormReg()
+		printhelper("move $s{0}, $s{1}".format(val1,val),1)
+		freeNormReg(val)
+		# printNormReg()
+		# print("Freeing reg ",val)
+		return(val1,0)
+	if ast.Type == "OR":
+		global condfalsenum, condendnum
+		r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		val = getNormReg()
+		printhelper("or $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+		freeNormReg(r0[0])
+		freeNormReg(r1[0])
+		# printNormReg()
+		val1 = getNormReg()
+		printhelper("move $s{0}, $s{1}".format(val1,val),1)
+		freeNormReg(val)
+		# printNormReg()
+		# print("Freeing reg ",val)
+		return(val1,0)
+
+	if ast.Type == "NE":
+		global condfalsenum, condendnum
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("sne $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.eq.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondTrue_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondTrue_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "GE":
+		global condfalsenum, condendnum
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("sle $s{0}, $s{1}, $s{2}".format(val,r1[0],r0[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.le.s $f{0}, $f{1}".format(r1[0],r0[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "GT":
+		global condfalsenum, condendnum
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("slt $s{0}, $s{1}, $s{2}".format(val,r1[0],r0[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.lt.s $f{0}, $f{1}".format(r1[0],r0[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
 			condfalsenum +=1
 			condendnum += 1
 			cond2 = getNormReg()
