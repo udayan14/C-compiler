@@ -9,6 +9,9 @@ from ASTclass import *
 from HelperFunctions import *
 from GlobalVariables import *
 
+condendnum=0
+condfalsenum=0
+
 class SymbolTable:
 
 	def __init__(self):
@@ -29,18 +32,18 @@ class SymbolTable:
 						declaration_error_string = str(ast.l[1][i])+" declared more than once in same scope."
 					else:
 						if ast.l[0] == "int":
-							self.varTable[ast.l[1][i]] = (t,0,self.size,0)
+							self.varTable[ast.l[1][i]] = [t,0,self.size,0]
 							self.size+=4
 
 						else:
-							self.varTable[ast.l[1][i]] = (t,0,self.size,0)
+							self.varTable[ast.l[1][i]] = [t,0,self.size,0]
 							self.size+=8              ##This is gonna get bad
 				else:
 					if ast.l[1][i][0] in self.varTable:
 						declaration_error = 1
 						declaration_error_string = str(ast.l[1][i])+" declared more than once in same scope."
 					else:
-						self.varTable[ast.l[1][i][0]] = (t,ast.l[1][i][1],self.size,0)
+						self.varTable[ast.l[1][i][0]] = [t,ast.l[1][i][1],self.size,0]
 						self.size+=4
 
 		elif(ast.Type == "FCALL"):
@@ -88,7 +91,7 @@ class SymbolTable:
 			else:
 				fTable = SymbolTable()
 				fTable.empty = 1
-				self.funcTable[t] = (ast.l[0],ast.l[2],fTable)
+				self.funcTable[t] = (ast.l[0],ast.l[2],fTable,getoffset(ast.l[1]))
 
 		elif (ast.Type == "FUNC"):
 			# print("ASTL1",ast.l[1])
@@ -110,7 +113,7 @@ class SymbolTable:
 				fTable = SymbolTable()
 				fTable.addEntry(AST("PARAMLIST","",[ast.l[1]]))
 				fTable.addEntry(ast.l[2])			
-				self.funcTable[t] = (ast.l[0],ast.l[3],fTable)
+				self.funcTable[t] = (ast.l[0],ast.l[3],fTable,getoffset(ast.l[1]))
 
 			for ss in ast.l[2].l:
 				if(ss.Type == "RETURN"):
@@ -171,7 +174,7 @@ class SymbolTable:
 			print(value[0] + '*'*value[1] + " " +key +" Offset: ",value[2])
 		print("Functions defined in code are :")
 		for key,value in self.funcTable.items():
-			print(key[0],"("+key[1]+")")
+			print(key[0],"("+key[1]+")"+" Offset list is: "+str(value[3]))
 			for key1,value1 in value[2].varTable.items():
 				print(value1[0] + '*'*value1[1] + " " + key1 +" Offset: ",value1[2])
 		pass
@@ -256,7 +259,7 @@ def Checktype(varTable, ast):
 			typeslist.append([type1,('a',level1)])
 			# print("Types : ",typeslist)
 		temp = makestring1(typeslist)
-		
+		ast.funcstr = temp
 		t = (ast.Name, temp)
 		if t in globalSym.funcTable:
 			temp = globalSym.funcTable[t]
@@ -413,15 +416,15 @@ def printSymbolTable():
 def printAssembly(cfg_list):
 	print("")
 	printhelper(".data",1)
-	for key,value in globalSym.varTable.items():
-		if value[2]==8:
+	for key in sorted(globalSym.varTable):
+		if globalSym.varTable[key][1]==0 and globalSym.varTable[key][0]=="float":
 			print("global_{0}:\t.space\t8".format(key))
 		else:
 			print("global_{0}:\t.word\t0".format(key))
 	print("")
-	printhelper(".text\t# The .text assembler directive indicates",1)
 	for cfg in cfg_list:
 		#Printing Prologue
+		printhelper(".text\t# The .text assembler directive indicates",1)
 		printhelper(".globl {0}\t# The following is the code".format(cfg.funcinfo[0]),1)
 		print("{0}:".format(cfg.funcinfo[0]))
 		print("# Prologue begins")
@@ -430,20 +433,21 @@ def printAssembly(cfg_list):
 		printhelper("sub $fp, $sp, 8 # Update the frame pointer",1)
 		t = globalSym.funcTable[cfg.funcinfo]
 		table = t[2]
-		printhelper("sub $sp, $sp, {0}   # Make space for the locals".format(table.size+8),1)
+		printhelper("sub $sp, $sp, {0}        # Make space for the locals".format(table.size+8),1)
 		print("# Prologue ends")
 		#Printint function
 		printAssemblyHelper(cfg.head,0,cfg.funcinfo)
-
+		printhelper("j epilogue_{0}".format(cfg.funcinfo[0]),1)
+		print("")
 		#Printing Epilogue
 		print("# Epilogue begins")
 		print("epilogue_{0}:".format(cfg.funcinfo[0]))
 		printhelper("add $sp, $sp, {0}".format(table.size+8),1)
 		printhelper("lw $fp, -4($sp)",1)
 		printhelper("lw $ra, 0($sp)",1)
-		printhelper("jr $ra  #  Jump back to the called procedure",1)
+		printhelper("jr $ra  # Jump back to the called procedure",1)
 		print("# Epilogue ends")
-		print("")
+
 
 def printAssemblyHelper(n1,nextstatenum,funcinfo):
 	if n1==-1:
@@ -452,17 +456,15 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 		printAssemblyHelper(n1.left,nextstatenum,funcinfo)
 
 	elif n1.Type == "End":
-		if(not n1.hasreturn):
-			print("label{0}:".format(n1.num))
-			printhelper("j epilogue_{0}".format(funcinfo[0]),1)
-			print("")
+		print("label{0}:".format(n1.num))
+
 	elif n1.Type == "Normal":
 		print("label{0}:".format(n1.num))
 		# print("{0} has child {1}".format(n1.num,n1.l))	
 		for ast in n1.astList:
 			ASTtoAssembly(ast,funcinfo)
 		if n1.hasreturn == 1:
-			print("")
+			pass
 		elif (not (n1.left==-1 and n1.right==-1 and n1.middle==-1)):			
 			printhelper("j label{0}".format(n1.num+1),1)
 			print("")
@@ -474,6 +476,7 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 	elif n1.Type == "ITE":
 		print("label{0}:".format(n1.num))
 		reg = ASTtoAssembly(n1.astList[0],funcinfo)
+		freeNormReg(reg[0])
 		# if(n1.left==-1):
 		# 	print("if(t{0}) goto <bb {1}>".format(n1.num1,n1.middle.num))
 		# else:
@@ -484,97 +487,99 @@ def printAssemblyHelper(n1,nextstatenum,funcinfo):
 		# 	print("else goto <bb {0}>".format(n1.right.num))
 		# print("")
 		if n1.left!=-1 and n1.right!=-1 and n1.middle!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(n1.right.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(n1.right.num),1)
 			print("")
 			printAssemblyHelper(n1.left,n1.middle.num,funcinfo)
 			printAssemblyHelper(n1.right,n1.middle.num,funcinfo)
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 		elif n1.left!=-1 and n1.middle!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(n1.middle.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(n1.middle.num),1)
 			print("")
 			printAssemblyHelper(n1.left,n1.middle.num,funcinfo)
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 		elif n1.right!=-1 and n1.middle!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.middle.num))
-			print("else goto <bb {0}>".format(n1.right.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.middle.num),1)
+			printhelper("j label{0}".format(n1.right.num),1)
 			print("")
 			printAssemblyHelper(n1.right,n1.middle.num,funcinfo)
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 		elif n1.left!=-1 and n1.right!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(n1.right.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(n1.right.num),1)
 			print("")
 			printAssemblyHelper(n1.left,nextstatenum,funcinfo)
 			printAssemblyHelper(n1.right,nextstatenum,funcinfo)
 		elif n1.left!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(nextstatenum))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(nextstatenum),1)
 			print("")
 			printAssemblyHelper(n1.left,nextstatenum,funcinfo)
 		elif n1.right!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
-			print("else goto <bb {0}>".format(n1.right.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],nextstatenum),1)
+			printhelper("j label{0}".format(n1.right.num),1)
 			print("")
 			printAssemblyHelper(n1.right,nextstatenum,funcinfo)
 		elif n1.middle!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
-			print("else goto <bb {0}>".format(nextstatenum))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],nextstatenum),1)
+			printhelper("j label{0}".format(nextstatenum),1)
 			print("")
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 
 	elif n1.Type == "IF":
 		print("label{0}:".format(n1.num))
 		reg = ASTtoAssembly(n1.astList[0],funcinfo)
-		
+		freeNormReg(reg[0])
 		if (n1.left!=-1 and n1.middle!=-1):
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(n1.middle.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(n1.middle.num),1)
 			print("")
 			printAssemblyHelper(n1.left,n1.middle.num,funcinfo)
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 		elif n1.left!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(nextstatenum))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(nextstatenum),1)
 			print("")
 			printAssemblyHelper(n1.left,nextstatenum,funcinfo)
 		elif n1.middle!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.middle.num))
-			print("else goto <bb {0}>".format(n1.middle.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.middle.num),1)
+			printhelper("j label{0}".format(n1.middle.num),1)
 			print("")
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 		else:
-			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
-			print("else goto <bb {0}>".format(nextstatenum))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],nextstatenum),1)
+			printhelper("j label{0}".format(nextstatenum),1)
 			print("")
+
 	elif n1.Type == "WHILE":
 		print("label{0}:".format(n1.num))			
 		reg = ASTtoAssembly(n1.astList[0],funcinfo)
-		
+		freeNormReg(reg[0])
 		# print("")
 		if (n1.left!=-1 and n1.middle!=-1):
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(n1.middle.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(n1.middle.num),1)
 			print("")
 			printAssemblyHelper(n1.left,n1.num,funcinfo)
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 		elif n1.left!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.left.num))
-			print("else goto <bb {0}>".format(nextstatenum))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.left.num),1)
+			printhelper("j label{0}".format(nextstatenum),1)
 			print("")
 			printAssemblyHelper(n1.left,n1.num,funcinfo)
 		elif n1.middle!=-1:
-			print("if(t{0}) goto <bb {1}>".format(reg,n1.num))
-			print("else goto <bb {0}>".format(n1.middle.num))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],n1.num),1)
+			printhelper("j label{0}".format(n1.middle.num),1)
 			print("")
 			printAssemblyHelper(n1.middle,nextstatenum,funcinfo)
 		else:
-			print("if(t{0}) goto <bb {1}>".format(reg,nextstatenum))
-			print("else goto <bb {0}>".format(nextstatenum))
+			printhelper("bne $s{0}, $0, label{1}".format(reg[0],nextstatenum),1)
+			printhelper("j label{0}".format(nextstatenum),1)
 			print("")
 
 def ASTtoAssembly(ast,funcinfo):
+	global condfalsenum, condendnum
 	if ast.Type == "PLUS":
 		if ast.l[0].isSimple():
 			if ast.l[1].isSimple():
@@ -608,6 +613,407 @@ def ASTtoAssembly(ast,funcinfo):
 			freeFloatReg(val)
 			return(val1,1)
 
+	if ast.Type == "MINUS":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("sub $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			val = getFloatReg()
+			printhelper("sub.s $f{0}, $f{1}, $f{2}".format(val,r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			val1 = getFloatReg()
+			printhelper("mov.s $f{0}, $f{1}".format(val1,val),1)
+			freeFloatReg(val)
+			return(val1,1)
+
+	if ast.Type == "MUL":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("mul $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			val = getFloatReg()
+			printhelper("mul.s $f{0}, $f{1}, $f{2}".format(val,r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			val1 = getFloatReg()
+			printhelper("mov.s $f{0}, $f{1}".format(val1,val),1)
+			freeFloatReg(val)
+			return(val1,1)
+
+	if ast.Type == "DIV":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("div $s{0}, $s{1}".format(r0[0],r1[0]),1)
+			printhelper("mflo $s{0}".format(val),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			val = getFloatReg()
+			printhelper("div.s $f{0}, $f{1}, $f{2}".format(val,r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			val1 = getFloatReg()
+			printhelper("mov.s $f{0}, $f{1}".format(val1,val),1)
+			freeFloatReg(val)
+			return(val1,1)
+
+	if ast.Type == "LE":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("sle $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.le.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "LT":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("slt $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.lt.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "EQ":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("seq $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.eq.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "AND":
+		r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		val = getNormReg()
+		printhelper("and $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+		freeNormReg(r0[0])
+		freeNormReg(r1[0])
+		# printNormReg()
+		val1 = getNormReg()
+		printhelper("move $s{0}, $s{1}".format(val1,val),1)
+		freeNormReg(val)
+		# printNormReg()
+		# print("Freeing reg ",val)
+		return(val1,0)
+	if ast.Type == "OR":
+		r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		val = getNormReg()
+		printhelper("or $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+		freeNormReg(r0[0])
+		freeNormReg(r1[0])
+		# printNormReg()
+		val1 = getNormReg()
+		printhelper("move $s{0}, $s{1}".format(val1,val),1)
+		freeNormReg(val)
+		# printNormReg()
+		# print("Freeing reg ",val)
+		return(val1,0)
+
+	if ast.Type == "NE":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("sne $s{0}, $s{1}, $s{2}".format(val,r0[0],r1[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.eq.s $f{0}, $f{1}".format(r0[0],r1[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondTrue_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondTrue_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "GE":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("sle $s{0}, $s{1}, $s{2}".format(val,r1[0],r0[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.le.s $f{0}, $f{1}".format(r1[0],r0[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if ast.Type == "GT":
+		if ast.l[0].isSimple():
+			if ast.l[1].isSimple():
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+			else:
+				r1 = ASTtoAssembly(ast.l[1],funcinfo)
+				r0 = ASTtoAssembly(ast.l[0],funcinfo)
+		else:
+			r0 = ASTtoAssembly(ast.l[0],funcinfo)
+			r1 = ASTtoAssembly(ast.l[1],funcinfo)
+		if(r0[1]==0):
+			val = getNormReg()
+			printhelper("slt $s{0}, $s{1}, $s{2}".format(val,r1[0],r0[0]),1)
+			freeNormReg(r0[0])
+			freeNormReg(r1[0])
+			# printNormReg()
+			val1 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(val1,val),1)
+			freeNormReg(val)
+			# printNormReg()
+			# print("Freeing reg ",val)
+			return(val1,0)
+		else:
+			# val = getFloatReg()
+			printhelper("c.lt.s $f{0}, $f{1}".format(r1[0],r0[0]),1)
+			freeFloatReg(r0[0])
+			freeFloatReg(r1[0])
+			printhelper("bc1f L_CondFalse_{0}".format(condfalsenum),1)
+			cond1 = getNormReg()
+			printhelper("li $s{0}, 1".format(cond1),1)
+			printhelper("j L_CondEnd_{0}".format(condendnum),1)
+			printhelper("L_CondFalse_{0}:".format(condfalsenum),0)
+			printhelper("li $s{0}, 0".format(cond1),1)
+			printhelper("L_CondEnd_{0}:".format(condendnum),0)
+			condfalsenum +=1
+			condendnum += 1
+			cond2 = getNormReg()
+			printhelper("move $s{0}, $s{1}".format(cond2,cond1),1)
+			freeNormReg(cond1)
+			return (cond2,0)
+
+	if(ast.Type == "ADDR"):
+
+		curr = ast.l[0]
+		table = globalSym.funcTable[funcinfo]
+		if(curr.Name in table[2].varTable):
+			entry = table[2].varTable[curr.Name]
+			offset = entry[2]
+			newt = getNormReg()
+			printhelper("addi $s{0}, $sp, {1}".format(newt,offset+4),1)
+			return (newt,0)
+
+		else:
+			entry = globalSym.varTable[curr.Name]
+			newt = getNormReg()
+			printhelper("la $s{0}, global_{1}".format(newt,curr.Name),1)
+			return (newt,0)
+
+
+
+
 	if(ast.Type == "ASGN"):
 		r1 = ASTtoAssembly(ast.l[1],funcinfo)
 		curr = ast.l[0]
@@ -615,23 +1021,46 @@ def ASTtoAssembly(ast,funcinfo):
 		while(curr.Type!="VAR"):
 			curr = curr.l[0]
 			count+=1
-		r0 = ASTtoAssembly(curr,funcinfo)
-		temp_reg = r0[0]
-		for i in range(count - 1):
-			val = getNormReg()
-			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
-			freeNormReg(temp_reg)
-			temp_reg = val
-		if r0[1] == 0:
-			printhelper("sw $s{0}, 0($s{1})".format(r1[0],temp_reg),1)
-			freeNormReg(temp_reg)
-			freeNormReg(r1[0])
-			return (0,0)
+		if count==0:
+			table = globalSym.funcTable[funcinfo]
+			if curr.Name in table[2].varTable:
+				entry = table[2].varTable[curr.Name]
+				offset = entry[2]
+				printhelper("sw $s{0} {1}($sp)".format(r1[0],offset+4),1)
+				freeNormReg(r1[0])
+			else:
+				printhelper("sw $s{0} global_{1}".format(r1[0],curr.Name),1)
+				freeNormReg(r1[0])
+
+
 		else:
-			printhelper("s.s $f{0}, 0($s{1})".format(r1[0],temp_reg),1)
-			freeNormReg(temp_reg)
-			freeFloatReg(r1[0])
-			return (0,1)
+			table = globalSym.funcTable[funcinfo]
+			if curr.Name in table[2].varTable:
+				entry = table[2].varTable[curr.Name]
+				offset = entry[2]
+				val = getNormReg()
+				printhelper("lw $s{0}, {1}($sp)".format(val,offset+4),1)
+				temp_reg = val
+			elif curr.Name in globalSym.varTable:
+				entry = globalSym.varTable[curr.Name]
+				val = getNormReg()
+				printhelper("lw $s{0}, global_{1}".format(val,curr.Name),1)
+				temp_reg = val
+			for i in range(count - 1):
+				val = getNormReg()
+				printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+				freeNormReg(temp_reg)
+				temp_reg = val
+			if r1[1] == 0:
+				printhelper("sw $s{0}, 0($s{1})".format(r1[0],temp_reg),1)
+				freeNormReg(temp_reg)
+				freeNormReg(r1[0])
+				return (0,0)
+			else:
+				printhelper("s.s $f{0}, 0($s{1})".format(r1[0],temp_reg),1)
+				freeNormReg(temp_reg)
+				freeFloatReg(r1[0])
+				return (0,1)
 
 	elif(ast.Type == "DEREF"):
 		curr = ast
@@ -677,29 +1106,108 @@ def ASTtoAssembly(ast,funcinfo):
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
 					return (val,0)
-				else:
+				elif entry[1]>0:
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+					return (val,1)
+				else:
+					val = getFloatReg()
+					printhelper("l.s $f{0}, {1}($sp)".format(val,4+offset),1)
 					return (val,1)
 			else:
 				if entry[0]=="int":
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
 					return (val,0)
-				else:
+				elif entry[1]>0:
 					val = getNormReg()
 					printhelper("lw $s{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
 					return (val,1)
+				else:
+					val = getFloatReg()
+					printhelper("lw $f{0}, {1}($sp)".format(val,table[2].size+12+offset),1)
+					return (val,1)
 		elif ast.Name in globalSym.varTable:
 			entry = globalSym.varTable[ast.Name]
-			if entry[0] == "int":
+			if entry[0] == "int" or entry[1]>0:
 				val = getNormReg()
-				printhelper("lw $s{0}, global_{1}".format(val,ast.Name))
+				printhelper("lw $s{0}, global_{1}".format(val,ast.Name),1)
 				return (val,0)
 			else:
-				val = getNormReg()
-				printhelper("lw $s{0}, global_{1}".format(val,ast.Name))
+				val = getFloatReg()
+				printhelper("lw $f{0}, global_{1}".format(val,ast.Name),1)
 				return (val,1)
+
+	elif(ast.Type == "FCALL"):
+		arg_ast = ast.l[0]
+		len1 = len(arg_ast.l)
+		t = (ast.Name,ast.funcstr)
+		entry = globalSym.funcTable[t]
+		table = entry[2]
+		total_size = table.paramsize
+		offset = entry[3]
+		flag = [0]*len1
+
+		for i in range(0,len1):
+			if(arg_ast.l[i].Type in ["VAR","DEREF","CONST"]):
+				pass
+			else:
+				r = ASTtoAssembly(arg_ast.l[i],funcinfo)
+				flag[i] = r
+
+		printhelper("# setting up activation record for called function",1)
+
+		for i in range(0,len1):
+			if flag[i] == 0:
+				r = ASTtoAssembly(arg_ast.l[i],funcinfo)
+			else:
+				r = flag[i]
+
+			if r[1]==0:
+				if i==len1-1:
+					printhelper("sw $s{0}, {1}($sp)".format(r[0],0),1)
+				else:
+					printhelper("sw $s{0}, {1}($sp)".format(r[0],-total_size+offset[i+1]-offset[i]),1)
+				freeNormReg(r[0])
+			else:
+				if i==len1-1:
+					printhelper("s.s $f{0}, {1}($sp)".format(r[0],0),1)
+				else:
+					printhelper("s.s $f{0}, {1}($sp)".format(r[0],-total_size+offset[i+1]-offset[i]),1)
+				freeFloatReg(r[0])
+		printhelper("sub $sp, $sp, {0}".format(total_size),1)
+		printhelper("jal {0} # function call".format(ast.Name),1)
+		printhelper("add $sp, $sp, {0} # destroying activation record of called function".format(total_size),1)
+		if entry[0] == "void":
+			pass
+		elif entry[0] == "float":
+			if entry[1] == 0:
+				val = getFloatReg()
+				printhelper("mov.s $f{0}, $f0 # using the return value of called function".format(val),1)
+				return (val,1)
+			else:
+				val = getNormReg()
+				printhelper("move $s{0}, $v1 # using the return value of called function".format(val),1)
+				return (val,0)
+		else:
+			val = getNormReg()
+			printhelper("move $s{0}, $v1 # using the return value of called function".format(val),1)
+			return (val,0)
+
+	elif(ast.Type == "RETURN"):
+		entry = globalSym.funcTable[funcinfo]
+		r = ASTtoAssembly(ast.l[0],funcinfo)
+		if entry[0] == "float":
+			if entry[1] == 0:
+				printhelper("mov.s $f0, $f{0}".format(r[0]),1)
+				freeFloatReg(r[0])
+			else:
+				printhelper("move $v1, $s{0} # move return value to $v1 ".format(r[0]),1)
+				freeNormReg(r[0])
+		else:
+			printhelper("move $v1, $s{0} # move return value to $v1".format(r[0]),1)
+			freeNormReg(r[0])
+
 def p_masterprogram(p):
 	"""
 	master : program
@@ -708,6 +1216,21 @@ def p_masterprogram(p):
 	p[0] = p[1]
 	for i in p[0].l:
 		globalSym.addEntry(i)
+	for key, values in globalSym.funcTable.items():
+		offset = 0
+		for key1 in sorted(values[2].varTable):
+			entry = values[2].varTable[key1]
+			if entry[3]==0:
+				if entry[0]=="float":
+					if entry[1]==0:
+						entry[2]=offset
+						offset+=8
+					else:
+						entry[2]=offset
+						offset+=4
+				else:
+					entry[2]=offset
+					offset+=4
 	globalSym.printTable()
 	if(declaration_error):
 		print(declaration_error_string)

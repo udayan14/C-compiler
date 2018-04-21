@@ -1,0 +1,5 @@
+function f(int a, int *b)
+<bb 0>
+*c = &d
+return *c
+

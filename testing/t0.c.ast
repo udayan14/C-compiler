@@ -1,9 +1,7 @@
 
-
-
 FUNCTION f1
 PARAMS (int *p1,float p2,float p3,int q1)
-RETURNS void
+RETURNS *float
 	ASGN
 	(
 		DEREF
@@ -18,97 +16,29 @@ RETURNS void
 		(
 			PLUS
 			(
-				PLUS
+				DEREF
 				(
 					DEREF
 					(
-						DEREF
-						(
-							VAR(f2)
-						)
-					)
-					,
-					CONST(1.0)
-				)
-				,
-				PLUS
-				(
-					CONST(2.3)
-					,
-					CONST(3.4)
-				)
-			)
-			,
-			CONST(4.5)
-		)
-	)
-	ASGN
-	(
-		DEREF
-		(
-			VAR(a)
-		)
-		,
-		PLUS
-		(
-			PLUS
-			(
-				PLUS
-				(
-					DEREF
-					(
-						DEREF
-						(
-							DEREF
-							(
-								DEREF
-								(
-									VAR(b)
-								)
-							)
-						)
-					)
-					,
-					DEREF
-					(
-						DEREF
-						(
-							DEREF
-							(
-								VAR(c)
-							)
-						)
+						VAR(f2)
 					)
 				)
 				,
-				CONST(4)
+				CONST(1.0)
 			)
 			,
 			PLUS
 			(
-				CONST(5)
+				CONST(2.3)
 				,
-				CONST(3)
+				CONST(3.4)
 			)
-		)
-	)
-	ASGN
-	(
-		DEREF
-		(
-			VAR(a)
-		)
-		,
-		PLUS
-		(
-			DEREF
-			(
-				VAR(a)
-			)
-			,
-			CONST(1)
 		)
 	)
 RETURN 
 (
+	DEREF
+	(
+		VAR(f2)
+	)
 )

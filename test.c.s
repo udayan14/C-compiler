@@ -8,10 +8,10 @@ global_fff:	.word	0
 	.globl f	# The following is the code
 f:
 # Prologue begins
-	sw $ra, 0($sp)  # Save the return address
-	sw $fp, -4($sp) # Save the frame pointer
-	sub $fp, $sp, 8 # Update the frame pointer
-	sub $sp, $sp, 16        # Make space for the locals
+	sw $ra, 0($sp)	# Save the return address
+	sw $fp, -4($sp)	# Save the frame pointer
+	sub $fp, $sp, 8	# Update the frame pointer
+	sub $sp, $sp, 16	# Make space for the locals
 # Prologue ends
 label0:
 	lw $s0, 4($sp)
@@ -23,16 +23,16 @@ epilogue_f:
 	add $sp, $sp, 16
 	lw $fp, -4($sp)
 	lw $ra, 0($sp)
-	jr $ra  # Jump back to the called procedure
+	jr $ra	# Jump back to the called procedure
 # Epilogue ends
 	.text	# The .text assembler directive indicates
 	.globl f2	# The following is the code
 f2:
 # Prologue begins
-	sw $ra, 0($sp)  # Save the return address
-	sw $fp, -4($sp) # Save the frame pointer
-	sub $fp, $sp, 8 # Update the frame pointer
-	sub $sp, $sp, 12        # Make space for the locals
+	sw $ra, 0($sp)	# Save the return address
+	sw $fp, -4($sp)	# Save the frame pointer
+	sub $fp, $sp, 8	# Update the frame pointer
+	sub $sp, $sp, 12	# Make space for the locals
 # Prologue ends
 label1:
 	lw $s0, global_d
@@ -44,16 +44,16 @@ epilogue_f2:
 	add $sp, $sp, 12
 	lw $fp, -4($sp)
 	lw $ra, 0($sp)
-	jr $ra  # Jump back to the called procedure
+	jr $ra	# Jump back to the called procedure
 # Epilogue ends
 	.text	# The .text assembler directive indicates
 	.globl main	# The following is the code
 main:
 # Prologue begins
-	sw $ra, 0($sp)  # Save the return address
-	sw $fp, -4($sp) # Save the frame pointer
-	sub $fp, $sp, 8 # Update the frame pointer
-	sub $sp, $sp, 48        # Make space for the locals
+	sw $ra, 0($sp)	# Save the return address
+	sw $fp, -4($sp)	# Save the frame pointer
+	sub $fp, $sp, 8	# Update the frame pointer
+	sub $sp, $sp, 48	# Make space for the locals
 # Prologue ends
 label2:
 	li.s $f10, 6.4
@@ -68,7 +68,6 @@ L_CondEnd_0:
 	move $s1, $s0
 	bne $s1, $0, label3
 	j label4
-
 label3:
 	lw $s0, 16($sp)
 	lw $s1, 0($s0)
@@ -78,7 +77,6 @@ label3:
 	lw $s1, 16($sp)
 	sw $s0, 0($s1)
 	j label4
-
 label4:
 	li.s $f10, 6.4
 	li.s $f12, 7.3
@@ -92,7 +90,6 @@ L_CondEnd_1:
 	move $s1, $s0
 	bne $s1, $0, label5
 	j label6
-
 label5:
 	lw $s0, 16($sp)
 	lw $s1, 0($s0)
@@ -102,7 +99,6 @@ label5:
 	lw $s1, 16($sp)
 	sw $s0, 0($s1)
 	j label6
-
 label6:
 	li.s $f10, 6.4
 	li.s $f12, 7.3
@@ -128,7 +124,6 @@ L_CondEnd_3:
 	move $s1, $s0
 	bne $s1, $0, label7
 	j label8
-
 label7:
 	lw $s0, 16($sp)
 	lw $s1, 0($s0)
@@ -138,7 +133,6 @@ label7:
 	lw $s1, 16($sp)
 	sw $s0, 0($s1)
 	j label8
-
 label8:
 	li.s $f10, 6.4
 	li.s $f12, 7.3
@@ -152,7 +146,6 @@ L_CondEnd_4:
 	move $s1, $s0
 	bne $s1, $0, label9
 	j label10
-
 label9:
 	lw $s0, 16($sp)
 	lw $s1, 0($s0)
@@ -162,7 +155,6 @@ label9:
 	lw $s1, 16($sp)
 	sw $s0, 0($s1)
 	j label10
-
 label10:
 	j epilogue_main
 
@@ -171,5 +163,5 @@ epilogue_main:
 	add $sp, $sp, 48
 	lw $fp, -4($sp)
 	lw $ra, 0($sp)
-	jr $ra  # Jump back to the called procedure
+	jr $ra	# Jump back to the called procedure
 # Epilogue ends
