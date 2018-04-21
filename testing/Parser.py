@@ -377,20 +377,21 @@ precedence = (
 def printCFG(ast):
 	l1 = ast.l
 	CFG_list = []
-	num = 0
+	num = -1
 	for i in range(0,len(l1)):
 		if ast.l[i].Type == "FUNC":
 			cfg = CFG()
 			cfg.insert(l1[i])
 			cleanup(cfg.head)
-			num1 = giveNumbering(cfg.head,num-1)
+			num1 = giveNumbering(cfg.head,num)
 			s = "function " + ast.l[i].Name + "(" + makestring(ast.l[i].l[1]) + ")"
 			print(s)
 			printCFGhelper(cfg.head,num-1)
 			CFG_list.append(cfg)
 			num = num1-1
-			if ast.l[i].Name == "main":
-				num += 1
+
+				
+
 	return CFG_list
 
 def printSymbolTable():
@@ -1214,6 +1215,8 @@ def ASTtoAssembly(ast,funcinfo):
 
 	elif(ast.Type == "RETURN"):
 		entry = globalSym.funcTable[funcinfo]
+		if ast.l is None:
+			return
 		r = ASTtoAssembly(ast.l[0],funcinfo)
 		if entry[0] == "float":
 			if entry[1] == 0:

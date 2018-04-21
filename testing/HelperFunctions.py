@@ -141,8 +141,12 @@ def printList(l):
 
 
 def giveNumbering(n,i):
-
-	if n.Type in ["Start","Normal","End"]:
+	if n.Type == "End":
+		if not n.hasreturn:
+			n.num = i
+			return i+1
+		return i
+	elif n.Type in ["Start","Normal"]:
 		n.num = i
 		if (not(n.left==-1 and n.middle==-1 and n.right==-1)):
 			# print(n.Type + "calling " + n.left.Type)
@@ -208,7 +212,7 @@ def giveNumbering(n,i):
 
 def printCFGhelper(n1,nextstatenum):
 	if n1==-1:
-		return
+		return -1
 	elif n1.Type == "Start":
 		printCFGhelper(n1.left,nextstatenum)
 
@@ -217,6 +221,7 @@ def printCFGhelper(n1,nextstatenum):
 			print("<bb {0}>".format(n1.num))
 			print("return")
 			print("")
+
 	elif n1.Type == "Normal":
 		print("<bb {0}>".format(n1.num))
 		# print("{0} has child {1}".format(n1.num,n1.l))	
