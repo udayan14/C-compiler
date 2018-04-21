@@ -17,115 +17,32 @@ RETURN
 Function Main
 PARAMS()
 RETURNS void
-	ASGN
+	IF
 	(
-		VAR(p)
-		,
-		VAR(q)
-	)
-
-	ASGN
-	(
-		VAR(p)
-		,
-		VAR(w)
-	)
-
-	ASGN
-	(
-		VAR(u)
-		,
-		VAR(v)
-	)
-
-	ASGN
-	(
-		VAR(u)
-		,
-		VAR(x)
-	)
-
-	ASGN
-	(
-		VAR(d)
-		,
-		VAR(w)
-	)
-
-	ASGN
-	(
-		DEREF
+		LE
 		(
-			VAR(z)
+			CONST(6.4)
+			,
+			CONST(7.3)
 		)
 		,
-		VAR(q)
-	)
-
-	ASGN
-	(
-		DEREF
-		(
-			VAR(q)
-		)
-		,
-		DEREF
+		ASGN
 		(
 			DEREF
 			(
-				DEREF
-				(
-					VAR(c)
-				)
-			)
-		)
-	)
-
-	ASGN
-	(
-		DEREF
-		(
-			DEREF
-			(
-				DEREF
-				(
-					VAR(b)
-				)
-			)
-		)
-		,
-		DEREF
-		(
-			VAR(v)
-		)
-	)
-
-	ASGN
-	(
-		VAR(p)
-		,
-		CALL f2(
-			DEREF
-			(
-				DEREF
-				(
-					VAR(m)
-				)
+				VAR(p)
 			)
 			,
 			PLUS
 			(
 				DEREF
 				(
-					VAR(u)
+					VAR(p)
 				)
 				,
-				DEREF
-				(
-					VAR(x)
-				)
+				CONST(1)
 			)
 		)
-	)
 
+	)
 

@@ -8,19 +8,15 @@ return d
 
 function main()
 <bb 2>
-p = q
-p = w
-u = v
-u = x
-d = w
-*z = q
-*q = ***c
-***b = *v
-t0 = *u + *x
-t1 = f2(**m, t0)
-p = t1
-goto <bb 3>
+t0 = 6.4 <= 7.3
+if(t0) goto <bb 3>
+else goto <bb 4>
 
 <bb 3>
+t1 = *p + 1
+*p = t1
+goto <bb 4>
+
+<bb 4>
 return
 

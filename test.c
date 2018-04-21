@@ -20,14 +20,8 @@ void main(){
 	float *u,*v,*x;
 	int **z,***c;
 	float ***b,**m;
-	p=q;
-	p=w;
-	u=v;
-	u=x;
-	d = w;
-	*z = q;
-	*q = ***c;
-	***b = *v;
-	p = f2(**m,*u+*x);
+	if(6.4<=7.3){
+		*p = *p + 1;
+	}
 
 }
