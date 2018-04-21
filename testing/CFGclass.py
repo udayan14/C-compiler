@@ -47,6 +47,9 @@ class CFG:
 
 		elif ast.Type == "RETURN":
 			# print("return statement",ast.l[0])
+			c_common = node("Normal",self.insertnode.left,-1,-1)
+			self.insertnode.left = c_common
+			self.insertnode = c_common
 			a = ast.getcode()	
 			self.insertnode.astList.append(ast)
 			if isinstance(a,str):
