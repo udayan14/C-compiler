@@ -1,0 +1,13 @@
+function f1(int *p1, float p2, float p3, int q1)
+<bb 0>
+return *f2
+
+function main()
+<bb 1>
+t0 = f1(a, *a3, *a3, *a)
+ret = t0
+goto <bb 2>
+
+<bb 2>
+return
+

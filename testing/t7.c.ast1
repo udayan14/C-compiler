@@ -1,0 +1,29 @@
+Function Main
+PARAMS()
+RETURNS void
+	ASGN
+	(
+		VAR(x)
+		,
+		CALL f(
+			DEREF
+			(
+				VAR(y)
+			)
+			,
+			DEREF
+			(
+				VAR(y)
+			)
+		)
+	)
+
+
+FUNCTION f
+PARAMS (int x, int y)
+RETURNS *float
+RETURN
+(
+	VAR(f1)
+)
+
