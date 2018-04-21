@@ -1097,21 +1097,25 @@ def ASTtoAssembly(ast,funcinfo):
 		table = globalSym.funcTable[funcinfo]
 		if curr.Name in table[2].varTable:
 			entry = table[2].varTable[curr.Name]
-			if entry[1] == "int":
-				val = getNormReg()
-				printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
-				freeNormReg(temp_reg)
-				return (val,0)
-			elif entry[2]!=count:
-				val = getNormReg()
-				printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
-				freeNormReg(temp_reg)
-				return (val,1)
-			else:
-				val = getFloatReg()
-				printhelper("l.s $f{0}, 0($s{1})".format(val,temp_reg),1)
-				freeNormReg(temp_reg)
-				return (val,1)
+		else:
+			entry = globalSym.varTable[curr.Name]
+		# print("Entry ",entry[2],count)
+		if entry[0] == "int":
+			val = getNormReg()
+			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,0)
+		elif entry[1]>count:
+			val = getNormReg()
+			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,1)
+		else:
+			val = getFloatReg()
+			printhelper("l.s $f{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,1)
+
 
 	elif(ast.Type == "CONST"):
 		if ast.Name == "int":
@@ -1135,9 +1139,9 @@ def ASTtoAssembly(ast,funcinfo):
 						printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
 						return (val,0)
 					else:
-					val = getNormReg()
-					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
-					return (val,0)
+						val = getNormReg()
+						printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,0)
 				else:
 					if entry[1]==0:
 						val = getFloatReg()
@@ -1232,7 +1236,7 @@ def ASTtoAssembly(ast,funcinfo):
 		r = ASTtoAssembly(ast.l[0],funcinfo)
 		if entry[0] == "float":
 			if entry[1] == 0:
-				printhelper("mov.s $f0, $f{0}".format(r[0]),1)
+				printhelper("mov.s $f0, $f{0} # move return value to $f0".format(r[0]),1)
 				freeFloatReg(r[0])
 			else:
 				printhelper("move $v1, $s{0} # move return value to $v1 ".format(r[0]),1)

@@ -1,0 +1,32 @@
+Procedure table :-
+-----------------------------------------------------------------
+Name		|	Return Type  |  Parameter List
+main		|	void		|	
+f1		|	float*		|	int *,float ,float ,int 
+-----------------------------------------------------------------
+Variable table :- 
+-----------------------------------------------------------------
+Name		|	Scope		|	Base Type		|	Derived Type
+-----------------------------------------------------------------
+b2		|	procedure global		|	float		|	*
+a3		|	procedure global		|	float		|	*
+a1		|	procedure global		|	int		|	
+a2		|	procedure global		|	float		|	
+b		|	procedure global		|	int		|	
+a		|	procedure global		|	int		|	*
+y		|	procedure main		|	int		|	
+ret		|	procedure main		|	float		|	*
+x		|	procedure main		|	int		|	
+f1		|	procedure f1		|	float		|	
+f3		|	procedure f1		|	float		|	****
+f2		|	procedure f1		|	float		|	**
+q1		|	procedure f1		|	int		|	
+p2		|	procedure f1		|	float		|	
+p1		|	procedure f1		|	int		|	*
+p3		|	procedure f1		|	float		|	
+b		|	procedure f1		|	int		|	****
+a		|	procedure f1		|	int		|	*
+f4		|	procedure f1		|	float		|	***
+c		|	procedure f1		|	int		|	***
+-----------------------------------------------------------------
+-----------------------------------------------------------------

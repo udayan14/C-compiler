@@ -1,0 +1,13 @@
+function main()
+<bb 0>
+t0 = f(*y, *y)
+x = t0
+goto <bb 1>
+
+<bb 1>
+return
+
+function f(int x, int y)
+<bb 2>
+return f1
+

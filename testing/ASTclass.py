@@ -173,6 +173,7 @@ class AST:
 
 		elif self.Type == "FCALL":
 			arg_ast = self.l[0]
+			# self.funcstr = makestring1(arg_ast.l[0])
 			len1 = len(arg_ast.l)
 			t = []
 			arg = []

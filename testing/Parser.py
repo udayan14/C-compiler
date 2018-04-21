@@ -62,7 +62,7 @@ class SymbolTable:
 
 			# print("Types : ",typeslist)
 			temp = makestring1(typeslist)
-			
+			ast.funcstr = temp
 			t = (ast.Name, temp)
 			# print("Self.functable",globalSym.funcTable)
 
@@ -1086,23 +1086,36 @@ def ASTtoAssembly(ast,funcinfo):
 		while(curr.Type!="VAR"):
 			curr = curr.l[0]
 			count+=1
-		r0 = ASTtoAssembly(curr,funcinfo)
+		r0 = ASTtoAssembly(curr,funcinfo)		
 		temp_reg = r0[0]
 		for i in range(count - 1):
 			val = getNormReg()
 			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
 			freeNormReg(temp_reg)
 			temp_reg = val
-		if r0[1] == 0:
+
+		table = globalSym.funcTable[funcinfo]
+		if curr.Name in table[2].varTable:
+			entry = table[2].varTable[curr.Name]
+		else:
+			entry = globalSym.varTable[curr.Name]
+		# print("Entry ",entry[2],count)
+		if entry[0] == "int":
 			val = getNormReg()
 			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
 			freeNormReg(temp_reg)
 			return (val,0)
+		elif entry[1]>count:
+			val = getNormReg()
+			printhelper("lw $s{0}, 0($s{1})".format(val,temp_reg),1)
+			freeNormReg(temp_reg)
+			return (val,1)
 		else:
 			val = getFloatReg()
 			printhelper("l.s $f{0}, 0($s{1})".format(val,temp_reg),1)
 			freeNormReg(temp_reg)
 			return (val,1)
+
 
 	elif(ast.Type == "CONST"):
 		if ast.Name == "int":
@@ -1121,17 +1134,23 @@ def ASTtoAssembly(ast,funcinfo):
 			offset = entry[2]
 			if entry[3]==0:
 				if entry[0]=="int":
-					val = getNormReg()
-					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
-					return (val,0)
-				elif entry[1]>0:
-					val = getNormReg()
-					printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
-					return (val,1)
+					if entry[1]==0:
+						val = getNormReg()
+						printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,0)
+					else:
+						val = getNormReg()
+						printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,0)
 				else:
-					val = getFloatReg()
-					printhelper("l.s $f{0}, {1}($sp)".format(val,4+offset),1)
-					return (val,1)
+					if entry[1]==0:
+						val = getFloatReg()
+						printhelper("l.s $f{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,1)
+					else:
+						val = getNormReg()
+						printhelper("lw $s{0}, {1}($sp)".format(val,4+offset),1)
+						return (val,0,1)
 			else:
 				if entry[0]=="int":
 					val = getNormReg()
@@ -1217,7 +1236,7 @@ def ASTtoAssembly(ast,funcinfo):
 		r = ASTtoAssembly(ast.l[0],funcinfo)
 		if entry[0] == "float":
 			if entry[1] == 0:
-				printhelper("mov.s $f0, $f{0}".format(r[0]),1)
+				printhelper("mov.s $f0, $f{0} # move return value to $f0".format(r[0]),1)
 				freeFloatReg(r[0])
 			else:
 				printhelper("move $v1, $s{0} # move return value to $v1 ".format(r[0]),1)
@@ -1481,7 +1500,7 @@ def p_function_call(p):
 	"""
 	# newast = AST("DECL", "", [p[3]])
 	p[0] = AST("FCALL", p[1], [p[3],0])
-
+	# p[0].funcstr = makestring1(p[0].l[0])
 
 
 def p_function_arguments(p):
